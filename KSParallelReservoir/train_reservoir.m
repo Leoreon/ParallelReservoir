@@ -1,4 +1,4 @@
-function [x, wout, A, win] = train_reservoir(resparams, data, labindex, jobid, locality, chunk_size)
+function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, locality, chunk_size)
 
 [num_inputs,~] = size(data);
 
@@ -18,3 +18,7 @@ states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
 wout = fit(resparams, states, data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
 
 x = states(:,end);
+
+error = wout*states - data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+error = error .^ 2;
+RMSE = sqrt(mean(mean(error)));

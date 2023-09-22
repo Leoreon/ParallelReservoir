@@ -6,8 +6,10 @@ clear;
 % SIAM Journal on Scientific Computing 26.4 (2005): 1214-1233.
 
 
-N = 256;
-d = 100;
+% N = 256;
+N = 64;
+% d = 100;
+d = 22;
 x = d*(-N/2+1:N/2)'/N;
 u = 0.6*(-1+2*rand(size(x)));
 v = fft(u);
@@ -62,10 +64,17 @@ uu = transpose(real(ifft(vv)));
 
 %save KS_100.mat uu -v7.3;
 
+% Adata = uu(1:80000,:);
+% Bdata = uu(80001:end,:);
+% 
+% filename = strcat('Adata_L', num2str(d), '_N_', num2str(N), '_dps', num2str(80000), '.mat');
+% save(filename, 'Adata', 'Bdata', '-v7.3');
+
+
 train_input_sequence = uu(1:80000,:);
 
 test_input_sequence = uu(80001:end,:);
 
 save('test_input_sequence.mat', 'test_input_sequence', '-v7.3');
 
-save('train_input_sequence.mat', 'train_input_sequence', '-v7.3')
+save('train_input_sequence.mat', 'train_input_sequence', '-v7.3');

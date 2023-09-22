@@ -1,5 +1,4 @@
 function prediction = predict(w,w_out,x,w_in,pl,chunk_size,frontWkrIdx, rearWkrIdx,N, locality)
-
 prediction = zeros(chunk_size,pl);
 
 for i=1:pl

@@ -1,7 +1,7 @@
-function pred_collect = res_train_predict(in, test_in, resparams, jobid, locality, chunk_size, pred_marker_array, sync_length)
+function [pred_collect, RMSE] = res_train_predict(in, test_in, resparams, jobid, locality, chunk_size, pred_marker_array, sync_length)
 
 
-[x, w_out, w, w_in] = train_reservoir(resparams, in, labindex, jobid, locality, chunk_size);
+[x, w_out, w, w_in, RMSE] = train_reservoir(resparams, in, labindex, jobid, locality, chunk_size);
 
 frontWkrIdx = mod(labindex, numlabs) + 1; % one worker to the front
 rearWkrIdx = mod(labindex - 2, numlabs) + 1; % one worker to the rear
