@@ -8,6 +8,17 @@ for i=1:pl
     labBarrier;
     rear_out = labSendReceive(frontWkrIdx ,rearWkrIdx, out(end-locality+1:end));
     front_out = labSendReceive(rearWkrIdx, frontWkrIdx, out(1:locality));
+    % fprintf('out: \n');
+    % display(size(out));
+    % display(size(front_out));
+    % display(size(rear_out));
+    % break;
+    if size(rear_out, 2) ~= size(out, 2) || size(out, 2) ~= size(front_out, 2)
+        fprintf('out: \n');
+        display(size(out));
+        display(size(front_out));
+        display(size(rear_out));
+    end
     feedback = vertcat(rear_out, out, front_out);
     x = tanh(w*x + w_in*feedback); 
     prediction(:,i) = out;

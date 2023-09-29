@@ -2,15 +2,11 @@
 %College Park.
 %email: jpathak@umd.edu or jaideeppathak244@gmail.com
 
-clear
 
-% function jobid = parallel_reservoir_benchmarking(request_pool_size)
+
+function jobid = parallel_reservoir_benchmarking(request_pool_size)
  data_dir = './';
- % request_pool_size_list = 2:6;
- % request_pool_size_list = 2;
- request_pool_size_list = 4;
- % request_pool_size = 4;
- % request_pool_size = 8;
+ request_pool_size = 8;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
  %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -29,13 +25,11 @@ clear
  % rho_list = 0.8:0.2:1.4;
  % locality_list = 7:8;
  
- % rho_list = 0.75;
- % locality_list = 8;
+ rho_list = 0.8;
+ locality_list = 8;
 
- rho_list = 1.11;
- % rho_list = 0.8;
- locality_list = 3;
- % locality_list = 12;
+ % rho_list = 1.11;
+ % locality_list = 8;
  
  % rho_list = 0.2:1:1.7;
  % locality_list = 3:4:8;
@@ -44,7 +38,6 @@ clear
  for index_iter = 1:1
  for rho = rho_list
  for locality_ = locality_list
- for request_pool_size = request_pool_size_list
     tic;
     partial_pred_marker_array = full_pred_marker_array((index_iter-1)*indices_per_job + 1:index_iter*indices_per_job);
 
@@ -63,18 +56,15 @@ clear
 
     request_pool_size
     spmd(request_pool_size)
+        
         jobid = 1;
         
-        % data_kind = 'KS';
-        data_kind = 'CGL';
+        data_kind = 'KS';
+        % data_kind = 'CGL';
         switch data_kind
             case 'CGL'
-                L = 8; N = 32; test_steps = 20000;
-                train_steps = 80000; 
-                % train_steps = 100000;dps  = 700000;  %50 200     % Number of stored times
- 
-                % train_steps = 200000; 
-                % L = 8; N = 64; train_steps = 80000; test_steps = 20000;
+                L = 8; N = 64; train_steps = 100000; test_steps = 20000;
+                % L = 8; N = 32; train_steps = 80000; test_steps = 20000;
                 max_lyapunov = 1.0;
                 m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
                 tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
@@ -120,10 +110,8 @@ clear
         overlap_size = length(rear_overlap) + length(forward_overlap); 
 
         % approx_reservoir_size = 5000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 7000 * 8 / request_pool_size;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         approx_reservoir_size = 7000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 9000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
 
         avg_degree = 3; %average connection degree
 
@@ -135,12 +123,11 @@ clear
 
         resparams.N = nodes_per_input*(chunk_size+overlap_size); % exact number of nodes in the network
 
-        resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
-
-        resparams.train_length = train_steps-resparams.discard_length;  %number of time steps used for training
         % resparams.train_length = 99000;  %number of time steps used for training
-        % resparams.train_length = 79000;  %number of time steps used for training
+        resparams.train_length = 79000;  %number of time steps used for training
         % resparams.train_length = 39000;  %number of time steps used for training
+
+        resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
 
         resparams.predict_length = 2999;  %number of steps to be predicted
 
@@ -181,28 +168,9 @@ clear
         tf = [];
         test_uu = [];
         % fprintf('start res train predict');
-        % [pred_collect, RMSE] = res_predict(x, w_out, w, w_in, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
+        [pred_collect, RMSE] = res_predict(x, w_out, w, w_in, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
         
-        % learn = 'RLS';
-        learn = 'LSM';
-        switch learn
-            case 'LSM'
-                [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
-            case 'RLS'
-                [num_inputs2,~] = size(u.');
-                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
-                q = resparams.N/num_inputs2;
-                win = zeros(resparams.N, num_inputs2);
-                for i=1:num_inputs2
-                    rng(i)
-                    ip = (-1 + 2*rand(q,1));
-                    win((i-1)*q+1:i*q,i) = ip;
-                end
-                
-                wout = zeros(chunk_size, resparams.N);
-                [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
-                pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
-        end
+        % [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
         % fprintf('pred_collect');
         collated_prediction = gcat(pred_collect,1,1);
     end
@@ -228,7 +196,6 @@ clear
     resparams = resparams{1};
     sync_length = sync_length{1};
     sigma = sigma{1};
-    chunk_size = chunk_size{1};
     num_inputs = num_inputs{1};
     pred_collect = collated_prediction{1};
     pred_marker_array = pred_marker_array{1};
@@ -236,17 +203,11 @@ clear
     diff = zeros(num_inputs, num_preds*resparams.predict_length);
     trajectories_true = zeros(num_inputs, num_preds*resparams.predict_length);
     
-    switch learn{1} 
-        case 'LSM'
-            RMSE_mean = 0;
-            for i = 1:num_workers
-                RMSE_mean = RMSE_mean + RMSE{i};
-                i;
-            end
-            RMSE_mean = RMSE_mean / num_workers;
-        case 'RLS'
-            RMSE_mean = 0;
+    RMSE_mean = 0;
+    for i = 1:num_workers
+        RMSE_mean = RMSE_mean + RMSE{i};
     end
+    RMSE_mean = RMSE_mean / num_workers;
 
     for pred_iter = 1:num_preds
         prediction_marker = pred_marker_array(pred_iter);
@@ -275,7 +236,7 @@ clear
     subplot(3, 1, 1); surf(times, locations, [trajectories_true(1:2:end-1,1:n_steps); trajectories_true(2:2:end,1:n_steps)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('target'); colorbar; clim([min_value max_value]); xlim([0 50]);
     subplot(3, 1, 2); surf(times, locations, [pred_collect(1:2:end-1,:); pred_collect(2:2:end,:)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('output'); colorbar; clim([min_value max_value]); xlim([0 50]);
     subplot(3, 1, 3); surf(times, locations, [diff(1:2:end-1,:); diff(2:2:end, :)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 50]);
-    sgtitle([data_kind ' rho: ' num2str(resparams.radius) ', chunk size: ' num2str(chunk_size) ', locality: ' num2str(locality)]);
+    sgtitle([data_kind ' rho: ' num2str(resparams.radius) ', locality: ' num2str(locality)]);
     
     progress = progress + 1;
     total = size(rho_list, 2) * size(locality_list, 2);
@@ -284,9 +245,8 @@ clear
  end
  end
  end
- end
  close(h);
-% end
+
  
 
 

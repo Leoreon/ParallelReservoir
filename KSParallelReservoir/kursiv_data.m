@@ -75,6 +75,6 @@ train_input_sequence = uu(1:80000,:);
 
 test_input_sequence = uu(80001:end,:);
 
-save('test_input_sequence.mat', 'test_input_sequence', '-v7.3');
+save('test_input_sequence2.mat', 'test_input_sequence', '-v7.3');
 
-save('train_input_sequence.mat', 'train_input_sequence', '-v7.3');
+save('train_input_sequence2.mat', 'train_input_sequence', '-v7.3');
