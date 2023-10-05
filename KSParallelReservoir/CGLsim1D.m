@@ -14,26 +14,37 @@ disp('*** 1D CGL SIMULATION ***');
 % a = -2;
 % b = 0.7;
 % a = -2; b = 2;
-a = 2;
-b = -2;
+a = 0; b = -3;
+% a = 2;
+% b = -2;
+
+% a = -1.05;
+% b = 1.05;
 
 % save_results = false;
 save_results = true;
 
 % Set system parameters
-% L    = 200;       % Domain size
+% L    = 2000;       % Domain size
+L    = 200;       % Domain size
 % L    = 50;       % Domain size
+% L    = 44;       % Domain size
+% L    = 40;       % Domain size
+% L    = 36;       % Domain size
+% L    = 26;       % Domain size
+% L    = 22;       % Domain size
 % L    = 18;       % Domain size
-L    = 8;       % Domain size
+% L    = 8;       % Domain size
 % Tmax = 200;       % Simulation time
 % N    = 512;       % Number of grid points
 % dT   = 0.05;      % Timestep (choose between 0.01 and 0.05)
 % dps  = 1000;      % Number of stored times
 ic   = 'pulse';   % Initial condition: choose 'zero', 'tw', 'uniform' or 'pulse'
 n    = 0;         % Winding number for 'tw' initial condition
-% N    = 128;       % Number of grid points, default
+% N    = 2048;       % Number of grid points, default
+N    = 128;       % Number of grid points, default
 % N    = 64;       % Number of grid points, default
-N    = 32;       % Number of grid points, default
+% N    = 32;       % Number of grid points, default
 % N    = 20;       % Number of grid points
 % N    = 10;       % Number of grid points
 % N    = 6;       % Number of grid points
@@ -44,12 +55,15 @@ time_scale = 1;
 % dT   = 0.05;      % Timestep, default
 % dT   = 0.05/time_scale;      % Timestep
 % dT   = 0.07;      % Timestep
-dT   = 1e-4;      % Timestep
+dT   = 0.01;      % Timestep
+% dT   = 1e-4;      % Timestep
 % sample_dT = 0.01;
 sample_dT = 0.07;
 % sample_dT = 0.1;
 % sample_dT = 1e-4;
 
+% type = 'train';
+% type = 'test';
 % dps  = 1000000;  %50 200     % Number of stored times
 % dps  = 700000;  %50 200     % Number of stored times
 % dps  = 300000;  %50 200     % Number of stored times
@@ -63,10 +77,10 @@ sample_dT = 0.07;
 % dps  = 10000;  %50 200     % Number of stored times
 % dps  = 2000;  %50 200     % Number of stored times
 % dps  = 1000;  %50 200     % Number of stored times
-% dps  = 800;  %50 200     % Number of stored times
+dps  = 800;  %50 200     % Number of stored times
 % dps  = 400;  %50 200     % Number of stored times
 % dps  = 200;  %50 100     % Number of stored times, default
-dps  = 200;  %50 100     % Number of stored times, default
+% dps  = 100;  %50 100     % Number of stored times, default
 Tmax = 2 * sample_dT / dT * dps * dT;
 co   = 0;         % Whether to continue simulation from final values of previous
 
@@ -91,7 +105,7 @@ if co == 0
     elseif strcmp(ic, 'pulse')
 		A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
 		% A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
-	    A = 100 * A;
+	    % A = 100 * A;
     else
 		error('invalid initial condition selected')
 	end
@@ -177,6 +191,7 @@ end
 % Plot evolution
 figure('position', [200 200 300 350])
 surf(X,Tdata,real(Adata).')
+colorbar;
 view(0,90), shading interp, axis tight;
 % set(gca,'position', [0 0 1 1])
  set(gca,'position', [0.1 0.07 0.8 0.87])
@@ -202,32 +217,42 @@ title('evolution of |A|',...
 data_dir = '';
 % data_dir = 'results/CGL1d/';
 %% save for parallel
-if true % train data
-    n_steps = dps;
-    % data_kind = 'NLCGL';
-    data_kind = 'CGL';
-    L = 8; N = 32; dps = n_steps;
-    n_data = 2 * N;
-    filename = [data_dir 'CGL2' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-    Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
-    % Adata = Adata.';
-    train_input_sequence = zeros(n_steps, n_data);
-    train_input_sequence(:, 1:2:end) = Adata(:, 1:n_data/2);
-    train_input_sequence(:, 2:2:end) = Adata(:, n_data/2+1:end);
-    save(filename, 'train_input_sequence', '-v7.3');
-elseif false % test data
-    test_input_sequence = Adata.';
-    filename = [data_dir 'CGL2' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-    save(filename, 'test_input_sequence', '-v7.3');
+switch type
+    case 'train' % train data
+        n_steps = dps;
+        % data_kind = 'NLCGL';
+        data_kind = 'CGL';
+        % L = 8; N = 32; dps = n_steps;
+        n_data = 2 * N;
+        filename = [data_dir 'CGL' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
+        Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
+        % Adata = Adata.';
+        train_input_sequence = zeros(n_steps, n_data);
+        train_input_sequence(:, 1:2:end) = Adata(:, 1:n_data/2);
+        train_input_sequence(:, 2:2:end) = Adata(:, n_data/2+1:end);
+        save(filename, 'train_input_sequence', '-v7.3');
+    case 'test' % test data
+        n_steps = dps;
+        % data_kind = 'NLCGL';
+        data_kind = 'CGL';
+        % L = 8; N = 32; dps = n_steps;
+        n_data = 2 * N;
+        filename = [data_dir 'CGL' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
+        Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
+        % Adata = Adata.';
+        test_input_sequence = zeros(n_steps, n_data);
+        test_input_sequence(:, 1:2:end) = Adata(:, 1:n_data/2);
+        test_input_sequence(:, 2:2:end) = Adata(:, n_data/2+1:end);
+        save(filename, 'test_input_sequence', '-v7.3');
 end
 
 %% save for simulation_future
 if false %save_results
     % filename = strcat('results/CGL1d/Adata', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), '.mat');
-    filename = strcat(data_dir, 'Adata', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), '.mat');
+    filename = strcat(data_dir, 'Adata', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), 'c1_', num2str(a), 'c2_', num2str(b), '.mat');
     save(filename, 'Adata', '-v7.3');
     % filename2 = strcat('results/CGL1d/CGL', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), '.mat');
-    filename2 = strcat(data_dir, 'CGL', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), '.mat');
+    filename2 = strcat(data_dir, 'CGL', '_L', num2str(L), '_N_', num2str(N), '_dps', num2str(dps), 'c1_', num2str(a), 'c2_', num2str(b), '.mat');
     save(filename2, '-v7.3');
     display(filename);
 end

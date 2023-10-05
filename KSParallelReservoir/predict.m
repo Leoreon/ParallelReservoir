@@ -13,12 +13,6 @@ for i=1:pl
     % display(size(front_out));
     % display(size(rear_out));
     % break;
-    if size(rear_out, 2) ~= size(out, 2) || size(out, 2) ~= size(front_out, 2)
-        fprintf('out: \n');
-        display(size(out));
-        display(size(front_out));
-        display(size(rear_out));
-    end
     feedback = vertcat(rear_out, out, front_out);
     x = tanh(w*x + w_in*feedback); 
     prediction(:,i) = out;

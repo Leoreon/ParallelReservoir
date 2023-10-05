@@ -7,8 +7,11 @@ clear
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
  data_dir = './';
  % request_pool_size_list = 2:6;
+ % request_pool_size_list = 1;
  % request_pool_size_list = 2;
- request_pool_size_list = 4;
+ % request_pool_size_list = 4;
+ request_pool_size_list = 8;
+ % request_pool_size_list = 16;
  % request_pool_size = 4;
  % request_pool_size = 8;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
@@ -25,17 +28,20 @@ clear
 
  % rho_list = 0.05:0.05:1.5;
  % locality_list = 6:2:8;
-
- % rho_list = 0.8:0.2:1.4;
+ 
+ % rho_list = 0.9:0.1:1.7;
+ % rho_list = 1.7:0.1:2.0;
+ % rho_list = 1.41:0.04:1.79;
  % locality_list = 7:8;
  
  % rho_list = 0.75;
- % locality_list = 8;
-
- rho_list = 1.11;
+ locality_list = 8;
+ 
+ rho_list = 1.7;
  % rho_list = 0.8;
- locality_list = 3;
- % locality_list = 12;
+ % locality_list = 0;
+ % locality_list = 3;
+ % locality_list = 8:-2:2;
  
  % rho_list = 0.2:1:1.7;
  % locality_list = 3:4:8;
@@ -69,15 +75,29 @@ clear
         data_kind = 'CGL';
         switch data_kind
             case 'CGL'
-                L = 8; N = 32; test_steps = 20000;
-                train_steps = 80000; 
+                % L = 44; 
+                % L = 36; 
+                % L = 30; 
+                % L = 26; 
+                L = 22; 
+                % L = 18; 
+                % L = 8; 
+                N = 32;
+                % N = 32*2;
+                % N = 128;
+                test_steps = 20000;
+                % train_steps = 80000;
+                train_steps = 100000;
+                c1 = -2; c2 = 2;
                 % train_steps = 100000;dps  = 700000;  %50 200     % Number of stored times
  
                 % train_steps = 200000; 
                 % L = 8; N = 64; train_steps = 80000; test_steps = 20000;
                 max_lyapunov = 1.0;
-                m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
-                tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+                % m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
+                % tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+                m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
+                tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
             case 'KS'
                 L = 22; N = 64; train_steps = 80000; test_steps = 20000;
                 max_lyapunov = 0.0825;
@@ -183,6 +203,7 @@ clear
         % fprintf('start res train predict');
         % [pred_collect, RMSE] = res_predict(x, w_out, w, w_in, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
         
+        fprintf('start learning\n');
         % learn = 'RLS';
         learn = 'LSM';
         switch learn
@@ -206,8 +227,8 @@ clear
         % fprintf('pred_collect');
         collated_prediction = gcat(pred_collect,1,1);
     end
-
-    runtime = toc;
+    
+    runtime = toc
     approx_reservoir_size = approx_reservoir_size{1};
     locality = locality{1};
     num_workers = num_workers{1};
@@ -216,11 +237,12 @@ clear
     % test_file = tf{1};
     data_kind = data_kind{1};
     max_lyapunov = max_lyapunov{1};
-    L = L{1}; N = N{1}; train_steps = train_steps{1}; test_steps = test_steps{1};
+    L = L{1}; N = N{1}; train_steps = train_steps{1}; test_steps = test_steps{1}; c1 = c1{1}; c2 = c2{1};
     switch data_kind
         case 'CGL'
             % data_file = load([data_dir 'CGL_L18_N_32_dps80000.mat']); % CGL
-            test_file = load([data_dir 'CGL_L' num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+            test_file = load([data_dir 'CGL_L' num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
+            % test_file = load([data_dir 'CGL_L' num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
         case 'KS'
             % data_file = load([data_dir 'train_input_sequence.mat']); % KS
             test_file = load([data_dir 'test_input_sequence.mat']); % KS
@@ -275,7 +297,7 @@ clear
     subplot(3, 1, 1); surf(times, locations, [trajectories_true(1:2:end-1,1:n_steps); trajectories_true(2:2:end,1:n_steps)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('target'); colorbar; clim([min_value max_value]); xlim([0 50]);
     subplot(3, 1, 2); surf(times, locations, [pred_collect(1:2:end-1,:); pred_collect(2:2:end,:)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('output'); colorbar; clim([min_value max_value]); xlim([0 50]);
     subplot(3, 1, 3); surf(times, locations, [diff(1:2:end-1,:); diff(2:2:end, :)]); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('location'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 50]);
-    sgtitle([data_kind ' rho: ' num2str(resparams.radius) ', chunk size: ' num2str(chunk_size) ', locality: ' num2str(locality)]);
+    sgtitle([data_kind ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
     
     progress = progress + 1;
     total = size(rho_list, 2) * size(locality_list, 2);

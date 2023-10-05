@@ -6,8 +6,10 @@
 clear all;
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
  data_dir = './';
- request_pool_size = 2;
+ % request_pool_size = 1;
+ % request_pool_size = 2;
  % request_pool_size = 8;
+ request_pool_size = 16;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
  %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -23,16 +25,21 @@ clear all;
  % rho_list = 0.5:0.3:1.7;
  % locality_list = 4:2:8;
 
- % rho_list = 0.7:0.1:1.2;
+ % rho_list = 0.2:0.05:1.6;
+ % rho_list = 0.05:0.05:0.15;
  % locality_list = 8:-1:7;
+ % locality_list = 0;
  
  % rho_list = 0.8;
  % locality_list = 8;
 
- rho_list = 1.1;
- locality_list = 8;
+ % rho_list = 1.1;
+ rho_list = 1.6;
+ % locality_list = 8;
+ locality_list = 16;
  
- % rho_list = 0.2:1:1.7;
+ % rho_list = 0.2:0.05:1.8;
+ % rho_list = 0.1:0.2:1.7;
  % locality_list = 3:4:8;
  h = waitbar(0,'Please wait...');
  progress = 0;
@@ -76,14 +83,24 @@ clear all;
         data_kind = 'CGL';
         switch data_kind
             case 'CGL'
-                L = 8; N = 32;
-                % train_steps = 80000;
-                train_steps = 200000;
+                % L = 44; 
+                L = 36;
+                % L = 30;
+                % L = 22;
+                % L = 8; 
+                % N = 32;
+                % N = 32 * 2;
+                N = 128;
+                c1 = -2; c2 = 2;
+                train_steps = 80000;
+                % train_steps = 100000;
+                % train_steps = 200000;
                 % train_steps = 300000;
                 % train_steps = 700000;
                 test_steps = 20000;
-                m = matfile([data_dir 'CGL2_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
-                tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+                m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
+                % m = matfile([data_dir 'CGL2_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
+                % tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
             case 'KS'
                 L = 22; N = 64;
                 train_steps = 80000;
@@ -137,9 +154,11 @@ clear all;
         overlap_size = length(rear_overlap) + length(forward_overlap); 
 
         % approx_reservoir_size = 5000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 7000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 9000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 7000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 8000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 10000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 15000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
 
         avg_degree = 3; %average connection degree
 
@@ -161,7 +180,7 @@ clear all;
         resparams.predict_length = test_steps;  %number of steps to be predicted
 
         % sync_length = 32; % use a short time series to synchronize to the data at the prediction_marker
-        sync_length = 100; % use a short time series to synchronize to the data at the prediction_marker
+        sync_length = 1000; % use a short time series to synchronize to the data at the prediction_marker
         
         % resparams.radius = 0.6; % spectral radius of the reservoir
         resparams.radius = rho; % spectral radius of the reservoir
@@ -177,21 +196,23 @@ clear all;
         u(:,locality+chunk_size+1:2*locality+chunk_size) = train_uu(1:end,forward_overlap);
 
         u = sigma*u;
-        
-        test_uu = tf.test_input_sequence;
-        % clear tf;
-        tf = [];
+        train_uu = []; 
 
-        test_u = zeros(20000, chunk_size + overlap_size); % this will be populated by the input data to the reservoir
-
-        test_u(:,1:locality) = test_uu(1:end, rear_overlap);
-
-        test_u(:,locality+1:locality+chunk_size) = test_uu(1:end, chunk_begin:chunk_end);
-
-        test_u(:,locality+chunk_size+1:2*locality+chunk_size) = test_uu(1:end,forward_overlap);
-
-        test_u = sigma*test_u;
-        % fprintf('start res train predict');
+        % test_uu = tf.test_input_sequence;
+        % % clear tf;
+        % tf = [];
+        % 
+        % test_u = zeros(20000, chunk_size + overlap_size); % this will be populated by the input data to the reservoir
+        % 
+        % test_u(:,1:locality) = test_uu(1:end, rear_overlap);
+        % 
+        % test_u(:,locality+1:locality+chunk_size) = test_uu(1:end, chunk_begin:chunk_end);
+        % 
+        % test_u(:,locality+chunk_size+1:2*locality+chunk_size) = test_uu(1:end,forward_overlap);
+        % 
+        % test_u = sigma*test_u;
+        % test_uu = [];
+        fprintf('start train reservoir\n');
         [x, w_out, A, w_in, RMSE] = train_reservoir(resparams, u.', reservoir_id, jobid, locality, chunk_size);
 
         % [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
@@ -247,7 +268,7 @@ clear all;
         % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
         filename = [data_dir '/', data_kind, '/', data_kind '_reservoir' num2str(reservoir_id), 'train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
         % save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true');
-        save(filename, 'A', 'w_in', 'w_out', 'reservoir_id', 'resparams', 'RMSE', 'locality', 'chunk_size');
+        save(filename, 'A', 'x', 'w_in', 'w_out', 'reservoir_id', 'resparams', 'RMSE', 'locality', 'chunk_size');
         display(filename);
         
         % dt = 1/4;

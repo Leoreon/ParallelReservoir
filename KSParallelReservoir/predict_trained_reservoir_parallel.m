@@ -7,7 +7,9 @@
 
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
  data_dir = './';
- request_pool_size = 8;
+ % request_pool_size = 1;
+ % request_pool_size = 8;
+ request_pool_size = 16;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
  %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -28,8 +30,14 @@
  
  % rho_list = 0.8;
  % locality_list = 8;
-
- rho_list = 1.1;
+ 
+ % rho_list = 1.2:0.05:1.6;
+ % rho_list = 0.05:0.05:0.15;
+ % rho_list = 0.4:0.2:1.6;
+ % rho_list = 0.2:0.1:0.3;
+ % rho_list = 1.1;
+ rho_list = 1.4;
+ % locality_list = 0;
  locality_list = 8;
  
  % rho_list = 0.2:1:1.7;
@@ -76,12 +84,22 @@
         data_kind = 'CGL';
         switch data_kind
             case 'CGL'
-                L = 8; N = 32; 
-                % train_steps = 80000;
-                train_steps = 700000;
+                % L = 44;
+                L = 36;
+                % L = 22;
+                % L = 8;
+                % N = 32;
+                % N = 32*2; 
+                N = 128;
+                c1 = -2; c2 = 2;
+                train_steps = 80000;
+                % train_steps = 100000;
+                % train_steps = 200000;
+                % train_steps = 300000;
+                % train_steps = 700000;
                 test_steps = 20000;
                 % m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
-                tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+                tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
             case 'KS'
                 L = 22; N = 64; 
                 train_steps = 80000;
@@ -142,7 +160,10 @@
         
         % approx_reservoir_size = 5000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         approx_reservoir_size = 7000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 9000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 8000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 10000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 15000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
 
         avg_degree = 3; %average connection degree
 
@@ -161,7 +182,7 @@
         % resparams.train_length = 39000;  %number of time steps used for training
         
         % sync_length = 32; % use a short time series to synchronize to the data at the prediction_marker
-        sync_length = 100; % use a short time series to synchronize to the data at the prediction_marker
+        sync_length = 1000; % use a short time series to synchronize to the data at the prediction_marker
         
         % resparams.predict_length = 2999;  %number of steps to be predicted
         resparams.predict_length = test_steps-sync_length-1;  %number of steps to be predicted
@@ -223,11 +244,11 @@
     Win = gather(w_in);
     Wout = gather(w_out);
 
-    L = L{1}; N = N{1}; train_steps = train_steps{1}; test_steps = test_steps{1};
+    L = L{1}; N = N{1}; c1 = c1{1}; c2 = c2{1}; train_steps = train_steps{1}; test_steps = test_steps{1};
     switch data_kind
         case 'CGL'
             % data_file = load([data_dir 'CGL_L18_N_32_dps80000.mat']); % CGL
-            test_file = load([data_dir 'CGL_L' num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
+            test_file = load([data_dir 'CGL_L' num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
         case 'KS'
             % data_file = load([data_dir 'train_input_sequence.mat']); % KS
             test_file = load([data_dir 'test_input_sequence.mat']); % KS

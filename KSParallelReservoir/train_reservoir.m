@@ -10,10 +10,11 @@ for i=1:num_inputs
     ip = (-1 + 2*rand(q,1));
     win((i-1)*q+1:i*q,i) = ip;
 end
+win = sparse(win);
 
 states = reservoir_layer(A, win, data, resparams);
 
-states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
+% states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
 
 wout = fit(resparams, states, data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
 
