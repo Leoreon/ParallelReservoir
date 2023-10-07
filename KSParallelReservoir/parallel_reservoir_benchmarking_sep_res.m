@@ -8,8 +8,8 @@ clear all;
  data_dir = './';
  % request_pool_size = 1;
  % request_pool_size = 2;
- % request_pool_size = 8;
- request_pool_size = 16;
+ request_pool_size = 8;
+ % request_pool_size = 16;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
  %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -34,10 +34,12 @@ clear all;
  % locality_list = 8;
 
  % rho_list = 1.1;
- rho_list = 1.6;
- % locality_list = 8;
- locality_list = 16;
- 
+ rho_list = 1.2;
+ % rho_list = 1.2:0.2:1.6;
+ locality_list = 8;
+ % locality_list = 16;
+ % train_steps_list = 100000:20000:140000;
+ train_steps_list = 12e4;
  % rho_list = 0.2:0.05:1.8;
  % rho_list = 0.1:0.2:1.7;
  % locality_list = 3:4:8;
@@ -46,6 +48,7 @@ clear all;
  for index_iter = 1:1
  for rho = rho_list
  for locality_ = locality_list
+ for train_steps = train_steps_list
     tic;
     partial_pred_marker_array = full_pred_marker_array((index_iter-1)*indices_per_job + 1:index_iter*indices_per_job);
 
@@ -84,15 +87,15 @@ clear all;
         switch data_kind
             case 'CGL'
                 % L = 44; 
-                L = 36;
+                % L = 36;
                 % L = 30;
-                % L = 22;
+                L = 22;
                 % L = 8; 
-                % N = 32;
+                N = 32;
                 % N = 32 * 2;
-                N = 128;
+                % N = 128;
                 c1 = -2; c2 = 2;
-                train_steps = 80000;
+                % train_steps = 80000;
                 % train_steps = 100000;
                 % train_steps = 200000;
                 % train_steps = 300000;
@@ -177,7 +180,7 @@ clear all;
         % resparams.train_length = 39000;  %number of time steps used for training
         
         % resparams.predict_length = 2999;  %number of steps to be predicted
-        resparams.predict_length = test_steps;  %number of steps to be predicted
+        resparams.predict_length = test_steps-sync_length-1;  %number of steps to be predicted
 
         % sync_length = 32; % use a short time series to synchronize to the data at the prediction_marker
         sync_length = 1000; % use a short time series to synchronize to the data at the prediction_marker
@@ -289,6 +292,7 @@ clear all;
         sprintf('progress: %d/%d', progress, total));
         toc;
     end
+ end
  end
  end
  end

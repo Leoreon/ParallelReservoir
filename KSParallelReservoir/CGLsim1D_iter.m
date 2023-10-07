@@ -76,8 +76,9 @@ type = 'train';
 % dps  = 60000;  %50 200     % Number of stored times
 % dps  = 40000;  %50 200     % Number of stored times
 % dps  = 30000;  %50 200     % Number of stored times
-dps  = 20001;  %50 200     % Number of stored times
+% dps  = 20001;  %50 200     % Number of stored times
 % dps  = 20000;  %50 200     % Number of stored times
+dps  = 11000;  %50 200     % Number of stored times
 % dps  = 10000;  %50 200     % Number of stored times
 % dps  = 2000;  %50 200     % Number of stored times
 % dps  = 1000;  %50 200     % Number of stored times
@@ -96,6 +97,11 @@ X    = (L/N)*(-N/2:N/2-1)';
 nplt = floor(nmax/dps);
 
 % lyapunov_sum = 0;
+n_iter = 7;
+% n_iter = 8;
+Adata = zeros(N, n_iter*dps);
+A_hatdata = zeros(N, n_iter*dps);
+for kkk = 1:n_iter
 
 % Define initial conditions
 if co == 0 
@@ -125,11 +131,11 @@ end
 % Set wavenumbers and data arrays
 k = [0:N/2-1 0 -N/2+1:-1]'*(2*pi/L);
 k2 = k.*k; k2(N/2+1) = ((N/2)*(2*pi/L))^2;
-Adata     = zeros(N,dps+1);
-A_hatdata = zeros(N,dps+1);
+% Adata     = zeros(N,dps+1);
+% A_hatdata = zeros(N,dps+1);
 A_hat          = fft(A);
-Adata(:,1)     = A;
-A_hatdata(:,1) = A_hat;
+Adata(:,(kkk-1)*dps+1)     = A;
+A_hatdata(:,(kkk-1)*dps+1) = A_hat;
 
 % Compute exponentials and nonlinear factors for ETD2 method
 cA 	    	= 1-k2*(1+i*a);
@@ -168,9 +174,9 @@ for n = 1:nmax
         % lyapunov_sum = lyapunov_sum + ln;
 
 		A = ifft(A_hat);
-		Adata(:,dataindex)     = A;
-		A_hatdata(:,dataindex) = A_hat; 
-		Tdata(dataindex)       = T;
+		Adata(:,(kkk-1)*dps+dataindex)     = A;
+		A_hatdata(:,(kkk-1)*dps+dataindex) = A_hat; 
+		Tdata((kkk-1)*dps+dataindex)       = T;
 		dataindex              = dataindex + 1;
     end
 
@@ -185,12 +191,14 @@ for n = 1:nmax
     % end
 	
 	% Commenting on time elapsed
-	if mod(n,floor(nmax/10)) == 0
-		outp = strcat('  n= ', num2str(n), ' completed'); disp(outp);
-	end
+	% if mod(n,floor(nmax/10)) == 0
+	% 	outp = strcat('  n= ', num2str(n), ' completed'); disp(outp);
+	% end
 end
 % lyapunov = lyapunov_sum / n * (sample_dT/dT);
 % display(lyapunov);
+outp = strcat('  kkk= ', num2str(kkk), ' completed'); disp(outp);
+end
 
 % Plot evolution
 figure('position', [200 200 300 350])
@@ -223,12 +231,12 @@ data_dir = '';
 %% save for parallel
 switch type
     case 'train' % train data
-        n_steps = dps;
+        n_steps = n_iter*dps;
         % data_kind = 'NLCGL';
         data_kind = 'CGL';
         % L = 8; N = 32; dps = n_steps;
         n_data = 2 * N;
-        filename = [data_dir 'CGL' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
+        filename = [data_dir 'CGL_iter' num2str(n_iter) '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(dps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
         Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
         % Adata = Adata.';
         train_input_sequence = zeros(n_steps, n_data);
