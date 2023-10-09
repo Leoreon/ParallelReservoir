@@ -35,13 +35,13 @@
  % rho_list = 0.05:0.05:0.15;
  % rho_list = 0.4:0.2:1.6;
  % rho_list = 0.2:0.1:0.3;
- % rho_list = 1.1;
- rho_list = [1.2];
+ rho_list = 0.6;
+ % rho_list = [1.2];
  % locality_list = 0;
  locality_list = 8;
  % locality_list = 16;
  % train_steps_list = 8e4:2e4:14e4;
- train_steps_list = 12e4;
+ train_steps_list = 8e4;
  % rho_list = 0.2:1:1.7;
  % locality_list = 3:4:8;
  h = waitbar(0,'Please wait...');
@@ -83,8 +83,8 @@
         
         jobid = 1;
         
-        % data_kind = 'KS';
-        data_kind = 'CGL';
+        data_kind = 'KS';
+        % data_kind = 'CGL';
         switch data_kind
             case 'CGL'
                 % L = 44;
@@ -106,12 +106,14 @@
                 % m = matfile([data_dir 'CGL_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
                 tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
             case 'KS'
-                L = 22; N = 64; 
+                % L = 22; N = 64; 
+                L = 44; N = 128; 
                 train_steps = 80000;
                 % train_steps = 300000;
                 test_steps = 20000;
                 % m = matfile([data_dir 'train_input_sequence.mat']); % KS
-                tf = matfile([data_dir 'test_input_sequence.mat']); % KS
+                tf = matfile([data_dir 'test_input_sequence_L44.mat']); % KS
+                % tf = matfile([data_dir 'test_input_sequence.mat']); % KS
         end
         % fprintf(['use ', data_kind, '\n']);
         % m = matfile('/lustre/jpathak/KS100/train_input_sequence.mat'); 
@@ -258,7 +260,8 @@
         case 'KS'
             dt = 1/4;
             % data_file = load([data_dir 'train_input_sequence.mat']); % KS
-            test_file = load([data_dir 'test_input_sequence.mat']); % KS
+            test_file = load([data_dir 'test_input_sequence_L44.mat']); % KS
+            % test_file = load([data_dir 'test_input_sequence.mat']); % KS
     end
     resparams = resparams{1};
     sync_length = sync_length{1};

@@ -7,9 +7,11 @@ clear;
 
 
 % N = 256;
-N = 64;
+N = 128;
+% N = 64;
 % d = 100;
-d = 22;
+d = 44;
+% d = 22;
 x = d*(-N/2+1:N/2)'/N;
 u = 0.6*(-1+2*rand(size(x)));
 v = fft(u);
@@ -75,6 +77,10 @@ train_input_sequence = uu(1:80000,:);
 
 test_input_sequence = uu(80001:end,:);
 
-save('test_input_sequence2.mat', 'test_input_sequence', '-v7.3');
+save('test_input_sequence_L44.mat', 'test_input_sequence', '-v7.3');
 
-save('train_input_sequence2.mat', 'train_input_sequence', '-v7.3');
+save('train_input_sequence_L44.mat', 'train_input_sequence', '-v7.3');
+
+% save('test_input_sequence2.mat', 'test_input_sequence', '-v7.3');
+% 
+% save('train_input_sequence2.mat', 'train_input_sequence', '-v7.3');

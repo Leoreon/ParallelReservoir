@@ -33,13 +33,14 @@ clear all;
  % rho_list = 0.8;
  % locality_list = 8;
 
+ rho_list = 0.6;
  % rho_list = 1.1;
- rho_list = 1.2;
+ % rho_list = 1.2;
  % rho_list = 1.2:0.2:1.6;
  locality_list = 8;
  % locality_list = 16;
  % train_steps_list = 100000:20000:140000;
- train_steps_list = 12e4;
+ train_steps_list = 8e4;
  % rho_list = 0.2:0.05:1.8;
  % rho_list = 0.1:0.2:1.7;
  % locality_list = 3:4:8;
@@ -82,8 +83,8 @@ clear all;
         
         jobid = 1;
         
-        % data_kind = 'KS';
-        data_kind = 'CGL';
+        data_kind = 'KS';
+        % data_kind = 'CGL';
         switch data_kind
             case 'CGL'
                 % L = 44; 
@@ -105,11 +106,14 @@ clear all;
                 % m = matfile([data_dir 'CGL2_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % CGL
                 % tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) '.mat']); % CGL
             case 'KS'
-                L = 22; N = 64;
+                % L = 22;N = 64;
+                L = 44;N = 128;
                 train_steps = 80000;
                 test_steps = 20000;
-                m = matfile([data_dir 'train_input_sequence.mat']); % KS
-                tf = matfile([data_dir 'test_input_sequence.mat']); % KS
+                % m = matfile([data_dir 'train_input_sequence.mat']); % KS
+                % tf = matfile([data_dir 'test_input_sequence.mat']); % KS
+                m = matfile([data_dir 'train_input_sequence_L44.mat']); % KS
+                tf = matfile([data_dir 'test_input_sequence_L44.mat']); % KS
         end
         % fprintf(['use ', data_kind, '\n']);
         % m = matfile('/lustre/jpathak/KS100/train_input_sequence.mat'); 
@@ -179,12 +183,12 @@ clear all;
         % resparams.train_length = 79000;  %number of time steps used for training
         % resparams.train_length = 39000;  %number of time steps used for training
         
-        % resparams.predict_length = 2999;  %number of steps to be predicted
-        resparams.predict_length = test_steps-sync_length-1;  %number of steps to be predicted
-
         % sync_length = 32; % use a short time series to synchronize to the data at the prediction_marker
         sync_length = 1000; % use a short time series to synchronize to the data at the prediction_marker
         
+        % resparams.predict_length = 2999;  %number of steps to be predicted
+        resparams.predict_length = test_steps-sync_length-1;  %number of steps to be predicted
+
         % resparams.radius = 0.6; % spectral radius of the reservoir
         resparams.radius = rho; % spectral radius of the reservoir
         
