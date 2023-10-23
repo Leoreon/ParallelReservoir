@@ -8,6 +8,18 @@ win = zeros(resparams.N, num_inputs);
 for i=1:num_inputs
     rng(i)
     ip = (-1 + 2*rand(q,1));
+    if true % 'uniform'
+        % if i <= locality || i > num_inputs - locality
+        %     ip = ip / 4;
+        % end
+        ip = ip;
+    elseif true % linear
+        if i <= locality
+            ip = ip * i / locality;
+        elseif i > num_inputs - locality
+            ip = ip * (num_inputs-i+1) / locality;
+        end
+    end
     win((i-1)*q+1:i*q,i) = ip;
 end
 win = sparse(win);

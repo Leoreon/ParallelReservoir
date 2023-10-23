@@ -8,8 +8,8 @@ clear all;
  data_dir = './';
  % request_pool_size = 1;
  % request_pool_size = 2;
- request_pool_size = 8;
- % request_pool_size = 16;
+ % request_pool_size = 8;
+ request_pool_size = 16;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
  %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -33,9 +33,9 @@ clear all;
  % rho_list = 0.8;
  % locality_list = 8;
 
- rho_list = 0.6;
+ % rho_list = 0.6;
  % rho_list = 1.1;
- % rho_list = 1.2;
+ rho_list = 1.3;
  % rho_list = 1.2:0.2:1.6;
  locality_list = 8;
  % locality_list = 16;
@@ -83,17 +83,17 @@ clear all;
         
         jobid = 1;
         
-        data_kind = 'KS';
-        % data_kind = 'CGL';
+        % data_kind = 'KS';
+        data_kind = 'CGL';
         switch data_kind
             case 'CGL'
-                % L = 44; 
+                L = 44; 
                 % L = 36;
                 % L = 30;
-                L = 22;
+                % L = 22;
                 % L = 8; 
-                N = 32;
-                % N = 32 * 2;
+                % N = 32;
+                N = 64;
                 % N = 128;
                 c1 = -2; c2 = 2;
                 % train_steps = 80000;

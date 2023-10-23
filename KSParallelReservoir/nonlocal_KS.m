@@ -5,24 +5,16 @@ clear;
 % "Fourth-order time-stepping for stiff PDEs." 
 % SIAM Journal on Scientific Computing 26.4 (2005): 1214-1233.
 
-rng(3);
-% N = 2048;
-% N = 1024;
-% N = 512;
+
 % N = 256;
 N = 128;
 % N = 64;
-% d = 800;
-% d = 400;
-% d = 200;
 % d = 100;
+% d = 88;
+% d = 66;
 d = 50;
 % d = 44;
-% d = 25;
-% d = 25;
-
-c1 = 1.0; c2 = 1.0; c3 = 1.0;
-
+% d = 22;
 x = d*(-N/2+1:N/2)'/N;
 u = 0.6*(-1+2*rand(size(x)));
 v = fft(u);
@@ -36,7 +28,26 @@ r = exp(1i*pi*((1:M)-.5)/M); % roots of unity
 
 LR = h*L(:,ones(M,1)) + r(ones(N,1),:);
 
+%% parameters for Nonlocal term
+% KK = 0;
+KK=0.5;
+% KK = 1;
+XX    = (d/N)*(-N/2:N/2-1)'; 
+% [X,Y] = meshgrid(XX);
+X = XX;
+% rr=X.*X+Y.*Y;
+rr = X.*X;
+K = besselk(0,sqrt(rr)); %K = besselk(0,sqrt(rr));
+% K(N/2+1,N/2+1)=0;
+K(N/2+1) = 0;
+% sumK=sum(sum(K));
+sumK = sum(K);
+% K = circshift(K,[N/2 N/2]);
+K = circshift(K, N/2);
+K=K/sumK;
+K_hat=fft2(K);
 
+%%
 Q = h*real(mean( (exp(LR/2)-1)./LR ,2));
 f1 = h*real(mean( (-4-LR+exp(LR).*(4-3*LR+LR.^2))./LR.^3 ,2));
 f2 = h*real(mean( (2+LR+exp(LR).*(-2+LR))./LR.^3 ,2));
@@ -44,8 +55,7 @@ f3 = h*real(mean( (-4-3*LR-LR.^2+exp(LR).*(4-LR))./LR.^3 ,2));
 % Main time-stepping loop:
 tt = 0;
 tmax =25000; nmax = round(tmax/h); nplt = 1;%floor((tmax/10000)/h);
-g = -0.5i*k; % sample code (Pathak)
-% g = 0.5i*k; % science of synchronization (kuramoto)
+g = -0.5i*k;
 
 vv = zeros(N, nmax);
 
@@ -60,7 +70,11 @@ b = E2.*v + Q.*Na;
 Nb = g.*fft(real(ifft(b)).^2);
 c = E2.*a + Q.*(2*Nb-Nv);
 Nc = g.*fft(real(ifft(c)).^2);
-v = E.*v + Nv.*f1 + 2*(Na+Nb).*f2 + Nc.*f3; % E.*v : term of y*dy/dx
+% V_hat = fft2(v);
+KV_hat=K_hat.*v;
+% kv=ifft2(KV_hat);
+v = E.*v + Nv.*f1 + 2*(Na+Nb).*f2 + Nc.*f3 + KK*(KV_hat-v)*h;
+% v = E.*v + Nv.*f1 + 2*(Na+Nb).*f2 + Nc.*f3 + KK*(1+i*v)*(kv-v)*h;
 vv(:,n) = v;
 end
 
@@ -68,11 +82,11 @@ uu = transpose(real(ifft(vv)));
 
 %%
 
-fig2 = figure('pos',[5 270 600 200],'color','w');
-imagesc(transpose(uu))
-shading flat
-colormap(jet);
-colorbar;
+% fig2 = figure('pos',[5 270 600 200],'color','w');
+% imagesc(transpose(uu))
+% shading flat
+% colormap(jet);
+% colorbar;
 
 %%
 
@@ -89,24 +103,13 @@ train_input_sequence = uu(1:80000,:);
 
 test_input_sequence = uu(80001:end,:);
 
+figure(); surf(uu.'); view(0,90); shading interp; axis tight;
+
+save('test_input_sequence_nonlocal.mat', 'test_input_sequence', '-v7.3');
+save('train_input_sequence_nonlocal.mat', 'train_input_sequence', '-v7.3');
+
 % save('test_input_sequence_L44.mat', 'test_input_sequence', '-v7.3');
-% 
 % save('train_input_sequence_L44.mat', 'train_input_sequence', '-v7.3');
 
-%% save for parallel
-data_dir = '';
-% train data
-% data_kind = 'KS_science';
-data_kind = 'KS';
-dps = size(train_input_sequence, 1);
-filename = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-save(filename, 'train_input_sequence', '-v7.3');
-
-% test data
-dps = size(test_input_sequence, 1);
-filename = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-save(filename, 'test_input_sequence', '-v7.3');
-
 % save('test_input_sequence2.mat', 'test_input_sequence', '-v7.3');
-% 
 % save('train_input_sequence2.mat', 'train_input_sequence', '-v7.3');

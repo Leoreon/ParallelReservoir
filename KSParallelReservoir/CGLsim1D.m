@@ -65,6 +65,7 @@ sample_dT = 0.07;
 
 type = 'train';
 % type = 'test';
+% type = 'train&test';
 % dps  = 1000000;  %50 200     % Number of stored times
 % dps  = 700000;  %50 200     % Number of stored times
 % dps  = 300000;  %50 200     % Number of stored times
@@ -76,7 +77,7 @@ type = 'train';
 % dps  = 60000;  %50 200     % Number of stored times
 % dps  = 40000;  %50 200     % Number of stored times
 % dps  = 30000;  %50 200     % Number of stored times
-dps  = 20001;  %50 200     % Number of stored times
+% dps  = 20001;  %50 200     % Number of stored times
 % dps  = 20000;  %50 200     % Number of stored times
 % dps  = 10000;  %50 200     % Number of stored times
 % dps  = 2000;  %50 200     % Number of stored times
@@ -247,6 +248,32 @@ switch type
         test_input_sequence = zeros(n_steps, n_data);
         test_input_sequence(:, 1:2:end) = Adata(:, 1:n_data/2);
         test_input_sequence(:, 2:2:end) = Adata(:, n_data/2+1:end);
+        save(filename, 'test_input_sequence', '-v7.3');
+    case 'train&test'
+        train_steps = 0.8 * dps;
+        % data_kind = 'NLCGL';
+        data_kind = 'CGL';
+        % L = 8; N = 32; dps = n_steps;
+        n_data = 2 * N;
+        filename = [data_dir 'CGL' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(train_steps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
+        Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
+        % Adata = Adata.';
+        train_input_sequence = zeros(train_steps, n_data);
+        train_input_sequence(:, 1:2:end) = Adata(1:train_steps, 1:n_data/2);
+        train_input_sequence(:, 2:2:end) = Adata(1:train_steps, n_data/2+1:end);
+        save(filename, 'train_input_sequence', '-v7.3');
+
+        test_steps = 0.2 * dps;
+        % data_kind = 'NLCGL';
+        data_kind = 'CGL';
+        % L = 8; N = 32; dps = n_steps;
+        n_data = 2 * N;
+        filename = [data_dir 'CGL_test' '_L' num2str(L), '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(a) 'c2_' num2str(b) '.mat'];
+        % Adata = [real(Adata(:,1:end-1)); imag(Adata(:,1:end-1))].';
+        % Adata = Adata.';
+        test_input_sequence = zeros(test_steps, n_data);
+        test_input_sequence(:, 1:2:end) = Adata(train_steps+1:train_steps+test_steps, 1:n_data/2);
+        test_input_sequence(:, 2:2:end) = Adata(train_steps+1:train_steps+test_steps, n_data/2+1:end);
         save(filename, 'test_input_sequence', '-v7.3');
 end
 
