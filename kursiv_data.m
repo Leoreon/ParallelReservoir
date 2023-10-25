@@ -5,21 +5,25 @@ clear;
 % "Fourth-order time-stepping for stiff PDEs." 
 % SIAM Journal on Scientific Computing 26.4 (2005): 1214-1233.
 
-rng(3);
+% rng(3);
+rng(1);
 % N = 2048;
 % N = 1024;
+N = 840;
 % N = 512;
 % N = 256;
-N = 128;
+% N = 128;
 % N = 64;
 % d = 800;
 % d = 400;
 % d = 200;
 % d = 100;
-d = 50;
+% d = 50;
 % d = 44;
 % d = 25;
-% d = 25;
+d = 22;
+% d = 20;
+% d = 12;
 
 c1 = 1.0; c2 = 1.0; c3 = 1.0;
 

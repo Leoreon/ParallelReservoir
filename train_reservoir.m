@@ -8,7 +8,7 @@ win = zeros(resparams.N, num_inputs);
 for i=1:num_inputs
     rng(i)
     ip = (-1 + 2*rand(q,1));
-    if true % 'uniform'
+    if false % 'uniform'
         % if i <= locality || i > num_inputs - locality
         %     ip = ip / 4;
         % end

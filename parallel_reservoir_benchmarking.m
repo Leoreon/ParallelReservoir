@@ -10,9 +10,9 @@ clear
  % request_pool_size_list = 1;
  % request_pool_size_list = 2;
  % request_pool_size_list = 4;
- request_pool_size_list = 8;
+ % request_pool_size_list = 8;
  % request_pool_size_list = 16;
- % request_pool_size = 4;
+ request_pool_size_list = 1:8;
  % request_pool_size = 8;
  % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
  index_file = matfile([data_dir 'testing_ic_indexes.mat']);
@@ -32,12 +32,16 @@ clear
  % locality_list = 6:2:8;
  % locality_list = 7:8;
  % locality_list = 0;
- % locality_list = 8;
+ locality_list = 18;
  % locality_list = 12;
  % locality_list = 16;
  % locality_list = [1 2 3 4 5 6 7 8 12];
  % locality_list = [3 4 5 6 7 8];
- locality_list = [16 15 14 13 12];
+ % locality_list = [16 15 14 13 12];
+ % locality_list = [26 25 24];
+ % locality_list = [28 27];
+ % locality_list = [30 31 32];
+ % locality_list = [33 34 35];
  % locality_list = 2;
  % locality_list = 8;
  % locality_list = 0;
@@ -137,9 +141,12 @@ clear
                 tf = matfile([data_dir 'CGL_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
             case 'KS'
                 % L = 22; N = 64; 
+                L = 22; N = 840;
                 % L = 25; N = 64;
                 % L = 50; N = 128; 
-                L = 50; N = 512; 
+                % L = 50; N = 512; 
+                % L = 50; N = 1024; 
+                % L = 50; N = 2048; 
                 % L = 100; N = 256; 
                 train_steps = 80000; test_steps = 20000; 
                 iter = false;
@@ -245,7 +252,8 @@ clear
         
         overlap_size = length(rear_overlap) + length(forward_overlap); 
 
-        approx_reservoir_size = 5000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 20160 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 5000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 7000 * 8 / request_pool_size;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 7000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 9000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
@@ -411,7 +419,8 @@ clear
 %    filename = ['KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = ['/lustre/jpathak/KS100/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
-    filename = [data_dir '/', data_kind, '/', data_kind, 'result_decay_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+    % filename = [data_dir '/', data_kind, '/', data_kind, 'result_uniform_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+    filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size');
     display(filename);
@@ -434,7 +443,7 @@ clear
     total = size(rho_list, 2) * size(locality_list, 2);
     h = waitbar(progress/total,h,... 
     sprintf('progress: %d/%d', progress, total));
-    % close all;
+    close all;
  end
  end
  end

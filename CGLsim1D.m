@@ -13,7 +13,8 @@ disp('*** 1D CGL SIMULATION ***');
 % Set equation coefficients
 % a = -2;
 % b = 0.7;
-a = -2; b = 2;
+a = -1; b = 2;
+% a = -2; b = 2;
 % a = 2;% b = -2;
 
 % a = -1.05; b = 1.05;
@@ -39,6 +40,7 @@ L    = 22;       % Domain size
 % N    = 512;       % Number of grid points
 % dT   = 0.05;      % Timestep (choose between 0.01 and 0.05)
 % dps  = 1000;      % Number of stored times
+% ic   = 'uniform';   % Initial condition: choose 'zero', 'tw', 'uniform' or 'pulse'
 ic   = 'pulse';   % Initial condition: choose 'zero', 'tw', 'uniform' or 'pulse'
 n    = 0;         % Winding number for 'tw' initial condition
 % N    = 2048;       % Number of grid points, default
@@ -81,7 +83,7 @@ type = 'train';
 % dps  = 20000;  %50 200     % Number of stored times
 % dps  = 10000;  %50 200     % Number of stored times
 % dps  = 2000;  %50 200     % Number of stored times
-% dps  = 1000;  %50 200     % Number of stored times
+dps  = 1000;  %50 200     % Number of stored times
 % dps  = 800;  %50 200     % Number of stored times
 % dps  = 400;  %50 200     % Number of stored times
 % dps  = 200;  %50 100     % Number of stored times, default
@@ -105,12 +107,13 @@ if co == 0
 		A = zeros(size(X)) + 10^(-2)*randn(size(X));
 	elseif strcmp(ic, 'tw')
 		A 	= sqrt(1-q^2)*exp(i*q*X) + 10^(-2)*randn(size(X));
-	elseif strcmp(ic, 'uniform')
-		A 	= ones(size(X)) + 0.01*randn(size(X));
+    elseif strcmp(ic, 'uniform')
+		% A = 2 * ones(size(X)) + 0.01*randn(size(X));
+		A = ones(size(X)) + 0.01*randn(size(X));
     elseif strcmp(ic, 'pulse')
 		A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
 		% A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
-	    % A = 100 * A;
+	    A = 10 * A;
     else
 		error('invalid initial condition selected')
 	end
