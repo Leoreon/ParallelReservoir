@@ -9,23 +9,50 @@ clear;
 rng(1);
 % N = 2048;
 % N = 1024;
-N = 840;
+% N = 836;
+% N = 924;
 % N = 512;
 % N = 256;
+% N = 192;
 % N = 128;
-% N = 64;
-% d = 800;
-% d = 400;
-% d = 200;
-% d = 100;
-% d = 50;
-% d = 44;
-% d = 25;
-d = 22;
-% d = 20;
-% d = 12;
+% N = 120;
+N = 64;
+% d = 800; % chaos
+% d = 400; % chaos
+% d = 200; % chaos
+% d = 100; % chaos
+% d = 90; % chaos
+% d = 88; % chaos
+% d = 80; % chaos
+% d = 70; % chaos
+% d = 66; % chaos
+% d = 60; % chaos
+% d = 55;
+% d = 50; % chaos (choi ayashii)
+% d = 52;
+% d = 44; % chaos
+% d = 42; not?
+% d = 40; not
+% d = 38; % chaos
+% d = 36; % chaos!?
+% d = 34; % chaos
+% d = 33; not
+% d = 32; % not
+% d = 30; % chaos
+% d = 28; not
+% d = 26; % chaos
+% d = 25; not 
+% d = 24; not
+d = 22; % chaos
+% d = 20; not chaos?
+% d = 6 * pi; ?
+% d = 11; not
+% d = 4 * pi;
 
+% scale = 2.0;
+% c1 = 1.0; c2 = 1.0; c3 = 4.0;
 c1 = 1.0; c2 = 1.0; c3 = 1.0;
+% c1 = scale^2; c2 = scale^4; c3 = scale^2;
 
 x = d*(-N/2+1:N/2)'/N;
 u = 0.6*(-1+2*rand(size(x)));
@@ -33,7 +60,7 @@ v = fft(u);
 % Precompute various ETDRK4 scalar quantities:
 h = 1/4; % time step
 k = [0:N/2-1 0 -N/2+1:-1]'*(2*pi/d); % wave numbers
-L = k.^2 - k.^4; % Fourier multipliers
+L = c1*k.^2 - c2*k.^4; % Fourier multipliers
 E = exp(h*L); E2 = exp(h*L/2);
 M = 16; % no. of points for complex means
 r = exp(1i*pi*((1:M)-.5)/M); % roots of unity
@@ -48,7 +75,8 @@ f3 = h*real(mean( (-4-3*LR-LR.^2+exp(LR).*(4-LR))./LR.^3 ,2));
 % Main time-stepping loop:
 tt = 0;
 tmax =25000; nmax = round(tmax/h); nplt = 1;%floor((tmax/10000)/h);
-g = -0.5i*k; % sample code (Pathak)
+% g = -0.5i*k; % sample code (Pathak)
+g = -c3*0.5i*k; % sample code (Pathak)
 % g = 0.5i*k; % science of synchronization (kuramoto)
 
 vv = zeros(N, nmax);
@@ -74,7 +102,8 @@ uu = transpose(real(ifft(vv)));
 
 fig2 = figure('pos',[5 270 600 200],'color','w');
 imagesc(transpose(uu))
-shading flat
+shading flat;
+title(['KS' ' L=' num2str(d)]);
 colormap(jet);
 colorbar;
 
@@ -103,13 +132,13 @@ data_dir = '';
 % data_kind = 'KS_science';
 data_kind = 'KS';
 dps = size(train_input_sequence, 1);
-filename = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-save(filename, 'train_input_sequence', '-v7.3');
+filename_train = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
+save(filename_train, 'train_input_sequence', '-v7.3');
 
 % test data
 dps = size(test_input_sequence, 1);
-filename = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
-save(filename, 'test_input_sequence', '-v7.3');
+filename_test = [data_dir data_kind '_L' num2str(d), '_N_' num2str(N) '_dps' num2str(dps) '.mat'];
+save(filename_test, 'test_input_sequence', '-v7.3');
 
 % save('test_input_sequence2.mat', 'test_input_sequence', '-v7.3');
 % 
