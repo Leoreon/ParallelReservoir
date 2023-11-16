@@ -9,7 +9,6 @@ for i = 1:resparams.discard_length
 end
 
 states(:,1) = x;
-
 for i = 1:resparams.train_length-1
     states(:,i+1) = tanh(A*states(:,i) + win*input(:,resparams.discard_length + i));
     states(2:2:resparams.N,i) = states(2:2:resparams.N,i).^2;

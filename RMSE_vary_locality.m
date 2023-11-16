@@ -15,9 +15,11 @@ L = 44; Ntotal = 5040; locality_list = [60 55 50 45 40 35 30]; num_workers_list 
 % L = 52; Ntotal = 80016; locality = 9; num_workers_list = [12];
 % L = 52; Ntotal = 80016; locality = 6; num_workers_list = [16];
 % L = 66; Ntotal = 15120; locality = 50; num_workers_list = [3 6 12];
+L = 88; Ntotal = 5040; locality_list = [15 50 70]; num_workers_list = 15;
+jobid_list = 1;
 % jobid_list = [2 3 4 6];
 % jobid_list = 2:5;
-jobid_list = 1:5;
+% jobid_list = 1:5;
 % jobid_list = 1:10;
 % num_workers_list = [2 3 4 8];
 % num_workers_list = [1 2 4 6];

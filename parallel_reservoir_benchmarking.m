@@ -17,9 +17,9 @@ data_dir = './';
 % request_pool_size_list = 8;
 % request_pool_size_list = 10;
 % request_pool_size_list = 11;
-request_pool_size_list = 12;
+% request_pool_size_list = 12;
 % request_pool_size_list = 14;
-% request_pool_size_list = 15;
+request_pool_size_list = 15;
 % request_pool_size_list = 16;
 % request_pool_size_list = 1:8;
 % request_pool_size_list = 2:6;
@@ -55,9 +55,10 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = 55;
 % locality_list = 100;
 % locality_list = [100 150 200];
-% locality_list = 100;
-% locality_list = [25];
-locality_list = [10 15 20 25 30 35 40 45];
+% locality_list = 15;
+locality_list = [70];
+% locality_list = [100];
+% locality_list = [10 15 20 25 30 35 40 45];
 % locality_list = [25 30 35 40 45];
 % locality_list = [50 55];
 % locality_list = 20:5:60;
@@ -96,7 +97,8 @@ train_steps_list = 8e4;
 % train_steps_list = [2e4+1 4e4 6e4];
 % rho_list = 0.2:1:1.7;
 % locality_list = 3:4:8;
-jobid_list = 1:5;
+jobid_list = 1;
+% jobid_list = 1:5;
 % jobid_list = 6:10;
 % jobid_list = 5;
 % jobid_list = [1 2 5];
@@ -181,11 +183,11 @@ for jobid = jobid_list
                 % L = 22; N = 64; 
                 % L = 22; N = 840;
                 % L = 26; N = 840;
-                L = 44; N = 840;
+                % L = 44; N = 840;
                 % L = 50; N = 840;
                 % L = 66; N = 840;
                 % L = 88; N = 924;
-                % L = 88; N = 840;
+                L = 88; N = 840;
                 % L = 100; N = 840;
                 % L = 25; N = 64;
                 % L = 50; N = 120;
@@ -306,12 +308,32 @@ for jobid = jobid_list
 
         chunk_end = chunk_size*l;
         
-        % locality = 6; % there are restrictions on the allowed range of this parameter. check documentation
-        locality = locality_array; % there are restrictions on the allowed range of this parameter. check documentation
         
-        resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
+        % learn = 'RLS';
+        % learn = 'LSM';
+        learn = 'LSM_common';
+        % learn = 'LSM_GD';
+        % Gradient Descentの時はlocalityを最大に、時間はworkerごとに変える
+        switch learn
+            case 'LSM_GD'
+                % dl = rem(l, 2);
+                locality = floor((num_inputs-chunk_size) / 2);
+                % resparams.train_length = floor(resparams.train_length / num_workers);
+                u_length = floor(train_steps * (num_workers-1) / num_workers);
+                train_start = floor((train_steps-u_length) / num_workers + 1);
+            otherwise
+                % locality = 6; % there are restrictions on the allowed range of this parameter. check documentation
+                locality = locality_array; % there are restrictions on the allowed range of this parameter. check documentation
+        
+                % dl = 0;
+                u_length = train_steps;
+                train_start = 1;
+        end
+        % locality = locality + dl;
 
-        resparams.train_length = train_steps-resparams.discard_length;  %number of time steps used for training
+        resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
+        
+        resparams.train_length = u_length-resparams.discard_length;  %number of time steps used for training
         % resparams.train_length = 99000;  %number of time steps used for training
         % resparams.train_length = 79000;  %number of time steps used for training
         % resparams.train_length = 39000;  %number of time steps used for training
@@ -325,6 +347,7 @@ for jobid = jobid_list
         % resparams.predict_length = test_steps-sync_length-pred_marker_array(end);  %number of steps to be predicted
         resparams.predict_length = 3000-sync_length-1;  %number of steps to be predicted
         
+
         rear_overlap = indexing_function_rear(chunk_begin, locality, num_inputs, chunk_size);  %spatial overlap on the one side
         
         forward_overlap = indexing_function_forward(chunk_end, locality, num_inputs, chunk_size);  %spatial overlap on the other side
@@ -369,15 +392,24 @@ for jobid = jobid_list
         
         resparams.beta = 0.0001; % ridge regression regularization parameter
         
-        u = zeros(len, chunk_size + overlap_size); % this will be populated by the input data to the reservoir
+        u = zeros(u_length, chunk_size + overlap_size); % this will be populated by the input data to the reservoir
         
-        u(:,1:locality) = train_uu(1:end, rear_overlap);
+        u(:,1:locality) = train_uu(train_start:train_start+u_length-1, rear_overlap);
         
-        u(:,locality+1:locality+chunk_size) = train_uu(1:end, chunk_begin:chunk_end);
+        u(:,locality+1:locality+chunk_size) = train_uu(train_start:train_start+u_length-1, chunk_begin:chunk_end);
         
-        u(:,locality+chunk_size+1:2*locality+chunk_size) = train_uu(1:end,forward_overlap);
+        u(:,locality+chunk_size+1:2*locality+chunk_size) = train_uu(train_start:train_start+u_length-1, forward_overlap);
         
         u = sigma*u;
+        % u = zeros(len, chunk_size + overlap_size); % this will be populated by the input data to the reservoir
+        % 
+        % u(:,1:locality) = train_uu(1:end, rear_overlap);
+        % 
+        % u(:,locality+1:locality+chunk_size) = train_uu(1:end, chunk_begin:chunk_end);
+        % 
+        % u(:,locality+chunk_size+1:2*locality+chunk_size) = train_uu(1:end,forward_overlap);
+        % 
+        % u = sigma*u;
         % [x, w_out, w, w_in, RMSE] = train_reservoir(resparams, in, labindex, jobid, locality, chunk_size);
         
         train_uu = [];
@@ -400,56 +432,110 @@ for jobid = jobid_list
         % fprintf('start res train predict');
         % [pred_collect, RMSE] = res_predict(x, w_out, w, w_in, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
         
-        % learn = 'RLS';
-        % learn = 'LSM';
-        learn = 'LSM_common';
-        % learn = 'LSM_GD';
-        fprintf('start learning %s\n', learn);
+        % fprintf('start learning %s\n', learn);
         switch learn
             case 'LSM_GD'
-                batch_size = 100;
-                max_iter = 1;
+                max_iter = 20;
+                % max_iter = 5;
+                iter = 1;
+                locality = locality_array;
+                E_list = zeros(1, max_iter);
+                l_list = zeros(1, max_iter);
+                while iter <= max_iter
+                    % reservoir
+                    locality = locality + 1 * rem(l, 2); % 奇数のワーカーはlocalityが一つ大きなリザバーで学習
+                    
+                    l_list(iter) = locality;
+                    num_inputs2 = chunk_size + 2 * locality;
+                    A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid+iter+l);
+                    q = resparams.N/num_inputs2;
+                    win = zeros(resparams.N, num_inputs2);
+                    % display(size(win));
+                    n_additional = rem(resparams.N, num_inputs2);
+                    nodes_per_in = floor(double(resparams.N) / double(num_inputs2));
+                    % display('eee');
+                    add_id = randsample(num_inputs2, n_additional);
+                    % display('eeeq');
+                    nodes_list = double(nodes_per_in) * ones(1, num_inputs2);
+                    % display('fff');
+                    nodes_list(add_id) = nodes_list(add_id) + 1;
+                    beg = 1;
+                    for i=1:num_inputs2
+                        rng(i)
+                        % ip = (-1 + 2*rand(q,1));
+                        % win((i-1)*q+1:i*q,i) = ip;
+                        ip = (-1 + 2*rand(nodes_list(i), 1));
+                        fin = beg + nodes_list(i)-1;
+                        win(beg:fin,i) = ip;
+                        beg = fin + 1;
+                    end
+                    % display('finish defining reservoirs');
+                    % display(size(win));
+                    % display(size(A));
 
-                [num_inputs2,~] = size(u.');
-                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
-                q = resparams.N/num_inputs2;
-                win = zeros(resparams.N, num_inputs2);
-                for i=1:num_inputs2
-                    rng(i)
-                    ip = (-1 + 2*rand(q,1));
-                    win((i-1)*q+1:i*q,i) = ip;
-                end
-                data = transpose(u(1:batch_size, :));
-                
-                iter = 0;
-                while iter < max_iter
+                    data = transpose(u(:, 1:locality*2+chunk_size));
+                    % fprintf('size of data: %d, %d', size(data));
+                    
                     states = reservoir_layer(A, win, data, resparams);
                     % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
                     
                     wout = fit(resparams, states, data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
                     x = states(:,end);
                     
+                    % test_data = transpose(test_u(:, 1:locality*2+chunk_size));
+                    % pred_collect = res_predict(x, wout, A, win, test_data, resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
+                    
+                    % prediction error
+                    % error = pred_collect - test_data(locality+1:locality+chunk_size, sync_length+1:sync_length+resparams.predict_length);
+                    % train error
                     error = wout*states - data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
-                    error = error .^ 2;
-                    RMSE = sqrt(mean(mean(error)));
-                    RMSEs = zeros(1, num_workers);
+                    RMSE = sqrt(mean(mean(error.^2)));
+                    RMSEs = zeros(num_workers, 1);
                     switch l
                         case 1
+                            fprintf('\n------------------------------\n');
+                            fprintf('iter%d->\n', iter);
                             RMSEs(1) = RMSE;
+                            labBarrier;
                             for lab = 2:num_workers
-                                labBarrier;
                                 RMSEs(lab) = labReceive(lab);
                             end
+                            % display(RMSEs);
+                            E_locality_delta = mean(RMSEs(1:2:end));
+                            E_locality = mean(RMSEs(2:2:end));
+                            delta_E =  E_locality_delta - E_locality;
+                            gradE = delta_E / 1;
+                            
+                            fprintf('  locality:%d\n', locality-1);
+                            fprintf('  E(%d)=%f\n  E(%d)=%f\n', locality, E_locality_delta, locality-1, E_locality);
+                            fprintf('  gradE: %f\n', gradE);
+
+                            delta_locality = int32(150/(5+5*iter));
+                            % display(delta_locality);
+                            % display(10/iter);
+                            if gradE > 0
+                                locality = locality - min(locality-1, delta_locality);
+                                fprintf('decrease locality to %d\n', locality);
+                            else
+                                locality = locality + delta_locality;
+                                fprintf('increase locality to %d\n', locality);
+                            end
                             labBarrier;
-                            delta_E = sum(RMSEs(1:2:end)) - sum(RMSEs)
+                            labSend(locality, 2:num_workers);
                         otherwise
                             labBarrier;
                             labSend(RMSE, 1);
                             labBarrier;
+                            locality = labReceive(1);
                     end
-                    
-                            
+                    E_list(iter) = RMSE;
+                    iter = iter + 1;
                 end
+                % exit;
+                % pred_collect = 0;
+                collated_prediction = 0;
+                collated_l = gcat(l_list, 1, 1);
+                collated_E = gcat(E_list, 1, 1);
 
             case 'LSM_common'
                 switch l
@@ -501,12 +587,16 @@ for jobid = jobid_list
                         % fprintf('finished receiving weights\n');
                 end
                 pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
+                % fprintf('calculated pred_collect of %d\n', l);
+                collated_prediction = gcat(pred_collect,1,1);
             case 'LSM'
                 if iter
                     [pred_collect, RMSE] = res_train_predict_iter(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
                 else
                     [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length, nodes_per_input);
                 end
+                % fprintf('calculated pred_collect of %d\n', l);
+                collated_prediction = gcat(pred_collect,1,1);
             case 'RLS'
                 [num_inputs2,~] = size(u.');
                 A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
@@ -521,13 +611,13 @@ for jobid = jobid_list
                 wout = zeros(chunk_size, resparams.N);
                 [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
                 pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
+                % fprintf('calculated pred_collect of %d\n', l);
+                collated_prediction = gcat(pred_collect,1,1);
             otherwise 
                 fprintf('error! learning method is invalid!\n');
         end
-        fprintf('calculated pred_collect of %d\n', l);
-        collated_prediction = gcat(pred_collect,1,1);
     end
-    
+    fprintf('prediction complete\n');
     runtime = toc;
     % fprintf('finished prediction\n');
     approx_reservoir_size = approx_reservoir_size{1};
@@ -577,6 +667,12 @@ for jobid = jobid_list
     trajectories_true = zeros(num_inputs, num_preds*resparams.predict_length);
     
     switch learn
+        case 'LSM_GD'
+            y = collated_E{1};
+            figure(); errorbar(mean(y, 1), std(y, 1));
+            xlabel('iterations'); ylabel('RMSE'); grid on;
+            figure(); plot(collated_l{1}(1, :));
+            xlabel('iterations'); ylabel('locality'); grid on;
         case 'LSM'
             RMSE_mean = 0;
             for i = 1:num_workers
@@ -713,7 +809,7 @@ for jobid = jobid_list
     % end
     % clear pred_marker_array which_index_iter rho_array locality_array;
     toc
-    close all;
+    % close all;
 end
 end
 end
