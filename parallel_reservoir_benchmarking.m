@@ -12,14 +12,14 @@ data_dir = './';
 % request_pool_size_list = 3;
 % request_pool_size_list = 4;
 % request_pool_size_list = 5;
-% request_pool_size_list = 6;
+request_pool_size_list = 6;
 % request_pool_size_list = 7;
 % request_pool_size_list = 8;
 % request_pool_size_list = 10;
 % request_pool_size_list = 11;
 % request_pool_size_list = 12;
 % request_pool_size_list = 14;
-request_pool_size_list = 15;
+% request_pool_size_list = 15;
 % request_pool_size_list = 16;
 % request_pool_size_list = 1:8;
 % request_pool_size_list = 2:6;
@@ -311,10 +311,15 @@ for jobid = jobid_list
         
         % learn = 'RLS';
         % learn = 'LSM';
-        learn = 'LSM_common';
-        % learn = 'LSM_GD';
+        % learn = 'LSM_common';
+        % learn = 'LSM_GD_training_error';
+        learn = 'LSM_GD_short_prediction_time';
         % Gradient Descentの時はlocalityを最大に、時間はworkerごとに変える
         switch learn
+            case 'LSM_GD_short_prediction_time'
+                locality = floor((num_inputs-chunk_size) / 2);
+                u_length = train_steps;
+                train_start = 1;
             case 'LSM_GD'
                 % dl = rem(l, 2);
                 locality = floor((num_inputs-chunk_size) / 2);
@@ -383,7 +388,8 @@ for jobid = jobid_list
         
         resparams.degree = avg_degree;
         
-        nodes_per_input = round(approx_reservoir_size/(chunk_size+overlap_size));
+        % nodes_per_input = round(approx_reservoir_size/(chunk_size+overlap_size));
+        nodes_per_input = 1 + round(approx_reservoir_size/(chunk_size+overlap_size));
         
         resparams.N = nodes_per_input*(chunk_size+overlap_size); % exact number of nodes in the network
 
@@ -434,7 +440,166 @@ for jobid = jobid_list
         
         % fprintf('start learning %s\n', learn);
         switch learn
-            case 'LSM_GD'
+            case 'LSM_GD_short_prediction_time'
+                locality = locality_array;
+                max_iter = 20;
+                % max_iter = 5;
+                % E_list = zeros(1, max_iter);
+                T_list = zeros(1, max_iter);
+                l_list = zeros(1, max_iter);
+                iter = 1;
+
+                while iter <= max_iter
+                    currentAndNextT = zeros(2, 1);
+                    for dlocality = 1:2
+                        locality = locality + (dlocality-1);
+                        num_inputs2 = chunk_size + 2 * locality;
+                        switch l
+                            case 1
+                                % [num_inputs2,~] = size(u.');
+                                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                                q = resparams.N/num_inputs2;
+                                
+                                win = zeros(resparams.N, num_inputs2);
+                                % display(size(win));
+                                n_additional = rem(resparams.N, num_inputs2);
+                                nodes_per_in = floor(double(resparams.N) / double(num_inputs2));
+                                % display('eee');
+                                add_id = randsample(num_inputs2, n_additional);
+                                % display('eeeq');
+                                nodes_list = double(nodes_per_in) * ones(1, num_inputs2);
+                                % display('fff');
+                                nodes_list(add_id) = nodes_list(add_id) + 1;
+                                beg = 1;
+                                for i=1:num_inputs2
+                                    rng(i)
+                                    % ip = (-1 + 2*rand(q,1));
+                                    % win((i-1)*q+1:i*q,i) = ip;
+                                    ip = (-1 + 2*rand(nodes_list(i), 1));
+                                    fin = beg + nodes_list(i)-1;
+                                    win(beg:fin,i) = ip;
+                                    beg = fin + 1;
+                                end
+                                display('finish defining reservoirs');
+                                display(size(win));
+                                display(size(A));
+
+                                % data = transpose(u);
+                                data = transpose(u(:, 1:locality*2+chunk_size));
+                                % fprintf('size of data: %d, %d', size(data));
+                                
+                                % wout = zeros(chunk_size, resparams.N);
+                                % [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
+                                states = reservoir_layer(A, win, data, resparams);
+                                % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
+                                
+                                wout = fit(resparams, states, data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
+                                x = states(:,end);
+                                
+                                error = wout*states - data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+                                error = error .^ 2;
+                                RMSE = sqrt(mean(mean(error)));
+                                
+                                destinations = 2:num_workers;
+                                % fprintf('started sending weights\n');
+                                labBarrier;
+                                labSend(A, destinations);
+                                labBarrier;
+                                labSend(win, destinations);
+                                labBarrier;
+                                labSend(wout, destinations);
+                                labBarrier;
+                                labSend(x, destinations);
+                                % fprintf('finished sending weights\n');
+                            otherwise
+                                u = [];
+                                % fprintf('started receiving weights\n');
+                                labBarrier;
+                                A = labReceive();
+                                labBarrier;
+                                win = labReceive();
+                                labBarrier;
+                                wout = labReceive();
+                                labBarrier;
+                                x = labReceive();
+                                % fprintf('finished receiving weights\n');
+                        end
+                        test_data = transpose(test_u(:, locality+1:locality+chunk_size));
+                        pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size)), resparams, jobid, locality, chunk_size, pred_marker_array, sync_length);
+                        % fprintf('calculated pred_collect of %d\n', l);
+                        collated_prediction = gcat(pred_collect,1,1);
+                        % prediction error
+                        % val_length = ;
+
+                        num_preds = length(pred_marker_array);
+                        % display('eee');
+                        for pred_iter = 1:num_preds
+                            prediction_marker = pred_marker_array(pred_iter);
+                            % trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length,:));
+                            % display(pred_iter);
+                            trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data(:, prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                            % diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
+                            %     = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length,:))...
+                            % -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
+                            % display('ggg');
+                            diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
+                                = test_data(:, prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length) ...
+                            -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
+                        end
+                        % display('hhh');
+                        RMSE = sqrt(mean(diff.^2, 1));
+                        % test_data = transpose(test_u(:, locality+1:locality+chunk_size));
+                        % error = pred_collect - test_data(locality+1:locality+chunk_size, sync_length+1:sync_length+resparams.predict_length);
+                        % RMSE = sum(error, 1);
+                        % display('ii');
+                        for k = 1:num_preds
+                            out_times = find(RMSE > 1.0);
+                            out_time = out_times(1);
+                            currentAndNextT(dlocality) = currentAndNextT(dlocality) + out_time;
+                        end
+                        % display('kk');
+                        currentAndNextT(dlocality) = currentAndNextT(dlocality) / num_preds;
+                    end
+                    currentAndNextT = gcat(currentAndNextT, 1);
+                    T_list = sum(currentAndNextT(1:2:end), 1);
+                    nextT = sum(currentAndNextT(2:2:end), 1);
+                    currentT = sum(currentAndNextT(1:2:end), 1);
+                    gradT = nextT - currentT;
+                    
+                    fprintf('\n------------------------------\n');
+                    fprintf('iter%d->\n', iter); 
+                            
+                    fprintf('  locality:%d\n', locality-1);
+                    fprintf('  E(%d)=%f\n  E(%d)=%f\n', locality, nextT, locality-1, currentT);
+                    fprintf('  gradE: %f\n', gradT);
+
+                    delta_locality = int32(150/(5+5*iter));
+                    % display(delta_locality);
+                    % display(10/iter);
+                    if gradT < 0
+                        locality = locality - min(locality-1, delta_locality);
+                        fprintf('decrease locality to %d\n', locality);
+                    else
+                        locality = locality + delta_locality;
+                        fprintf('increase locality to %d\n', locality);
+                    end
+                    % switch l
+                    %     case 1
+                    %         labBarrier;
+                    %         labSend(locality, 2:num_workers);
+                    %     otherwise
+                    %         labBarrier;
+                    %         labSend(RMSE, 1);
+                    %         labBarrier;
+                    %         locality = labReceive(1);
+                    % end
+                    % E_list(iter) = RMSE;
+                    iter = iter + 1;
+                    collated_l = gcat(l_list, 1, 1);
+                    collated_T = gcat(T_list, 1, 1);
+                end
+
+            case 'LSM_GD_training_error'
                 max_iter = 20;
                 % max_iter = 5;
                 iter = 1;
@@ -667,8 +832,16 @@ for jobid = jobid_list
     trajectories_true = zeros(num_inputs, num_preds*resparams.predict_length);
     
     switch learn
+        case 'LSM_GD_short_prediction_time'
+            % y = collated_E{1};
+            y = collated_T{1}(1:2:end);
+            figure(); errorbar(mean(y, 1), std(y, 1));
+            xlabel('iterations'); ylabel('RMSE'); grid on;
+            figure(); plot(collated_l{1}(1, :));
+            xlabel('iterations'); ylabel('locality'); grid on;
         case 'LSM_GD'
-            y = collated_E{1};
+            % y = collated_E{1};
+            y = collated_E{1}(1:2:end);
             figure(); errorbar(mean(y, 1), std(y, 1));
             xlabel('iterations'); ylabel('RMSE'); grid on;
             figure(); plot(collated_l{1}(1, :));
