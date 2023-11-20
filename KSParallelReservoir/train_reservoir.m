@@ -1,8 +1,9 @@
-function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, locality, chunk_size)
+function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, locality, chunk_size, nodes_per_input)
 
 [num_inputs,~] = size(data);
 
-A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+% A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input);
 q = resparams.N/num_inputs;
 win = zeros(resparams.N, num_inputs);
 for i=1:num_inputs
@@ -13,7 +14,7 @@ for i=1:num_inputs
         %     ip = ip / 4;
         % end
         ip = ip;
-    elseif true % linear
+    elseif false % linear
         if i <= locality
             ip = ip * i / locality;
         elseif i > num_inputs - locality

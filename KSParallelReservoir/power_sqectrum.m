@@ -1,48 +1,99 @@
 
 %% plot of power spectrum of KS
+% L = 22; N = 64;
+% L = 50; N = 128;
+% L = 100; N = 256;
 % L = 200; N = 512;
-L = 400; N = 1024;
+% L = 400; N = 1024;
 % L = 400; N = 2048;
 % L = 800; N = 2048;
-% load(['KS_science_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
-load(['KS_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
-% test_input_sequence = test_input_sequence.';
+data_kind = 'KS';
+% L_list = [22 26 30 34 38 44 50 100 200 400 800];
+% N_list = [64 128 128 128 128 128 128 256 512 1024 2048];
+% L_list = [22 50 100 200 400 800];
+% N_list = [64 128 256 512 1024 2048];
+% L_list = [22 44 66 88];
+% N_list = [840 840 840 840];
+L_list = [22];
+N_list = [2048];
 
-sum_p = zeros(4096, 1);
-naverage = 500;
-interval = 20;
-for i =2000:interval:2000+interval*naverage-1
-    % [p, f] = pspectrum(test_input_sequence(i,:), N/L*2*pi);
-    [p, f] = pspectrum(test_input_sequence(i,:), N/L);
-    % p = pspectrum(test_input_sequence(i,:), 128/50);
-    % pp = 20*log10(p);
-
-    % figure(); plot(f, p);
-    % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-    % xlabel('Spatial Frequency (Hz)'); ylabel('Power Spectrum(dB)');
-    % fontsize(16, 'points');
-    sum_p = sum_p + p;
-end
-sum_p = sum_p / naverage;
-% sum_p = sum_p .^ (1/naverage);
-
+% data_kind = 'CGL';
+% L_list = [50 100 200];
+% N_list = [32 64 128];
+% c1 = -4; c2 = 1;
+% c1 = -2; c2 = 2;
+% c1 = -1; c2 = 2;
+c1 = 0; c2 = -3;
 figure();
-scatter(2*pi*f, sum_p);
-% plot(2*pi*f, sum_p);
-set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-% xlabel('Spatial Frequency (Hz)'); 
-% ylabel('Power Spectrum');
-fontsize(16, 'points');
-% title(['average over ' num2str(naverage)]);
-title(['Powerspectrum ' 'L=' num2str(L)]);
-xlim([10^-2 10^1]); ylim([10^-4 10^2]);
-xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
-xlabel('q'); ylabel('g_q');
-grid on;
+powers = zeros(1000, length(L_list));
+for k = 1:length(L_list)
+    L = L_list(k); N = N_list(k);
+    switch data_kind 
+        case 'KS'
+            % load(['KS_science_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
+            load(['KS_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
+        case 'CGL'
+            load([data_kind '_L' num2str(L) '_N_' num2str(N) '_dps20000' 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']);
+    end
+    % test_input_sequence = test_input_sequence.';
+    
+    sum_p = zeros(4096, 1);
+    naverage = 200;
+    interval = 5;
+    % interval = 20;
+    [sum_p, f] = power_u(test_input_sequence.', L, N);
+    % for i =2000:interval:2000+interval*naverage-1
+    %     % [p, f] = pspectrum(test_input_sequence(i,:), N/L*2*pi);
+    %     [p, f] = pspectrum(test_input_sequence(i,:), N/L);
+    %     % [p, f] = power(test_input_sequence(i, :));
+    %     % p = pspectrum(test_input_sequence(i,:), 128/50);
+    %     % pp = 20*log10(p);
+    % 
+    %     % figure(); plot(f, p);
+    %     % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
+    %     % xlabel('Spatial Frequency (Hz)'); ylabel('Power Spectrum(dB)');
+    %     % fontsize(16, 'points');
+    %     sum_p = sum_p + p;
+    % end
+    % sum_p = sum_p / naverage;
+    % % sum_p = sum_p .^ (1/naverage);
+    
+    powers(:, k) = sum_p;
+    hold on;
+    % scatter(2*pi*f, sum_p);
+    plot(f, sum_p, 'DisplayName', ['L=' num2str(L)], 'LineWidth', 1.5);
+    % plot(2*pi*f, sum_p, 'DisplayName', ['L=' num2str(L)]);
+    hold off;
+    set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
+    xlabel('Spatial Frequency (Hz)'); 
+    ylabel('Power');
+    fontsize(16, 'points');
+    % title(['average over ' num2str(naverage)]);
+    switch data_kind
+        case 'KS'
+            title(['Powerspectrum of' ' KS']);
+        case 'CGL'
+            title(['Powerspectrum of CGL c_1=' num2str(c1) ', c_2=' num2str(c2)]);
+    end
+    % title(['Powerspectrum ' 'L=' num2str(L)]);
+    % xlim([10^-2 10^0]); ylim([10^-4 10^2]);
+    % xlim([10^-2 10^1]); ylim([10^-4 10^2]);
+    % xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
+    % % xlabel('q'); ylabel('g_q');
+    legend();
+    grid on;
+    
+    [max_value, max_index] = max(sum_p);
+    max_freq = f(max_index);
+    fprintf('max frequency for L=%d: %f which is %f\n', L, max_freq/(2*pi), 2*pi/max_freq);
+end
 
-[max_value, max_index] = max(sum_p)
-max_freq = f(max_index);
-fprintf('max frequency: %f\n', max_freq);
+% corr = corrcoef(test_input_sequence(:, 1:end));
+% figure(); plot(corr(1,:));
+% figure(); plot(corr(end/2,:));
+% axis tight
+% grid;
+
 % figure(); % plot(sum_p/30); 
 % % pspectrum(test_input_sequence(3600,:), 128/50);
 % [p, f] = pspectrum(test_input_sequence(3600,:), N/L);
@@ -83,4 +134,31 @@ sgtitle('Complex Ginzburg-Landau equation');
 
 % figure(); surf(test_input_sequence.');
 % xlim([0:]);
+
+%% snapshot
+L=88;
+load(['KS_L' num2str(L) '_N_840_dps20000.mat']);
+figure(); interval = L/840; space=0:interval:L-interval;
+plot(space, test_input_sequence(1,:));
+axis tight;
+xlim([0 L]); ylim([-2.6 2.6]);
+fontsize(16, 'points');
+xlabel('x'); ylabel('y'); xticks(0:L/7:L);
+grid on;
+title(['L=' num2str(L)]);
 %}
+
+function [p, f] = power_u(u_x_t, L, N)
+% u: space*time
+% u_q_t: freq*time
+% u = test_input_sequence.';
+num_freq = 1000;
+% num_steps = size(u);
+% f = logspace(-2, 1, num_freq);
+f = linspace(1e-2, 1e1, num_freq);
+dx = L/N;
+xs = 0:dx:L-dx;
+wave = exp(-j*f.' .* xs);
+u_q_t = 1/sqrt(L) *dx .* wave * u_x_t;
+p = mean(abs(u_q_t).^2, 2);
+end

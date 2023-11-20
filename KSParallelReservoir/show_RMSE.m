@@ -3,12 +3,15 @@
 % n_grids = size(train_steps_list, 2);
 % rho = 1.6;
 % rho = 0.6; 
-locality_list = [3 4 5 6 7 8];
-rho_list = [1.1 1.2 1.3 1.4 1.5 1.6];
+% locality_list = [3 4 5 6 7 8];
+locality_list = 18;
+% rho_list = [1.1 1.2 1.3 1.4 1.5 1.6];
+rho_list = 0.6;
 
 data_kind = 'KS';
 % data_kind = 'CGL';
-input_kind = 'decay';
+data_kind = 'linear';
+% input_kind = 'decay';
 % input_kind = 'uniform';
 max_lyapunov = 0.0743;
 % n_steps = 18999;

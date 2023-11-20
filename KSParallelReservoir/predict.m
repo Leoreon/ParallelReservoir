@@ -3,18 +3,18 @@ prediction = zeros(chunk_size,pl);
 if locality > chunk_size
     secFrontWkrIdx = mod(frontWkrIdx, numlabs) + 1;
     secRearWkrIdx = mod(rearWkrIdx-2, numlabs) + 1;
-    display(frontWkrIdx);
-    display(rearWkrIdx);
-    display(secFrontWkrIdx);
-    display(secRearWkrIdx);
+    % display(frontWkrIdx);
+    % display(rearWkrIdx);
+    % display(secFrontWkrIdx);
+    % display(secRearWkrIdx);
     for i=1:pl
         x_augment = x;
         x_augment(2:2:N) = x_augment(2:2:N).^2;
         out = (w_out)*x_augment;
         labBarrier;
-        rear_out = labSendReceive(frontWkrIdx ,rearWkrIdx, out(end-chunk_size+1:end));
+        rear_out = labSendReceive(frontWkrIdx, rearWkrIdx, out(end-chunk_size+1:end));
         front_out = labSendReceive(rearWkrIdx, frontWkrIdx, out(1:chunk_size));
-        
+        labBarrier;
         second_rear_out = labSendReceive(secFrontWkrIdx, secRearWkrIdx, out(end-(locality-chunk_size)+1:end));
         second_front_out = labSendReceive(secRearWkrIdx, secFrontWkrIdx, out(1:(locality-chunk_size)));
         % fprintf('out: \n');
@@ -30,7 +30,9 @@ else
     for i=1:pl
         x_augment = x;
         x_augment(2:2:N) = x_augment(2:2:N).^2;
+        % display('ee');
         out = (w_out)*x_augment;
+        % display('ff');
         labBarrier;
         rear_out = labSendReceive(frontWkrIdx ,rearWkrIdx, out(end-locality+1:end));
         front_out = labSendReceive(rearWkrIdx, frontWkrIdx, out(1:locality));
@@ -40,6 +42,10 @@ else
         % display(size(rear_out));
         % break;
         feedback = vertcat(rear_out, out, front_out);
+        % display(size(w));
+        % display(size(x));
+        % display(size(w_in));
+        % display(size(feedback));
         x = tanh(w*x + w_in*feedback); 
         prediction(:,i) = out;
     end

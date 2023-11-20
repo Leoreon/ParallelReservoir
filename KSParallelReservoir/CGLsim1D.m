@@ -13,8 +13,9 @@ disp('*** 1D CGL SIMULATION ***');
 % Set equation coefficients
 % a = -2;
 % b = 0.7;
-a = -2; b = 2;
-% a = 2;% b = -2;
+% a = -1; b = 2;
+% a = -2; b = 2;
+a = 2; b = -2;
 
 % a = -1.05; b = 1.05;
 % a = -4; b = 1;
@@ -25,20 +26,23 @@ save_results = true;
 
 % Set system parameters
 % L    = 2000;       % Domain size
+% L    = 400;       % Domain size
 % L    = 200;       % Domain size
+% L    = 100;       % Domain size
 % L    = 50;       % Domain size
 % L    = 44;       % Domain size
 % L    = 40;       % Domain size
 % L    = 36;       % Domain size
 % L    = 26;       % Domain size
-L    = 22;       % Domain size
-% L    = 18;       % Domain size
+% L    = 22;       % Domain size
+L    = 18;       % Domain size
 % L    = 14;       % Domain size
 % L    = 8;       % Domain size
 % Tmax = 200;       % Simulation time
 % N    = 512;       % Number of grid points
 % dT   = 0.05;      % Timestep (choose between 0.01 and 0.05)
 % dps  = 1000;      % Number of stored times
+% ic   = 'uniform';   % Initial condition: choose 'zero', 'tw', 'uniform' or 'pulse'
 ic   = 'pulse';   % Initial condition: choose 'zero', 'tw', 'uniform' or 'pulse'
 n    = 0;         % Winding number for 'tw' initial condition
 % N    = 2048;       % Number of grid points, default
@@ -63,14 +67,14 @@ sample_dT = 0.07;
 % sample_dT = 0.1;
 % sample_dT = 1e-4;
 
-type = 'train';
+% type = 'train';
 % type = 'test';
-% type = 'train&test';
+type = 'train&test';
 % dps  = 1000000;  %50 200     % Number of stored times
 % dps  = 700000;  %50 200     % Number of stored times
 % dps  = 300000;  %50 200     % Number of stored times
-% dps  = 140000;  %50 200     % Number of stored times
-% dps  = 100000;  %50 200     % Number of stored times
+% dps  = 170000;  %50 200     % Number of stored times
+dps  = 100000;  %50 200     % Number of stored times
 % dps  = 80000 + 5000;  %50 200     % Number of stored times
 % dps  = 80000 + 10;  %50 200     % Number of stored times
 % dps  = 80000;  %50 200     % Number of stored times
@@ -105,12 +109,13 @@ if co == 0
 		A = zeros(size(X)) + 10^(-2)*randn(size(X));
 	elseif strcmp(ic, 'tw')
 		A 	= sqrt(1-q^2)*exp(i*q*X) + 10^(-2)*randn(size(X));
-	elseif strcmp(ic, 'uniform')
-		A 	= ones(size(X)) + 0.01*randn(size(X));
+    elseif strcmp(ic, 'uniform')
+		% A = 2 * ones(size(X)) + 0.01*randn(size(X));
+		A = ones(size(X)) + 0.01*randn(size(X));
     elseif strcmp(ic, 'pulse')
 		A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
 		% A = sech((X+10).^2) + 0.8*sech((X-30).^2) + 10^(-2)*randn(size(X));
-	    % A = 100 * A;
+	    % A = 10 * A;
     else
 		error('invalid initial condition selected')
 	end
@@ -250,7 +255,8 @@ switch type
         test_input_sequence(:, 2:2:end) = Adata(:, n_data/2+1:end);
         save(filename, 'test_input_sequence', '-v7.3');
     case 'train&test'
-        train_steps = 0.8 * dps;
+        % train_steps = 0.8 * dps;
+        train_steps = 150000;
         % data_kind = 'NLCGL';
         data_kind = 'CGL';
         % L = 8; N = 32; dps = n_steps;
@@ -263,7 +269,8 @@ switch type
         train_input_sequence(:, 2:2:end) = Adata(1:train_steps, n_data/2+1:end);
         save(filename, 'train_input_sequence', '-v7.3');
 
-        test_steps = 0.2 * dps;
+        % test_steps = 0.2 * dps;
+        test_steps = 20000;
         % data_kind = 'NLCGL';
         data_kind = 'CGL';
         % L = 8; N = 32; dps = n_steps;
