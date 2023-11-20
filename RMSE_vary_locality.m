@@ -4,22 +4,23 @@
 % Ntotal = 5040;
 % locality = 50;
 % num_workers_list = 2:8;
+L = 22; Ntotal = 5040; locality_list = 1:2:15; num_workers_list = [2];
 % L = 22; Ntotal = 2520; locality = 100; num_workers_list = [3 5 6 7 8];
 % L = 22; Ntotal = 5040; locality = 100; num_workers_list = [1 2 3 4 6 8];
 % L = 26; Ntotal = 3360; locality = 100; num_workers_list = [2 6 8];
 % L = 26; Ntotal = 5880; locality = 100; num_workers_list = [1 2 4 6 8];
 % L = 44; Ntotal = 5040; locality_list = [60 55 50 45 40]; num_workers_list = [6]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-L = 44; Ntotal = 5040; locality_list = [60 55 50 45 40 35 30]; num_workers_list = [8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% L = 44; Ntotal = 5040; locality_list = [60 55 50 45 40 35 30]; num_workers_list = [8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 44; Ntotal = 5040; locality_list = [55 50 45 40 35 30]; num_workers_list = [12]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 50; Ntotal = 5040; locality = 50; num_workers_list = [2 4 5 6 7 8 10 12 14];
 % L = 52; Ntotal = 80016; locality = 9; num_workers_list = [12];
 % L = 52; Ntotal = 80016; locality = 6; num_workers_list = [16];
 % L = 66; Ntotal = 15120; locality = 50; num_workers_list = [3 6 12];
-L = 88; Ntotal = 5040; locality_list = [15 50 70]; num_workers_list = 15;
-jobid_list = 1;
+% L = 88; Ntotal = 5040; locality_list = [15 50 70]; num_workers_list = 15;
+% jobid_list = 1;
 % jobid_list = [2 3 4 6];
 % jobid_list = 2:5;
-% jobid_list = 1:5;
+jobid_list = 1:5;
 % jobid_list = 1:10;
 % num_workers_list = [2 3 4 8];
 % num_workers_list = [1 2 4 6];
@@ -45,7 +46,8 @@ for locality = locality_list
 errors = zeros(1, pred_length);
 for jobid = jobid_list
     Dr = Ntotal / num_workers;
-    load(['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_uniform_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'], 'error')
+    filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_uniform_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+    load(filename, 'error')
     
     % pred_length = 2899; num_pred = 49;
     % figure();

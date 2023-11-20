@@ -12,7 +12,7 @@ if locality > chunk_size
         x_augment(2:2:N) = x_augment(2:2:N).^2;
         out = (w_out)*x_augment;
         labBarrier;
-        rear_out = labSendReceive(frontWkrIdx ,rearWkrIdx, out(end-chunk_size+1:end));
+        rear_out = labSendReceive(frontWkrIdx, rearWkrIdx, out(end-chunk_size+1:end));
         front_out = labSendReceive(rearWkrIdx, frontWkrIdx, out(1:chunk_size));
         labBarrier;
         second_rear_out = labSendReceive(secFrontWkrIdx, secRearWkrIdx, out(end-(locality-chunk_size)+1:end));
