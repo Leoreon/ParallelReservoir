@@ -2,7 +2,7 @@ function A = generate_spatial_reservoir(size, radius, degree, labindex, jobid, n
 tic
 rng(labindex+jobid)
 
-locality = 20;
+locality = 10;
 % sparsity = degree/size;
 sparsity = degree/((2*locality+1)*nodes_per_input);
 
@@ -13,9 +13,8 @@ for k = 1:size/nodes_per_input
     A(row_index, col_index) = sprand(nodes_per_input, nodes_per_input*(2*locality+1), sparsity);
     % A(row_index, col_index) = ones(nodes_per_input, nodes_per_input*(2*locality+1));
 end
-A = sprand(size, size, sparsity);
-size(nonzeros(A))
-size(nonzeros(A)) / size
+% A = sprand(size, size, sparsity);
+
 
 % A = sparse(A);
 e = max(abs(eigs(A)));
