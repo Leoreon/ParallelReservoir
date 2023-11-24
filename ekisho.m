@@ -95,15 +95,15 @@ data_dir = train_dir;
     for k = 1:n_kind
         train_input_sequence(k:n_kind:end, :) = Adata_raw_train((k-1)*n_da+1:k*n_da, :);
     end
-
-    Input = vols;
+    train_input_sequence = train_input_sequence.';
+    Input = vols.';
     x_ = xs(:, 1);
     N = size(x_, 1);
     
     % clearvars -except Adata Input sample_dT;
     % train_filename = strcat('LCD1d/LCD_data.mat');
     filename = [data_dir '/LCD_data.mat'];
-    save(filename, 'train_input_sequence', 'Input', 'N', 'x_', 'sample_dT', 'L');
+    save(filename, 'train_input_sequence', 'Input', 'N', 'x_', 'sample_dT', 'L', '-v7.3');
     
     figure(); plot(times(1,:), nxs(10,:));
 
@@ -199,14 +199,15 @@ data_dir = test_dir;
         test_input_sequence(k:n_kind:end, :) = Adata_raw_test((k-1)*n_da+1:k*n_da, :);
     end
     
-    Input = vols;
+    test_input_sequence = test_input_sequence.';
+    Input = vols.';
     x_ = xs(:, 1);
     N = size(x_, 1);
     
     % clearvars -except Adata Input sample_dT;
     % train_filename = strcat('LCD1d/LCD_data.mat');
     filename = [data_dir '/LCD_data.mat'];
-    save(filename, 'test_input_sequence', 'Input', 'N', 'x_', 'sample_dT', 'L');
+    save(filename, 'test_input_sequence', 'Input', 'N', 'x_', 'sample_dT', 'L', '-v7.3');
     
     figure(); plot(times(1,:), nxs(10,:));
 

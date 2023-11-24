@@ -5,29 +5,33 @@
 clear
 
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
-data_dir = './';
+
 
 % request_pool_size_list = 1;
 % request_pool_size_list = 2;
 % request_pool_size_list = 3;
-request_pool_size_list = 4;
+% request_pool_size_list = 4;
 % request_pool_size_list = 5;
 % request_pool_size_list = 6;
 % request_pool_size_list = 7;
 % request_pool_size_list = 8;
-% request_pool_size_list = 10;
+request_pool_size_list = 10;
 % request_pool_size_list = 11;
 % request_pool_size_list = 12;
 % request_pool_size_list = 14;
 % request_pool_size_list = 15;
 % request_pool_size_list = 16;
+% request_pool_size_list = 6:8;
 % request_pool_size_list = 1:8;
+% request_pool_size_list = [10 12 14 15];
 % request_pool_size_list = 2:6;
 % request_pool_size_list = 8:-1:5;
 % request_pool_size_list = 4;
 % request_pool_size = 8;
 num_reservoirs = request_pool_size_list;
+for request_pool_size = request_pool_size_list
 num_reservoirs_per_worker = 1;
+data_dir = './';
 % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
 index_file = matfile([data_dir 'testing_ic_indexes.mat']);
 %index_file = matfile('KS100/testing_ic_indexes.mat');
@@ -45,7 +49,6 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = 0;
 % locality_list = 2;
 % locality_list = 3;
-locality_list = 5;
 % locality_list = 6;
 % locality_list = 8;
 % locality_list = 9;
@@ -60,7 +63,7 @@ locality_list = 5;
 % locality_list = 60;
 % locality_list = 65;
 % locality_list = 70;
-% locality_list = 80;
+locality_list = 80;
 % locality_list = 90;
 % locality_list = 100;
 % locality_list = 120;
@@ -74,7 +77,9 @@ locality_list = 5;
 % locality_list = [100];
 % locality_list = [10 15 20 25 30 35 40 45];
 % locality_list = [25 30 35 40 45];
+% locality_list = 10:10:80;
 % locality_list = 20:20:160;
+% locality_list = 80:20:160;
 % locality_list = [50 55];
 % locality_list = 20:5:60;
 % locality_list = 7:8;
@@ -120,7 +125,6 @@ jobid_list = 1;
 % jobid_list = [1 2 5];
 h = waitbar(0,'Please wait...');
 progress = 0;
-for request_pool_size = request_pool_size_list
 for index_iter = 1:1
 % for index_iter = 2:10
 for rho = rho_list
@@ -150,18 +154,16 @@ for jobid = jobid_list
         % jobid = 3;
         % jobid = 1;
         
-        % data_kind = 'KS';
+        data_kind = 'KS';
         % data_kind = 'NLKS';
         % data_kind = 'CGL';
         % data_kind = 'NLCGL';
-        data_kind = 'LCD';
+        % data_kind = 'LCD';
         switch data_kind
             case 'LCD'
                 pred_marker_array = pred_marker_array(1);
-                iter = false;
                 n_kind_data = 6;
                 n_kind_input = 1;
-                max_lyapunov = 1;
                 % L = 11;
                 train_steps = 16650;
                 test_steps = 3330;
@@ -174,14 +176,14 @@ for jobid = jobid_list
                 test_filename = [test_dir 'LCD_data.mat'];
                 m = matfile([train_filename]); % KS
                 tf = matfile([test_filename]); % KS
-                
+            
                 L = m.L; sample_dT = m.sample_dT; N = m.N;
                 train_input = m.Input; 
                 test_input = tf.Input;
             case 'KS'
                 n_kind_data = 1; n_kind_input = 0;
-                L = 22; N = 64; 
-                % L = 22; N = 840;
+                % L = 22; N = 64; 
+                L = 22; N = 840;
                 % L = 26; N = 840;
                 % L = 44; N = 832;
                 % L = 44; N = 840;
@@ -360,8 +362,8 @@ for jobid = jobid_list
         
         
         % learn = 'RLS';
-        learn = 'LSM';
-        % learn = 'LSM_common';
+        % learn = 'LSM';
+        learn = 'LSM_common';
         % learn = 'LSM_GD_training_error';
         % learn = 'LSM_GD_short_prediction_time';
         % Gradient Descentの時はlocalityを最大に、時間はworkerごとに変える
@@ -415,8 +417,8 @@ for jobid = jobid_list
         % approx_reservoir_size = 1680 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 2520 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 3360 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        approx_reservoir_size = 5880 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 5880 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = (6720 + 840) / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 7560 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 10080 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
@@ -435,9 +437,7 @@ for jobid = jobid_list
         % approx_reservoir_size = 9984;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
 
-        % avg_degree = 3; %average connection degree
-        avg_degree = 2; %average connection degree
-        % avg_degree = 1; %average connection degree
+        avg_degree = 3; %average connection degree
 
         resparams.sparsity = avg_degree/approx_reservoir_size;
         
@@ -453,8 +453,7 @@ for jobid = jobid_list
         % resparams.radius = 0.6; % spectral radius of the reservoir
         resparams.radius = rho; % spectral radius of the reservoir
         
-        % resparams.beta = 0.0001; % ridge regression regularization parameter
-        resparams.beta = 20; % ridge regression regularization parameter
+        resparams.beta = 0.0001; % ridge regression regularization parameter
         
         train_in = zeros(u_length, chunk_size_input + overlap_size_input); % this will be populated by the input data to the reservoir
         
@@ -570,7 +569,6 @@ for jobid = jobid_list
 
                                 % data = transpose(u);
                                 data = transpose(u(:, 1:locality*2+chunk_size_data));
-                                train_in = transpose(train_in);
                                 % fprintf('size of data: %d, %d', size(data));
                                 
                                 % wout = zeros(chunk_size, resparams.N);
@@ -587,7 +585,7 @@ for jobid = jobid_list
                                 
                                 destinations = 2:num_workers;
                                 % fprintf('started sending weights\n');
-                                labBarrier;
+                                spmdBarrier;
                                 labSend(A, destinations);
                                 labBarrier;
                                 labSend(win, destinations);
@@ -610,7 +608,6 @@ for jobid = jobid_list
                                 % fprintf('finished receiving weights\n');
                         end
                         test_data = transpose(test_u(:, locality+1:locality+chunk_size_data));
-                        test_in = transpose(test_in);
                         pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, locality, chunk_size_data, pred_marker_array, sync_length);
                         % fprintf('calculated pred_collect of %d\n', l);
                         collated_prediction = gcat(pred_collect,1,1);
@@ -822,7 +819,7 @@ for jobid = jobid_list
             
             case 'LSM_common'
                 % num_inputs2 = chunk_size + 2 * locality;
-                num_inputs2 = chunk_size_data + chunk_size_input + 2 * n_kind_data * locality + 2 * n_kind_input * locality; % size(train_in, 2);
+                num_inputs2 = chunk_size_data + 2 * n_kind_data * locality + 2 * n_kind_input * locality; % size(train_in, 2);
                 switch l
                     case 1
                         % rng(jobid+iter*2+dlocality);
@@ -850,7 +847,6 @@ for jobid = jobid_list
                             win(beg:fin,i) = ip;
                             beg = fin + 1;
                         end
-                        win = sparse(win);
 
                         % [num_inputs2,~] = size(u.');
                         % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
@@ -864,7 +860,7 @@ for jobid = jobid_list
                         data = transpose(u);
                         % wout = zeros(chunk_size, resparams.N);
                         % [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
-                        states = reservoir_layer(A, win, data, resparams, transpose(train_in));
+                        states = reservoir_layer(A, win, data, resparams, train_in);
                         % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
                         
                         wout = fit(resparams, states, data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
@@ -898,15 +894,14 @@ for jobid = jobid_list
                         x = labReceive();
                         % fprintf('finished receiving weights\n');
                 end
-                pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, transpose(test_in));
+                pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, test_in);
                 % fprintf('calculated pred_collect of %d\n', l);
                 collated_prediction = gcat(pred_collect,1,1);
             case 'LSM'
                 if iter
-                    [pred_collect, RMSE] = res_train_predict_iter(transpose(u), transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, transpose(train_in), transpose(test_in));
+                    [pred_collect, RMSE] = res_train_predict_iter(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size_data, pred_marker_array, sync_length);
                 else
-                    % [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, nodes_per_input, transpose(train_in), transpose(train_in));
-                    [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, nodes_per_input, transpose(train_in), transpose(test_in));
+                    [pred_collect, RMSE] = res_train_predict(transpose(u), transpose(test_u), resparams, jobid, locality, chunk_size_data, pred_marker_array, sync_length, nodes_per_input);
                 end
                 % fprintf('calculated pred_collect of %d\n', l);
                 collated_prediction = gcat(pred_collect,1,1);
@@ -945,11 +940,6 @@ for jobid = jobid_list
     train_steps = train_steps{1}; test_steps = test_steps{1};
     L = L{1};
     switch data_kind
-        case 'LCD'
-            dt = 5e-4;
-            N = N{1};
-            test_filename = test_filename{1};
-            test_file = matfile(test_filename);
         case 'CGL' 
             dt = 0.07;
             N = N{1}; c1 = c1{1}; c2 = c2{1};
@@ -1031,7 +1021,7 @@ for jobid = jobid_list
 
     which_index_iter = which_index_iter{1};
 
-    %% save result
+    %% save results
 %    filename = ['KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = ['/lustre/jpathak/KS100/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
@@ -1039,7 +1029,8 @@ for jobid = jobid_list
     % filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     
-    if jobid ==1
+    % if jobid == 1
+    if jobid == 0
         % true, predicted, error data
         save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
     else
@@ -1048,6 +1039,7 @@ for jobid = jobid_list
     end
     display(filename);
     
+    %% show graphs
     n_steps = size(trajectories_true, 2);
     n_data = size(trajectories_true, 1);
     times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
@@ -1061,13 +1053,6 @@ for jobid = jobid_list
             subplot(3, 1, 3); surf(times, locations, diff(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 50]);
             sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
             colormap(jet);
-        case 'LCD'
-            figure(); 
-            subplot(3, 1, 1); surf(times, locations, trajectories_true(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('true data'); colorbar; clim([min_value max_value]); xlim([0 1.25]);
-            subplot(3, 1, 2); surf(times, locations, pred_collect(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('predicted data'); colorbar; clim([min_value max_value]); xlim([0 1.25]);
-            subplot(3, 1, 3); surf(times, locations, diff(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 1.25]);
-            sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
-            colormap(jet);
         case 'CGL'
             figure(); 
             subplot(3, 1, 1); surf(times, locations, [trajectories_true(1:2:end-1,1:n_steps); trajectories_true(2:2:end,1:n_steps)]); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('true data'); colorbar; clim([min_value max_value]); xlim([0 50]);
@@ -1076,81 +1061,83 @@ for jobid = jobid_list
             sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
             colormap(jet);
     end
-    
+
     figure(); plot(times(1,:), sqrt(mean(diff.^2, 1)));
     xlabel('time (lyapunov*second'); ylabel('RMSE'); title('error');
 
-    naverage = 1;
-    % naverage = 50;
-    % naverage = 2000;
-    interval = floor(10/dt/max_lyapunov);
-    % interval = 20;
-    start_step = floor(6/dt/max_lyapunov);
-
-    % Temporal Powerspectrum
-    % % [true_temporal_p, f] = pspectrum(trajectories_true(1, :), 1/dt);
-    % % [pred_temporal_p, f] = pspectrum(pred_collect(1, :), 1/dt);
-    % % figure();
-    % % plot(f, true_temporal_p, 'DisplayName', ['true']);
-    % % hold off;
-    % % hold on;
-    % % plot(f, pred_temporal_p, 'DisplayName', ['prediction']);
-    % % hold off;
-    % % title(['Temporal Powerspectrum' ' g=' num2str(request_pool_size)]);
+    % naverage = 1;
+    % % naverage = 50;
+    % % naverage = 2000;
+    % interval = floor(10/dt/max_lyapunov);
+    % % interval = 20;
+    % start_step = floor(6/dt/max_lyapunov);
+    % 
+    % % Temporal Powerspectrum
+    % % % [true_temporal_p, f] = pspectrum(trajectories_true(1, :), 1/dt);
+    % % % [pred_temporal_p, f] = pspectrum(pred_collect(1, :), 1/dt);
+    % % % figure();
+    % % % plot(f, true_temporal_p, 'DisplayName', ['true']);
+    % % % hold off;
+    % % % hold on;
+    % % % plot(f, pred_temporal_p, 'DisplayName', ['prediction']);
+    % % % hold off;
+    % % % title(['Temporal Powerspectrum' ' g=' num2str(request_pool_size)]);
+    % 
+    % true_sum_p = zeros(4096, 1);
+    % pred_sum_p = zeros(4096, 1);
+    % % true_spatial_ps = zeros(4096, naverage);
+    % % pred_spatial_ps = zeros(4096, naverage);
+    % figure();
+    % for i =start_step:interval:start_step+interval*naverage-1
+    %     % [p, f] = pspectrum(test_input_sequence(i,:), N/L*2*pi);
+    %     [true_spatial_p, f] = pspectrum(trajectories_true(:, i), N/L);
+    %     [pred_spatial_p, f] = pspectrum(pred_collect(:, i), N/L);
+    %     % p = pspectrum(test_input_sequence(i,:), 128/50);
+    %     % pp = 20*log10(p);
+    %     % true_spatial_ps(:, i) = true_spatial_p;
+    %     % pred_spatial_ps(:, i) = pred_spatial_p;
+    %     % figure(); plot(f, p);
+    %     % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
+    %     % xlabel('Spatial Frequency (Hz)'); ylabel('Power Spectrum(dB)');
+    %     % fontsize(16, 'points');
+    %     true_sum_p = true_sum_p + true_spatial_p;
+    %     pred_sum_p = pred_sum_p + pred_spatial_p;
+    % end
+    % true_sum_p = true_sum_p / naverage;
+    % pred_sum_p = pred_sum_p / naverage;
+    % % sum_p = sum_p .^ (1/naverage);
+    % 
+    % hold on;
+    % % scatter(2*pi*f, sum_p);
+    % plot(2*pi*f, true_sum_p, 'DisplayName', ['true']);
+    % hold off;
+    % hold on;
+    % plot(2*pi*f, pred_sum_p, 'DisplayName', ['pred']);
+    % hold off;
+    % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
+    % % xlabel('Spatial Frequency (Hz)'); 
+    % % ylabel('Power Spectrum');
+    % fontsize(16, 'points');
+    % title(['Spatial Powerspectrum' ' g=' num2str(request_pool_size)]);
+    % % title(['average over ' num2str(naverage)]);
+    % % title(['Powerspectrum c_1=' num2str(c1) ', c_2=' num2str(c2)]);
+    % % title(['Powerspectrum ' 'L=' num2str(L)]);
+    % xlim([10^-2 10^1]); ylim([10^-4 10^2]);
+    % xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
+    % xlabel('q'); ylabel('g_q');
+    % legend();
+    % grid on;
+    % 
+    % [max_true_power, max_true_index] = max(true_sum_p);
+    % max_true_freq = f(max_true_index);    
+    % [max_pred_power, max_pred_index] = max(pred_sum_p);
+    % max_pred_freq = f(max_pred_index);
+    % fprintf('max spatial frequency for true data: %f\n', max_true_freq);
+    % fprintf('max spatial frequency for predicted data: %f\n', max_pred_freq);
     
-    true_sum_p = zeros(4096, 1);
-    pred_sum_p = zeros(4096, 1);
-    % true_spatial_ps = zeros(4096, naverage);
-    % pred_spatial_ps = zeros(4096, naverage);
-    figure();
-    for i =start_step:interval:start_step+interval*naverage-1
-        % [p, f] = pspectrum(test_input_sequence(i,:), N/L*2*pi);
-        [true_spatial_p, f] = pspectrum(trajectories_true(:, i), N/L);
-        [pred_spatial_p, f] = pspectrum(pred_collect(:, i), N/L);
-        % p = pspectrum(test_input_sequence(i,:), 128/50);
-        % pp = 20*log10(p);
-        % true_spatial_ps(:, i) = true_spatial_p;
-        % pred_spatial_ps(:, i) = pred_spatial_p;
-        % figure(); plot(f, p);
-        % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-        % xlabel('Spatial Frequency (Hz)'); ylabel('Power Spectrum(dB)');
-        % fontsize(16, 'points');
-        true_sum_p = true_sum_p + true_spatial_p;
-        pred_sum_p = pred_sum_p + pred_spatial_p;
-    end
-    true_sum_p = true_sum_p / naverage;
-    pred_sum_p = pred_sum_p / naverage;
-    % sum_p = sum_p .^ (1/naverage);
-    
-    hold on;
-    % scatter(2*pi*f, sum_p);
-    plot(2*pi*f, true_sum_p, 'DisplayName', ['true']);
-    hold off;
-    hold on;
-    plot(2*pi*f, pred_sum_p, 'DisplayName', ['pred']);
-    hold off;
-    set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-    % xlabel('Spatial Frequency (Hz)'); 
-    % ylabel('Power Spectrum');
-    fontsize(16, 'points');
-    title(['Spatial Powerspectrum' ' g=' num2str(request_pool_size)]);
-    % title(['average over ' num2str(naverage)]);
-    % title(['Powerspectrum c_1=' num2str(c1) ', c_2=' num2str(c2)]);
-    % title(['Powerspectrum ' 'L=' num2str(L)]);
-    xlim([10^-2 10^1]); ylim([10^-4 10^2]);
-    xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
-    xlabel('q'); ylabel('g_q');
-    legend();
-    grid on;
-    
-    [max_true_power, max_true_index] = max(true_sum_p);
-    max_true_freq = f(max_true_index);    
-    [max_pred_power, max_pred_index] = max(pred_sum_p);
-    max_pred_freq = f(max_pred_index);
-    fprintf('max spatial frequency for true data: %f\n', max_true_freq);
-    fprintf('max spatial frequency for predicted data: %f\n', max_pred_freq);
-
+    %% progress bar
     progress = progress + 1;
+    % total = size(request_pool_size) * size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
     total = size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
     h = waitbar(progress/total,h,... 
     sprintf('progress: %d/%d', progress, total));
@@ -1166,10 +1153,10 @@ end
 end
 end
 % delete(gcp);
+% clearvars -except request_pool_size h;
 end
 close(h);
 % end
- 
 
 
 

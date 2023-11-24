@@ -15,7 +15,6 @@ for k = 1:size/nodes_per_input
 end
 % A = sprand(size, size, sparsity);
 
-
 % A = sparse(A);
 e = max(abs(eigs(A)));
 
