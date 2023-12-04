@@ -5,8 +5,12 @@
 % locality = 50;
 % num_workers_list = 2:8;
 
+% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 1:4:20;
+% L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [20 100 200 400];
+L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 10:10:50;
+
 % L = 22; Ntotal = 15120; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-L = 22; Ntotal = 5040; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% L = 22; Ntotal = 5040; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 44; Ntotal = 5040; locality_list = 10:10:80; num_workers_list = [2 3 4 5 6 7 8 10 12 14 15]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 66; Ntotal = 5040; locality_list = 10:10:80; num_workers_list = [1 2 3 4 5 6 7 8]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 66; Ntotal = 5040; locality_list = 10:10:80; num_workers_list = [10 12 14 15]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
@@ -44,6 +48,7 @@ jobid_list = 1;
 % pred_length = 2499; num_pred = 49;
 pred_length = 2499; num_pred = 20;
 lineWidth = 1.5;
+reservoir_kind = 'spatial';
 dt = 1/4; max_lyapunov = 0.0743;
 n_steps = size(trajectories_true, 2);
 n_data = size(trajectories_true, 1);
@@ -54,12 +59,20 @@ T_list = zeros(length(num_workers_list), length(locality_list));
 for h = 1:length(num_workers_list)
     num_workers = num_workers_list(h);
     figure();
-    for k = 1:length(locality_list)
-        locality = locality_list(k);
-        errors = zeros(length(locality_list), pred_length);
+    % for k = 1:length(locality_list)
+        % locality = locality_list(k);
+    for k = 1:length(width_list)
+        width = width_list(k);
+        % errors = zeros(length(locality_list), pred_length);
+        errors = zeros(length(width_list), pred_length);
         for jobid = jobid_list
             Dr = Ntotal / num_workers;
-            filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_uniform_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            switch reservoir_kind 
+                case 'uniform'
+                    filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+                case 'spatial'
+                    filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            end
             load(filename, 'error')
             
             % pred_length = 2899; num_pred = 49;
@@ -74,7 +87,8 @@ for h = 1:length(num_workers_list)
         hold on;
         % plot(error);
         % plot(times(1,1:pred_length), errors(1, 1:pred_length), 'DisplayName', ['locality=' num2str(locality)]); 
-        plot(times(1,1:pred_length), errors(k, 1:pred_length), 'LineWidth', lineWidth, 'DisplayName', ['l=' num2str(locality)]); 
+        plot(times(1,1:pred_length), errors(k, 1:pred_length), 'LineWidth', lineWidth, 'DisplayName', ['width=' num2str(width)]); 
+        % plot(times(1,1:pred_length), errors(k, 1:pred_length), 'LineWidth', lineWidth, 'DisplayName', ['l=' num2str(locality)]); 
         % plot(times(1,:), error(1, 1:n_steps), 'DisplayName', ['train steps=' num2str(train_steps)]); 
         hold off;
     
@@ -99,14 +113,23 @@ for h = 1:length(num_workers_list)
 end
 %}
 
-figure(); 
-for h = 1:length(num_workers_list)
-    hold on;
-    num_workers = num_workers_list(h);
-    plot(locality_list/n_data*L, T_list(h, :), 'DisplayName', ['g=' num2str(num_workers)]);
-    hold off;
-end
+figure();
+plot(width_list/n_data*L, T_list(h, :), 'DisplayName', ['num=' num2str(num_workers)]);
+
 sgtitle(['L=' num2str(L) ', Ntotal=' num2str(Ntotal)]);
-xlabel('locality (space)'); %xlabel('locality'); 
+xlabel('width (space)'); %xlabel('locality'); 
 ylabel('short-term prediction time');
-legend('Location', 'eastoutside'); fontsize(16, 'points'); axis tight; grid on;
+% legend('Location', 'eastoutside'); 
+fontsize(16, 'points'); axis tight; grid on;
+
+% figure(); 
+% for h = 1:length(num_workers_list)
+%     hold on;
+%     num_workers = num_workers_list(h);
+%     plot(locality_list/n_data*L, T_list(h, :), 'DisplayName', ['g=' num2str(num_workers)]);
+%     hold off;
+% end
+% sgtitle(['L=' num2str(L) ', Ntotal=' num2str(Ntotal)]);
+% xlabel('locality (space)'); %xlabel('locality'); 
+% ylabel('short-term prediction time');
+% legend('Location', 'eastoutside'); fontsize(16, 'points'); axis tight; grid on;

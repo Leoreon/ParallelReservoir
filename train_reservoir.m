@@ -55,10 +55,10 @@ states = reservoir_layer(A, win, data, resparams, train_in);
 
 % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
 
-wout = fit(resparams, states, data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
+wout = fit(resparams, states, data(n_kind_data*locality+1:n_kind_data*locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
 
 x = states(:,end);
 
-error = wout*states - data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+error = wout*states - data(n_kind_data*locality+1:n_kind_data*locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
 error = error .^ 2;
 RMSE = sqrt(mean(mean(error)));

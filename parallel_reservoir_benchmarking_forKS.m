@@ -7,7 +7,7 @@ clear
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
 
 
-% request_pool_size_list = 1;
+request_pool_size_list = 1;
 % request_pool_size_list = 2;
 % request_pool_size_list = 3;
 % request_pool_size_list = 4;
@@ -15,7 +15,7 @@ clear
 % request_pool_size_list = 6;
 % request_pool_size_list = 7;
 % request_pool_size_list = 8;
-request_pool_size_list = 10;
+% request_pool_size_list = 10;
 % request_pool_size_list = 11;
 % request_pool_size_list = 12;
 % request_pool_size_list = 14;
@@ -23,7 +23,8 @@ request_pool_size_list = 10;
 % request_pool_size_list = 16;
 % request_pool_size_list = 6:8;
 % request_pool_size_list = 1:8;
-% request_pool_size_list = [10 12 14 15];
+% request_pool_size_list = [2:8 10 12 14 15];
+% request_pool_size_list = [12 14 15];
 % request_pool_size_list = 2:6;
 % request_pool_size_list = 8:-1:5;
 % request_pool_size_list = 4;
@@ -46,7 +47,7 @@ num_divided_jobs = 1;
 
 indices_per_job = num_indices/num_divided_jobs;
 
-% locality_list = 0;
+locality_list = 0;
 % locality_list = 2;
 % locality_list = 3;
 % locality_list = 6;
@@ -63,11 +64,11 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = 60;
 % locality_list = 65;
 % locality_list = 70;
-locality_list = 80;
+% locality_list = 80;
 % locality_list = 90;
 % locality_list = 100;
 % locality_list = 120;
-% locality_list = 150;
+% locality_list = 160;
 % locality_list = 200;
 % locality_list = 1:2:15;
 % locality_list = 2:2:15;
@@ -78,6 +79,7 @@ locality_list = 80;
 % locality_list = [10 15 20 25 30 35 40 45];
 % locality_list = [25 30 35 40 45];
 % locality_list = 10:10:80;
+% locality_list = 90:10:160;
 % locality_list = 20:20:160;
 % locality_list = 80:20:160;
 % locality_list = [50 55];
@@ -93,6 +95,13 @@ locality_list = 80;
 % locality_list = [28 27];
 % locality_list = [30 31 32];
 % locality_list = [33 34 35];
+
+width_list = 0;
+% width_list = 1:4:20;
+% width_list = 10:20:30;
+% width_list = 10:10:50;
+% width_list = 20;
+% width_list = 400;
 
 rho_list = 0.6;
 % rho_list = 0.75;
@@ -129,6 +138,7 @@ for index_iter = 1:1
 % for index_iter = 2:10
 for rho = rho_list
 for locality_ = locality_list
+for width = width_list
 for train_steps = train_steps_list
 for jobid = jobid_list
     tic;
@@ -148,7 +158,8 @@ for jobid = jobid_list
     end
     
     % [num_reservoirs_per_worker, num_rem] = quorem(num_reservoirs, request_pool_size);
-    num_rem = 0;
+    num_rem = mod(num_reservoirs, request_pool_size);
+    num_reservoirs_per_worker = floor(num_reservoirs/request_pool_size);
     request_pool_size
     spmd(request_pool_size)
         % jobid = 3;
@@ -183,10 +194,10 @@ for jobid = jobid_list
             case 'KS'
                 n_kind_data = 1; n_kind_input = 0;
                 % L = 22; N = 64; 
-                L = 22; N = 840;
+                % L = 22; N = 840;
                 % L = 26; N = 840;
                 % L = 44; N = 832;
-                % L = 44; N = 840;
+                L = 44; N = 840;
                 % L = 50; N = 840;
                 % L = 66; N = 840;
                 % L = 88; N = 924;
@@ -360,7 +371,9 @@ for jobid = jobid_list
         chunk_end_data = chunk_size_data*l;
         chunk_end_input = chunk_size_input*l;
         
-        
+        reservoir_kind = 'spatial';
+        % reservoir_kind = 'uniform';
+
         % learn = 'RLS';
         % learn = 'LSM';
         learn = 'LSM_common';
@@ -414,10 +427,12 @@ for jobid = jobid_list
         overlap_size_data = length(rear_overlap_data) + length(forward_overlap_data); 
         overlap_size_input = length(rear_overlap_input) + length(forward_overlap_input); 
         
+        % approx_reservoir_size = 192 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 256 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 1680 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 2520 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 3360 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 3360 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 5880 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = (6720 + 840) / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 7560 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
@@ -540,7 +555,14 @@ for jobid = jobid_list
                                 fprintf('locality: %d\n', locality);
                                 rng(jobid+iter*2+dlocality);
                                 % [num_inputs2,~] = size(u.');
-                                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                                % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                                switch reservoir_kind
+                                    case 'uniform'
+                                        A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                                    case 'spatial'
+                                        loc = int32(num_inputs2/2/nodes_per_input/4);
+                                        A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
+                                end
                                 q = resparams.N/num_inputs2;
                                 
                                 win = zeros(resparams.N, num_inputs2);
@@ -824,7 +846,22 @@ for jobid = jobid_list
                     case 1
                         % rng(jobid+iter*2+dlocality);
                         % [num_inputs2,~] = size(u.');
-                        A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                        % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                        % loc = int32(num_inputs2 / 2) - 1;
+                        % loc = int32(num_inputs2/2/nodes_per_input) - 1;
+                        % loc = int32(num_inputs2/2/nodes_per_input/4);
+                        % A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
+                        
+                        switch reservoir_kind
+                            case 'uniform'
+                                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                            case 'spatial'
+                                % loc = 1;
+                                % loc = int32(num_inputs2/2/4);
+                                % loc = int32(num_inputs2/2/nodes_per_input/4);
+                                A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, width);
+                        end
+
                         q = resparams.N/num_inputs2;
                         
                         win = zeros(resparams.N, num_inputs2);
@@ -847,6 +884,8 @@ for jobid = jobid_list
                             win(beg:fin,i) = ip;
                             beg = fin + 1;
                         end
+                        win = sparse(win);
+                        % display('w_in');
 
                         % [num_inputs2,~] = size(u.');
                         % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
@@ -862,10 +901,12 @@ for jobid = jobid_list
                         % [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
                         states = reservoir_layer(A, win, data, resparams, train_in);
                         % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
+                        % display('reservoir layer');
                         
                         wout = fit(resparams, states, data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
                         x = states(:,end);
-                        
+                        % display('fit');
+
                         error = wout*states - data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
                         error = error .^ 2;
                         RMSE = sqrt(mean(mean(error)));
@@ -894,7 +935,8 @@ for jobid = jobid_list
                         x = labReceive();
                         % fprintf('finished receiving weights\n');
                 end
-                pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, pred_marker_array, sync_length, test_in);
+                display('start prediction');
+                pred_collect = res_predict(x, wout, A, win, transpose(test_u), resparams, jobid, locality, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, test_in);
                 % fprintf('calculated pred_collect of %d\n', l);
                 collated_prediction = gcat(pred_collect,1,1);
             case 'LSM'
@@ -931,7 +973,7 @@ for jobid = jobid_list
     approx_reservoir_size = approx_reservoir_size{1};
     locality = locality{1};
     num_workers = num_workers{1};
-    learn = learn{1};
+    learn = learn{1}; reservoir_kind = reservoir_kind{1};
     % jobid = jobid{1};
     % data_file = m{1};
     % test_file = tf{1};
@@ -1025,8 +1067,13 @@ for jobid = jobid_list
 %    filename = ['KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = ['/lustre/jpathak/KS100/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
-    filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_uniform_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
-    % filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+    switch reservoir_kind 
+        case 'uniform'
+            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+        case 'spatial'
+            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+    end
+            % filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     
     % if jobid == 1
@@ -1147,6 +1194,7 @@ for jobid = jobid_list
     % clear pred_marker_array which_index_iter rho_array locality_array;
     toc
     % close all;
+end
 end
 end
 end

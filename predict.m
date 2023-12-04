@@ -1,8 +1,46 @@
-function prediction = predict(w,w_out,x,w_in,pl,chunk_size,frontWkrIdx, rearWkrIdx,N, locality, num_kind_data, test_in)
-prediction = zeros(chunk_size,pl);
+function prediction = predict(w,w_out,x,w_in,pl,chunk_size,num_reservoirs_per_worker,frontWkrIdx, rearWkrIdx,N, locality, num_kind_data, test_in)
+prediction = zeros(num_reservoirs_per_worker*chunk_size,pl);
 inputExist = ~isempty(test_in); % inputがないなら0、あるなら1
-
-if locality > chunk_size
+if locality > 2 * chunk_size
+    secFrontWkrIdx = mod(frontWkrIdx, numlabs) + 1;
+    secRearWkrIdx = mod(rearWkrIdx-2, numlabs) + 1;
+    thiFrontWkrIdx = mod(frontWkrIdx+1, numlabs) + 1;
+    thiRearWkrIdx = mod(rearWkrIdx-3, numlabs) + 1;
+    % display(frontWkrIdx);
+    % display(rearWkrIdx);
+    % display(secFrontWkrIdx);
+    % display(secRearWkrIdx);
+    for i=1:pl
+        x_augment = x;
+        x_augment(2:2:N) = x_augment(2:2:N).^2;
+        out = (w_out)*x_augment;
+        if num_kind_data == 6
+            for k = 1:size(out, 1)/num_kind_data
+                nxyz = out((k-1)*num_kind_data+2:(k-1)*num_kind_data+4);
+                norm_ = norm(nxyz);
+                out((k-1)*num_kind_data+2:(k-1)*num_kind_data+4) = nxyz / 2 / norm_;
+            end
+        end
+        labBarrier;
+        rear_out = labSendReceive(frontWkrIdx, rearWkrIdx, out(end-chunk_size+1:end));
+        front_out = labSendReceive(rearWkrIdx, frontWkrIdx, out(1:chunk_size));
+        labBarrier;
+        second_rear_out = labSendReceive(secFrontWkrIdx, secRearWkrIdx, out(end-chunk_size+1:end));
+        second_front_out = labSendReceive(secRearWkrIdx, secFrontWkrIdx, out(1:chunk_size));
+        labBarrier;
+        third_rear_out = labSendReceive(thiFrontWkrIdx, thiRearWkrIdx, out(end-(locality*num_kind_data-2*chunk_size)+1:end));
+        third_front_out = labSendReceive(thiRearWkrIdx, thiFrontWkrIdx, out(1:(locality*num_kind_data-2*chunk_size)));
+        % fprintf('out: \n');
+        % display(size(out));
+        % display(size(front_out));
+        % display(size(rear_out));
+        % break;
+        feedback = vertcat(third_rear_out, second_rear_out, rear_out, out, front_out, second_front_out, third_front_out, test_in(:, (i):(i)*inputExist));
+        % display(size(feedback));
+        x = tanh(w*x + w_in*feedback); 
+        prediction(:,i) = out;
+    end
+elseif locality > chunk_size
     secFrontWkrIdx = mod(frontWkrIdx, numlabs) + 1;
     secRearWkrIdx = mod(rearWkrIdx-2, numlabs) + 1;
     % display(frontWkrIdx);

@@ -7,7 +7,7 @@
 % L = 400; N = 1024;
 % L = 400; N = 2048;
 % L = 800; N = 2048;
-data_kind = 'KS';
+% data_kind = 'KS';
 % L_list = [22 26 30 34 38 44 50 100 200 400 800];
 % N_list = [64 128 128 128 128 128 128 256 512 1024 2048];
 % L_list = [22 50 100 200 400 800];
@@ -24,6 +24,9 @@ N_list = [2048];
 % c1 = -2; c2 = 2;
 % c1 = -1; c2 = 2;
 c1 = 0; c2 = -3;
+
+data_kind = 'LCD';
+L_list = 5e-6; N_list = 100;
 figure();
 powers = zeros(1000, length(L_list));
 for k = 1:length(L_list)
@@ -34,10 +37,14 @@ for k = 1:length(L_list)
             load(['KS_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
         case 'CGL'
             load([data_kind '_L' num2str(L) '_N_' num2str(N) '_dps20000' 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']);
+        case 'LCD'
+            test_dir = 'LCD_data/data/test';
+            test_filename = [test_dir 'LCD_data.mat'];
+            load(test_filename); L = 5e-6; N = 100;
     end
     % test_input_sequence = test_input_sequence.';
     
-    sum_p = zeros(4096, 1);
+    % sum_p = zeros(4096, 1);
     naverage = 200;
     interval = 5;
     % interval = 20;
