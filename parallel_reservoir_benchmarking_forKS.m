@@ -96,7 +96,13 @@ locality_list = 0;
 % locality_list = [30 31 32];
 % locality_list = [33 34 35];
 
-width_list = 0;
+% width_list = 0;
+% width_list = 5;
+% width_list = [11:19];
+% width_list = 0:2:20;
+width_list = 20:2:60;
+% width_list = 0:5:20;
+% width_list = 25:5:60;
 % width_list = 1:4:20;
 % width_list = 10:20:30;
 % width_list = 10:10:50;
@@ -127,6 +133,7 @@ train_steps_list = 8e4;
 % rho_list = 0.2:1:1.7;
 % locality_list = 3:4:8;
 jobid_list = 1;
+% jobid_list = 1:3;
 % jobid_list = 2:5;
 % jobid_list = 1:5;
 % jobid_list = 6:10;
@@ -197,11 +204,11 @@ for jobid = jobid_list
                 % L = 22; N = 840;
                 % L = 26; N = 840;
                 % L = 44; N = 832;
-                L = 44; N = 840;
+                % L = 44; N = 840;
                 % L = 50; N = 840;
                 % L = 66; N = 840;
                 % L = 88; N = 924;
-                % L = 88; N = 840;
+                L = 88; N = 840;
                 % L = 100; N = 840;
                 % L = 25; N = 64;
                 % L = 50; N = 120;
@@ -1069,9 +1076,11 @@ for jobid = jobid_list
     % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     switch reservoir_kind 
         case 'uniform'
-            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            % filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
         case 'spatial'
-            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            % filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     end
             % filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
@@ -1185,7 +1194,7 @@ for jobid = jobid_list
     %% progress bar
     progress = progress + 1;
     % total = size(request_pool_size) * size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
-    total = size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
+    total = size(width_list, 2) * size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
     h = waitbar(progress/total,h,... 
     sprintf('progress: %d/%d', progress, total));
     % if mean(mean(diff.^2, 1)) > 2
@@ -1193,7 +1202,7 @@ for jobid = jobid_list
     % end
     % clear pred_marker_array which_index_iter rho_array locality_array;
     toc
-    % close all;
+    close all;
 end
 end
 end

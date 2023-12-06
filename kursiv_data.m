@@ -24,7 +24,7 @@ N = 64;
 % d = 200; % chaos
 % d = 100; % chaos
 % d = 90; % chaos
-% d = 88; % chaos
+d = 88; % chaos
 % d = 80; % chaos
 % d = 70; % chaos
 % d = 66; % chaos
@@ -45,7 +45,7 @@ N = 64;
 % d = 26; % chaos
 % d = 25; not 
 % d = 24; not
-d = 22; % chaos
+% d = 22; % chaos
 % d = 20; not chaos?
 % d = 6 * pi; ?
 % d = 11; not
@@ -102,11 +102,18 @@ uu = transpose(real(ifft(vv)));
 
 %%
 
-fig2 = figure('pos',[5 270 600 200],'color','w');
-imagesc(transpose(uu))
-shading flat;
-title(['KS' ' L=' num2str(d)]);
-colormap(jet);
+% fig2 = figure('pos',[5 270 600 200],'color','w');
+figure();
+uuu = uu(2000:4000, :);
+[n_steps, n_data] = size(uuu);
+% imagesc(transpose(uu))
+% shading flat;
+locs = repmat(x, 1, n_steps);
+times = repmat(h:h:n_steps*h, n_data, 1);
+surf(locs, times, transpose(uuu));
+view(90, 90); shading interp; axis tight;
+title(['L=' num2str(d)]); xlabel('x'); ylabel('t');
+colormap(jet); fontsize(16, 'points');
 colorbar;
 
 %%

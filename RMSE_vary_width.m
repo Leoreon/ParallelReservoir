@@ -5,9 +5,13 @@
 % locality = 50;
 % num_workers_list = 2:8;
 
-% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 1:4:20;
+% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0:5:60];
+% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0:20 25:5:60];
+% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:20;
 % L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [20 100 200 400];
-L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 10:10:50;
+% L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0 5 10:10:50];
+% L = 66; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:20;
+L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2:20;
 
 % L = 22; Ntotal = 15120; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 22; Ntotal = 5040; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
@@ -31,6 +35,7 @@ L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 10:
 % L = 88; Ntotal = 5040; locality_list = [15 50 70]; num_workers_list = 15;
 jobid_list = 1;
 % jobid_list = 2;
+% jobid_list = 1:3;
 % jobid_list = [2 3 4 6];
 % jobid_list = 2:5;
 % jobid_list = 1:5;
@@ -71,7 +76,8 @@ for h = 1:length(num_workers_list)
                 case 'uniform'
                     filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
                 case 'spatial'
-                    filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+                    % filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+                    filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_' reservoir_kind '_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
             end
             load(filename, 'error')
             
@@ -114,7 +120,7 @@ end
 %}
 
 figure();
-plot(width_list/n_data*L, T_list(h, :), 'DisplayName', ['num=' num2str(num_workers)]);
+plot(width_list/Ntotal*L, T_list(h, :), 'DisplayName', ['num=' num2str(num_workers)]);
 
 sgtitle(['L=' num2str(L) ', Ntotal=' num2str(Ntotal)]);
 xlabel('width (space)'); %xlabel('locality'); 
