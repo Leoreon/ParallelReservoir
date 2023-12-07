@@ -1,5 +1,5 @@
 function A = generate_spatial_reservoir(N, radius, degree, labindex, jobid, nodes_per_input, locality)
-display('start generate_spatial_reservoir');
+% display('start generate_spatial_reservoir');
 rng(labindex+jobid)
 
 % locality = 10;
@@ -35,4 +35,4 @@ e = max(abs(eigs(A)));
 
 A = (A./e).*radius;
 % A = sparse(A);
-display('end generate_spatial_reservoir');
+% display('end generate_spatial_reservoir');

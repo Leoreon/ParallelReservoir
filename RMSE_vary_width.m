@@ -11,7 +11,10 @@
 % L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [20 100 200 400];
 % L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0 5 10:10:50];
 % L = 66; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:20;
-L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2:20;
+
+
+% L = 44; Ntotal = 1680; locality_list = 0; num_workers_list = 1; width_list = 0:4:120;
+L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2:60;
 
 % L = 22; Ntotal = 15120; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 22; Ntotal = 5040; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];

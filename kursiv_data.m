@@ -8,6 +8,7 @@ clear;
 % rng(3);
 rng(1);
 % N = 2048;
+N = 1680;
 % N = 1024;
 % N = 840;
 % N = 832;
@@ -18,13 +19,13 @@ rng(1);
 % N = 192;
 % N = 128;
 % N = 120;
-N = 64;
+% N = 64;
 % d = 800; % chaos
 % d = 400; % chaos
 % d = 200; % chaos
 % d = 100; % chaos
 % d = 90; % chaos
-d = 88; % chaos
+% d = 88; % chaos
 % d = 80; % chaos
 % d = 70; % chaos
 % d = 66; % chaos
@@ -32,7 +33,7 @@ d = 88; % chaos
 % d = 55;
 % d = 50; % chaos (choi ayashii)
 % d = 52;
-% d = 44; % chaos
+d = 44; % chaos
 % d = 42; not?
 % d = 40; not
 % d = 38; % chaos
