@@ -1,4 +1,5 @@
-function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, locality, n_kind_data, chunk_size, nodes_per_input, train_in)
+% function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, locality, n_kind_data, chunk_size, nodes_per_input, train_in)
+function [x, wout, A, win, RMSE] = train_reservoir(resparams, data, labindex, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size, nodes_per_input, train_in)
 
 [num_inputs,~] = size([data; train_in]);
 % [num_inputs,~] = size(data);
@@ -7,7 +8,6 @@ A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex
 % q = resparams.N/num_inputs;
 
 win = zeros(resparams.N, num_inputs);
-% display(size(win));
 n_additional = rem(resparams.N, num_inputs);
 nodes_per_in = floor(double(resparams.N) / double(num_inputs));
 % display('eee');
@@ -26,7 +26,7 @@ for i=1:num_inputs
     win(beg:fin,i) = ip;
     beg = fin + 1;
 end
-
+% display(size(win));
 % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
 % % A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input);
 % q = resparams.N/num_inputs;
@@ -54,11 +54,13 @@ win = sparse(win);
 states = reservoir_layer(A, win, data, resparams, train_in);
 
 % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
-
-wout = fit(resparams, states, data(n_kind_data*locality+1:n_kind_data*locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
-
+% display(size(states));
+% display(size(data));
+% wout = fit(resparams, states, data(n_kind_data*locality+1:n_kind_data*locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
+wout = fit(resparams, states, data(rear_locality_data+1:rear_locality_data+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
+% display(size(wout));
 x = states(:,end);
 
-error = wout*states - data(n_kind_data*locality+1:n_kind_data*locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+error = wout*states - data(rear_locality_data+1:rear_locality_data+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
 error = error .^ 2;
 RMSE = sqrt(mean(mean(error)));

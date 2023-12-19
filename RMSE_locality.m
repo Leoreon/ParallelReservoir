@@ -99,7 +99,7 @@
 % Ntotal = 5040;
 % locality = 50;
 % num_workers_list = 2:8;
-L = 22; Ntotal = 1680; locality = 100; num_workers_list = [2 3 4 5 6]; % num_workers_list = [3 4 5 6];
+L = 22; N=840; Ntotal = 1680; locality = 100; num_workers_list = [2 3 4 5 6]; % num_workers_list = [3 4 5 6];
 % L = 22; Ntotal = 2520; locality = 100; num_workers_list = [3 5 6 7 8]; % num_workers_list = [3 5 6 7 8];
 % L = 22; Ntotal = 5040; locality = 100; num_workers_list = [1 2 3 4 6 8];
 % L = 26; Ntotal = 3360; locality = 100; num_workers_list = [2 6 8];
@@ -134,8 +134,10 @@ pred_length = 2499; num_pred = 20;
 figure();
 lineWidth = 1.5;
 dt = 1/4; max_lyapunov = 0.0743;
-n_steps = size(trajectories_true, 2);
-n_data = size(trajectories_true, 1);
+% n_steps = size(trajectories_true, 2);
+% n_data = size(trajectories_true, 1);
+n_data = N;
+n_steps = 49980;
 times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
 locations = repmat((1:n_data).', 1, n_steps);
 for num_workers = num_workers_list

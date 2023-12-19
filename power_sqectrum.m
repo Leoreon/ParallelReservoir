@@ -7,15 +7,17 @@
 % L = 400; N = 1024;
 % L = 400; N = 2048;
 % L = 800; N = 2048;
-% data_kind = 'KS';
+data_kind = 'KS';
 % L_list = [22 26 30 34 38 44 50 100 200 400 800];
 % N_list = [64 128 128 128 128 128 128 256 512 1024 2048];
 % L_list = [22 50 100 200 400 800];
 % N_list = [64 128 256 512 1024 2048];
-% L_list = [22 44 66 88];
-% N_list = [840 840 840 840];
-L_list = [22];
-N_list = [2048];
+% L_list = [22 44 66 88 200 400];
+% N_list = [840 840 840 840 512 1024];
+L_list = [22 26 30 34 38 44 50];
+N_list = [64 128 128 128 128 128 128];
+% L_list = [22];
+% N_list = [2048];
 
 % data_kind = 'CGL';
 % L_list = [50 100 200];
@@ -25,8 +27,8 @@ N_list = [2048];
 % c1 = -1; c2 = 2;
 c1 = 0; c2 = -3;
 
-data_kind = 'LCD';
-L_list = 5e-6; N_list = 100;
+% data_kind = 'LCD';
+% L_list = 5e-6; N_list = 100;
 figure();
 powers = zeros(1000, length(L_list));
 for k = 1:length(L_list)

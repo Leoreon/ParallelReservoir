@@ -5,16 +5,26 @@
 % locality = 50;
 % num_workers_list = 2:8;
 
-% L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0:5:60];
+% L = 22; Ntotal = 3360; N=840; locality_list = 0; num_workers_list = 1; width_list = [0:5:60];
 % L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0:20 25:5:60];
 % L = 22; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:20;
 % L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [20 100 200 400];
 % L = 44; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = [0 5 10:10:50];
 % L = 66; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:20;
 
+%% spatial
+% L = 22; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 0:100:2500; N = 64; jobid_list = 1:5;
+L = 22; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 0:100:2500; N = 64; jobid_list = 5;
+% L = 44; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 0:100:2500; N = 128; jobid_list = 1;
 
+%% parallel and spatial
+% L = 22; Ntotal = 5040; locality_list = 80; num_workers_list = 6; width_list = 0:100:800; N = 840; jobid_list = 1;
+
+% L = 22; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 1:20; N = 64;
+% L = 22; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 0:50:800; N = 64;
+% L = 22; Ntotal = 5040; locality_list = 0; num_workers_list = 1; width_list = 1:20;
 % L = 44; Ntotal = 1680; locality_list = 0; num_workers_list = 1; width_list = 0:4:120;
-L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2:60;
+% L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2:60;
 
 % L = 22; Ntotal = 15120; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % L = 22; Ntotal = 5040; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8 10]; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
@@ -36,7 +46,7 @@ L = 88; Ntotal = 3360; locality_list = 0; num_workers_list = 1; width_list = 0:2
 % L = 52; Ntotal = 80016; locality = 6; num_workers_list = [16];
 % L = 66; Ntotal = 15120; locality = 50; num_workers_list = [3 6 12];
 % L = 88; Ntotal = 5040; locality_list = [15 50 70]; num_workers_list = 15;
-jobid_list = 1;
+% jobid_list = 1;
 % jobid_list = 2;
 % jobid_list = 1:3;
 % jobid_list = [2 3 4 6];
@@ -58,12 +68,15 @@ pred_length = 2499; num_pred = 20;
 lineWidth = 1.5;
 reservoir_kind = 'spatial';
 dt = 1/4; max_lyapunov = 0.0743;
-n_steps = size(trajectories_true, 2);
-n_data = size(trajectories_true, 1);
+% n_steps = size(trajectories_true, 2);
+n_steps = 49980;
+% n_data = size(trajectories_true, 1);
+n_data = N;
 times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
 locations = repmat((1:n_data).', 1, n_steps);
 threshold = 0.30;
 T_list = zeros(length(num_workers_list), length(locality_list));
+locality = locality_list(1);
 for h = 1:length(num_workers_list)
     num_workers = num_workers_list(h);
     figure();

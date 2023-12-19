@@ -10,18 +10,20 @@
 
 
 clear;
-% d = 22;  %domain size/periodicity length (denoted by L in Pathak et al)
+d = 22;  %domain size/periodicity length (denoted by L in Pathak et al)
 % d = 25;  %domain size/periodicity length (denoted by L in Pathak et al)
-d = 50;  %domain size/periodicity length (denoted by L in Pathak et al)
+% d = 50;  %domain size/periodicity length (denoted by L in Pathak et al)
 % d = 60;  %domain size/periodicity length (denoted by L in Pathak et al)
-% N = 64; % discretization grid size (denoted by Q)
-N = 128; % discretization grid size (denoted by Q)
-    
+N = 64; % discretization grid size (denoted by Q)
+% N = 128; % discretization grid size (denoted by Q)
+% N = 840;
+
 x = d*(-N/2+1:N/2)'/N;
 
 
 rng('shuffle')
-delta = 0.1;  % \mu in Eq. (7) REF 1. (set delta = 0 for the standard spatially homogeneous KS equation)
+% delta = 0.1;  % \mu in Eq. (7) REF 1. (set delta = 0 for the standard spatially homogeneous KS equation)
+delta = 0.0;  % \mu in Eq. (7) REF 1. (set delta = 0 for the standard spatially homogeneous KS equation)
 wavelength = d/4;  % \lambda in Eq. (7) REF 1. (sets the spatial inhomgeneity wavelength)
 omega = 2*pi/wavelength;
 p = delta.*cos(omega.*x);
@@ -32,7 +34,8 @@ pxx = -(omega^2).*p;
 u = 0.6*(-1+2*rand(size(x)));
 v = fft(u);
 
-num_lyaps = 40;  
+% num_lyaps = 40;
+num_lyaps = 60;  
 
 Y = orth(rand(N,num_lyaps));
 
@@ -150,8 +153,8 @@ max(spectrum)
 f = figure();
 pl = plot(spectrum, 'x'); pl.MarkerEdgeColor = 'r';
 % pl = plot(spectrum, '+'); pl.MarkerEdgeColor = 'r';
-refline([0,0]);
-xlabel('k'); ylabel('k-th largest lyapunov exponent'); fontsize(16, 'points');
+refline([0,0]); grid on;
+xlabel('j'); ylabel('\Lambda_j'); title('j-th largest lyapunov exponent'); fontsize(16, 'points');
 print(gcf,'-djpeg','KS/KS_lyapunov_L50.jpg','-r600');
 filename = strcat('L', num2str(d),'asym_m_delta', num2str(100*delta), 'wl', num2str(wavelength), 'numl', num2str(num_lyaps), '.mat');
 save(filename, 'spectrum', 'spec_sum', 'ky_point', 'kydim', 'Rii', 'delta', 'wavelength');

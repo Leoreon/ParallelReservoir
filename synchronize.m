@@ -9,6 +9,7 @@ else
     all_data = data;
 end
 % display(size(all_data));
+% display(size(w_in));
 % display(size(W));
 % display(size(x));
 for i=1:sync_length

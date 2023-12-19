@@ -1,6 +1,6 @@
 function A = generate_reservoir(size, radius, degree, labindex, jobid)
 
-rng(labindex+jobid)
+% rng(labindex+jobid)
 
 sparsity = degree/size;
 

@@ -1,5 +1,5 @@
 % function prediction = predict(w,w_out,x,w_in,pl,chunk_size,num_reservoirs_per_worker,frontWkrIdx, rearWkrIdx,N, locality, num_kind_data, test_in)
-function prediction = predict(w,w_out,x,w_in,pl,chunk_size,num_reservoirs_per_worker,frontWkrIdx, rearWkrIdx,N, rear_locality_data, forward_locality_data, num_kind_data, test_in)
+function prediction = predict_GD(w,w_out,x,w_in,pl,chunk_size,num_reservoirs_per_worker,frontWkrIdx, rearWkrIdx,N, rear_locality_data, forward_locality_data, num_kind_data, test_in)
 % display('start predict');
 prediction = zeros(num_reservoirs_per_worker*chunk_size,pl);
 inputExist = ~isempty(test_in); % inputがないなら0、あるなら1
