@@ -62,7 +62,7 @@ learn = 'LSM_common';
 % learn = 'LSM_GD_training_error';
 % learn = 'LSM_GD_short_prediction_time';
 
-data_kind = 'KS';
+% data_kind = 'KS';
 % data_kind = 'NLKS';
 % data_kind = 'CGL';
 % data_kind = 'NLCGL';

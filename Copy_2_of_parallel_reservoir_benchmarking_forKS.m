@@ -11,9 +11,9 @@ clear
 % request_pool_size_list = 2;
 % request_pool_size_list = 3;
 % request_pool_size_list = 4;
-% request_pool_size_list = 5;
+request_pool_size_list = 5;
 % request_pool_size_list = 6;
-request_pool_size_list = 7;
+% request_pool_size_list = 7;
 % request_pool_size_list = 8;
 % request_pool_size_list = 10;
 % request_pool_size_list = 11;
@@ -80,7 +80,7 @@ data_kind = 'KS';
 % locality_list = 12;
 % locality_list = 16;
 % locality_list = 18;
-locality_list = 20;
+% locality_list = 20;
 % locality_list = 30;
 % locality_list = 35;
 % locality_list = 40;
@@ -94,7 +94,7 @@ locality_list = 20;
 % locality_list = 120;
 % locality_list = 160;
 % locality_list = 200;
-% locality_list = 300;
+locality_list = 300;
 % locality_list = 1:2:15;
 % locality_list = 2:2:15;
 % locality_list = [100 150 200];
@@ -681,6 +681,8 @@ for jobid = jobid_list
         switch learn
             case 'LSM_GD_training_error'
                 current_locality = locality_array;
+                % algo = 'Newton';
+                algo = 'Adam';
                 max_iter = 30;
                 % max_iter = 15;
                 % max_iter = 10;
@@ -699,18 +701,24 @@ for jobid = jobid_list
                             fprintf('\n------------------------------\n');  
                             fprintf('iter%d->\n', iter);
                     end
-                    l_list(iter) = locality;
-                    currentAndNextT = zeros(1, 2);
-                    currentAndNextRMSE = zeros(1, 2);
-                    % del_locality = 1;
-                    del_locality = 3;
+                    del_locality = 1;
+                    % del_locality = 3;
                     % del_locality = 5;
                     % delta_locality = 15;
                     % delta_locality = 15;
-                    dlocality_list = [0 del_locality];
+                    switch algo
+                        case 'Adam'
+                            dlocality_list = [0 del_locality];
+                        case 'Newton'
+                            dlocality_list = [-del_locality 0 del_locality];
+                    end
                     % dlocality_list = [0 20];
+                    l_list(iter) = locality;
+                    currentAndNextT = zeros(1, length(dlocality_list));
+                    currentAndNextRMSE = zeros(1, length(dlocality_list));
                     % for dlocality_index = 1:2
-                    for dlocality_index = 2:-1:1
+                    % for dlocality_index = 2:-1:1
+                    for dlocality_index = length(dlocality_list):-1:1
                         dlocality = dlocality_list(dlocality_index);
                         locality = current_locality + dlocality;
                         % display(locality);
@@ -729,7 +737,7 @@ for jobid = jobid_list
                                 A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
                         end
                         switch dlocality_index
-                            case 2
+                            case length(dlocality_list)
                                 q = resparams.N/num_inputs2;
                                 
                                 win = zeros(resparams.N, num_inputs2);
@@ -755,7 +763,7 @@ for jobid = jobid_list
                                 % display('finish defining reservoirs');
                                 % display(size(win));
                                 % display(size(A));
-                            case 1
+                            otherwise
                                 % win = [];
                                 win = win(:, del_locality+1:end-del_locality);
                         end
@@ -796,75 +804,103 @@ for jobid = jobid_list
                     end
                     % display('bb');
                     % locality = locality - dlocality;
-                    currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
-                    currentRMSE = mean(currentAndNextRMSE(:, 1), 1);
-                    E_list(iter) = currentRMSE;
-                    l_list(iter) = current_locality;
-                    nextRMSE = mean(currentAndNextRMSE(:, 2), 1);
-                    gradE = (nextRMSE - currentRMSE) / del_locality;
                     
-                    % currentAndNextT = gcat(currentAndNextT, 1); 
-                    % T_list(iter) = mean(currentAndNextT(:, 1), 1); 
-                    % % T_list(iter) = mean(currentAndNextT(1:2:end), 1); 
-                    % % nextT = mean(currentAndNextT(2:2:end), 1); 
-                    % nextT = mean(currentAndNextT(:, 2), 1); 
-                    % % currentT = mean(currentAndNextT(1:2:end), 1); 
-                    % currentT = mean(currentAndNextT(:, 1), 1); 
-                    % gradT = nextT - currentT;
-                    switch l
-                        case 1
-                            % fprintf('\n------------------------------\n');
-                            % fprintf('iter%d->\n', iter); 
-                                    
-                            % fprintf('  locality:%d\n', locality-1);
-                            % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
-                            % fprintf('  gradE: %f\n', gradT);
-                            fprintf('  E(%d)=%f\n  T(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE);
-                            fprintf('  gradE: %f\n', gradE);
+                    switch algo
+                        case 'Adam'
+                            E_list(iter) = currentAndNextRMSE(1);
+                            l_list(iter) = current_locality;
+                            currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
+                            currentRMSE = mean(currentAndNextRMSE(:, 1), 1);
+                            
+                            nextRMSE = mean(currentAndNextRMSE(:, 2), 1);
+                            gradE = (nextRMSE - currentRMSE) / del_locality;
+                            
+                            % currentAndNextT = gcat(currentAndNextT, 1); 
+                            % T_list(iter) = mean(currentAndNextT(:, 1), 1); 
+                            % % T_list(iter) = mean(currentAndNextT(1:2:end), 1); 
+                            % % nextT = mean(currentAndNextT(2:2:end), 1); 
+                            % nextT = mean(currentAndNextT(:, 2), 1); 
+                            % % currentT = mean(currentAndNextT(1:2:end), 1); 
+                            % currentT = mean(currentAndNextT(:, 1), 1); 
+                            % gradT = nextT - currentT;
+                            switch l
+                                case 1
+                                    % fprintf('\n------------------------------\n');
+                                    % fprintf('iter%d->\n', iter); 
+                                            
+                                    % fprintf('  locality:%d\n', locality-1);
+                                    % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
+                                    % fprintf('  gradE: %f\n', gradT);
+                                    fprintf('  E(%d)=%f\n  E(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE);
+                                    fprintf('  gradE: %f\n', gradE);
+                            end
+                            % delta_locality = int32(150/(5+5*iter)); N = 840;
+                            % delta_locality = int32(200/(3+1*iter)); N = 840;
+                            % delta_locality = int32(300/(10+1*iter)); N = 840;
+        
+                            % delta_locality = int32(100/(1+1*iter)); % N = 840;
+                            % delta_locality = sqrt(gradE^2);
+                            % delta_locality = round(300/(10+1*iter)); N = 840;
+                            delta_locality = 100;
+                            alpha = 50;
+                            % alpha = 10;
+                            % alpha = 1;
+                            beta1 = 0.5; beta2 = 0.6;
+                            % delta_locality = int32(600/(20+2*iter)); N = 840;
+                            % delta_locality = 5;
+                            % delta_locality = 1;
+                            % delta_locality = int32(50/(5+5*iter)); % N = 64;
+                            % delta_locality = int32(15/(4+1*iter)); % N = 64;
+                            % delta_locality = 20;
+                            % display(delta_locality);
+                            % display(10/iter);
+        
+                            if gradE > 0
+                                G = - min(locality-1, delta_locality);
+                                % locality = locality - min(locality-1, delta_locality);
+                                % fprintf('decrease locality to %d\n', locality);
+                            else
+                                G = delta_locality;
+                                % locality = locality + delta_locality;
+                                % fprintf('increase locality to %d\n', locality);
+                            end
+                            epsilon = 1e-12;
+                            s_t = beta2 * s_t + (1-beta2) * G^2;
+                            nu_t = beta1 * nu_t + (1-beta1) * G;
+                            % display(s_t);
+                            switch l
+                                case 1
+                                    fprintf('update %d\n', round(alpha*nu_t / sqroot(s_t+epsilon)));
+                            end
+        
+                            d_current_locality = round(alpha * nu_t / sqroot(s_t+epsilon));
+                            
+                            current_locality = current_locality + d_current_locality;
+                        case 'Newton'
+                            currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
+                            beforeRMSE = mean(currentAndNextRMSE(:, 1));
+                            currentRMSE = mean(currentAndNextRMSE(:, 2), 1);
+                            nextRMSE = mean(currentAndNextRMSE(:, 3), 1);
+                            
+                            E_list(iter) = currentRMSE;
+                            l_list(iter) = current_locality;
+                            % gradE = (nextRMSE - currentRMSE) / del_locality;
+                            d2fdt2 = ((nextRMSE-currentRMSE) - (currentRMSE-beforeRMSE)) / del_locality^2;
+                            dfdt = (nextRMSE-beforeRMSE) / del_locality;
+                            switch l
+                                case 1
+                                    % fprintf('\n------------------------------\n');
+                                    % fprintf('iter%d->\n', iter); 
+                                            
+                                    % fprintf('  locality:%d\n', locality-1);
+                                    % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
+                                    % fprintf('  gradE: %f\n', gradT);
+                                    fprintf('  E(%d)=%f\n  E(%d)=%f\n  E(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE, current_locality-del_locality, beforeRMSE);
+                                    fprintf(' dEdl = %f \n  d^2Edl^2 = %f \n', dfdt, d2fdt2);
+                                    fprintf("update %f\n", - dfdt / d2fdt2);
+                            end
+                            current_locality = current_locality - round(dfdt / d2fdt2);
                     end
-                    
-                    % delta_locality = int32(150/(5+5*iter)); N = 840;
-                    % delta_locality = int32(200/(3+1*iter)); N = 840;
-                    % delta_locality = int32(300/(10+1*iter)); N = 840;
-
-                    % delta_locality = int32(100/(1+1*iter)); % N = 840;
-                    % delta_locality = sqrt(gradE^2);
-                    % delta_locality = round(300/(10+1*iter)); N = 840;
-                    delta_locality = 100;
-                    alpha = 50;
-                    % alpha = 10;
-                    % alpha = 1;
-                    beta1 = 0.5; beta2 = 0.6;
-                    % delta_locality = int32(600/(20+2*iter)); N = 840;
-                    % delta_locality = 5;
-                    % delta_locality = 1;
-                    % delta_locality = int32(50/(5+5*iter)); % N = 64;
-                    % delta_locality = int32(15/(4+1*iter)); % N = 64;
-                    % delta_locality = 20;
-                    % display(delta_locality);
-                    % display(10/iter);
-
-                    if gradE > 0
-                        G = - min(locality-1, delta_locality);
-                        % locality = locality - min(locality-1, delta_locality);
-                        % fprintf('decrease locality to %d\n', locality);
-                    else
-                        G = delta_locality;
-                        % locality = locality + delta_locality;
-                        % fprintf('increase locality to %d\n', locality);
-                    end
-                    epsilon = 1e-12;
-                    s_t = beta2 * s_t + (1-beta2) * G^2;
-                    nu_t = beta1 * nu_t + (1-beta1) * G;
-                    % display(s_t);
-                    switch l
-                        case 1
-                            fprintf('update %d\n', round(alpha*nu_t / sqroot(s_t+epsilon)));
-                    end
-
-                    d_current_locality = round(alpha * nu_t / sqroot(s_t+epsilon));
-                    
-                    current_locality = current_locality + d_current_locality;
                     if current_locality < 0
                         current_locality = 0;
                     % elseif current_locality > 840
