@@ -80,7 +80,7 @@ data_kind = 'KS';
 % locality_list = 12;
 % locality_list = 16;
 % locality_list = 18;
-% locality_list = 20;
+locality_list = 20;
 % locality_list = 30;
 % locality_list = 35;
 % locality_list = 40;
@@ -94,7 +94,7 @@ data_kind = 'KS';
 % locality_list = 120;
 % locality_list = 160;
 % locality_list = 200;
-locality_list = 300;
+% locality_list = 300;
 % locality_list = 1:2:15;
 % locality_list = 2:2:15;
 % locality_list = [100 150 200];
@@ -680,7 +680,7 @@ for jobid = jobid_list
         % fprintf('start learning %s\n', learn);
         switch learn
             case 'LSM_GD_training_error'
-                locality = locality_array;
+                current_locality = locality_array;
                 max_iter = 30;
                 % max_iter = 15;
                 % max_iter = 10;
@@ -702,16 +702,17 @@ for jobid = jobid_list
                     l_list(iter) = locality;
                     currentAndNextT = zeros(1, 2);
                     currentAndNextRMSE = zeros(1, 2);
-                    % delta_locality = 1;
-                    delta_locality = 5;
+                    % del_locality = 1;
+                    del_locality = 3;
+                    % del_locality = 5;
                     % delta_locality = 15;
                     % delta_locality = 15;
-                    dlocality_list = [0 delta_locality];
+                    dlocality_list = [0 del_locality];
                     % dlocality_list = [0 20];
-                    for dlocality_index = 1:2
-                    % for dlocality = 2:-1:1
+                    % for dlocality_index = 1:2
+                    for dlocality_index = 2:-1:1
                         dlocality = dlocality_list(dlocality_index);
-                        locality = locality + dlocality;
+                        locality = current_locality + dlocality;
                         % display(locality);
                         num_inputs2 = chunk_size_data + 2 * (n_kind_data + n_kind_input) * locality;
                         
@@ -727,31 +728,38 @@ for jobid = jobid_list
                                 loc = int32(num_inputs2/2/nodes_per_input/4);
                                 A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
                         end
-                        q = resparams.N/num_inputs2;
-                        
-                        win = zeros(resparams.N, num_inputs2);
-                        % display(size(win));
-                        n_additional = rem(resparams.N, num_inputs2);
-                        nodes_per_in = floor(double(resparams.N) / double(num_inputs2));
-                        % display('eee');
-                        add_id = randsample(num_inputs2, n_additional);
-                        % display('eeeq');
-                        nodes_list = double(nodes_per_in) * ones(1, num_inputs2);
-                        % display('fff');
-                        nodes_list(add_id) = nodes_list(add_id) + 1;
-                        beg = 1;
-                        for i=1:num_inputs2
-                            rng(i)
-                            % ip = (-1 + 2*rand(q,1));
-                            % win((i-1)*q+1:i*q,i) = ip;
-                            ip = (-1 + 2*rand(nodes_list(i), 1));
-                            fin = beg + nodes_list(i)-1;
-                            win(beg:fin,i) = ip;
-                            beg = fin + 1;
+                        switch dlocality_index
+                            case 2
+                                q = resparams.N/num_inputs2;
+                                
+                                win = zeros(resparams.N, num_inputs2);
+                                % display(size(win));
+                                n_additional = rem(resparams.N, num_inputs2);
+                                nodes_per_in = floor(double(resparams.N) / double(num_inputs2));
+                                % display('eee');
+                                add_id = randsample(num_inputs2, n_additional);
+                                % display('eeeq');
+                                nodes_list = double(nodes_per_in) * ones(1, num_inputs2);
+                                % display('fff');
+                                nodes_list(add_id) = nodes_list(add_id) + 1;
+                                beg = 1;
+                                for i=1:num_inputs2
+                                    rng(i)
+                                    % ip = (-1 + 2*rand(q,1));
+                                    % win((i-1)*q+1:i*q,i) = ip;
+                                    ip = (-1 + 2*rand(nodes_list(i), 1));
+                                    fin = beg + nodes_list(i)-1;
+                                    win(beg:fin,i) = ip;
+                                    beg = fin + 1;
+                                end
+                                % display('finish defining reservoirs');
+                                % display(size(win));
+                                % display(size(A));
+                            case 1
+                                % win = [];
+                                win = win(:, del_locality+1:end-del_locality);
                         end
-                        % display('finish defining reservoirs');
-                        % display(size(win));
-                        % display(size(A));
+
                         win = sparse(win);
 
                         rear_locality_data = n_kind_data * locality;
@@ -787,13 +795,14 @@ for jobid = jobid_list
                         % display(locality)
                     end
                     % display('bb');
-                    locality = locality - dlocality;
+                    % locality = locality - dlocality;
                     currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
                     currentRMSE = mean(currentAndNextRMSE(:, 1), 1);
                     E_list(iter) = currentRMSE;
+                    l_list(iter) = current_locality;
                     nextRMSE = mean(currentAndNextRMSE(:, 2), 1);
-                    gradE = (nextRMSE - currentRMSE) / dlocality;
-
+                    gradE = (nextRMSE - currentRMSE) / del_locality;
+                    
                     % currentAndNextT = gcat(currentAndNextT, 1); 
                     % T_list(iter) = mean(currentAndNextT(:, 1), 1); 
                     % % T_list(iter) = mean(currentAndNextT(1:2:end), 1); 
@@ -810,18 +819,22 @@ for jobid = jobid_list
                             % fprintf('  locality:%d\n', locality-1);
                             % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
                             % fprintf('  gradE: %f\n', gradT);
-                            fprintf('  E(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextRMSE, locality, currentRMSE);
+                            fprintf('  E(%d)=%f\n  T(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE);
                             fprintf('  gradE: %f\n', gradE);
                     end
-
+                    
                     % delta_locality = int32(150/(5+5*iter)); N = 840;
                     % delta_locality = int32(200/(3+1*iter)); N = 840;
                     % delta_locality = int32(300/(10+1*iter)); N = 840;
 
                     % delta_locality = int32(100/(1+1*iter)); % N = 840;
                     % delta_locality = sqrt(gradE^2);
-                    delta_locality = round(300/(10+1*iter)); N = 840;
-                    beta1 = 0.2; beta2 = 0.2;
+                    % delta_locality = round(300/(10+1*iter)); N = 840;
+                    delta_locality = 100;
+                    alpha = 50;
+                    % alpha = 10;
+                    % alpha = 1;
+                    beta1 = 0.5; beta2 = 0.6;
                     % delta_locality = int32(600/(20+2*iter)); N = 840;
                     % delta_locality = 5;
                     % delta_locality = 1;
@@ -842,15 +855,21 @@ for jobid = jobid_list
                     end
                     epsilon = 1e-12;
                     s_t = beta2 * s_t + (1-beta2) * G^2;
-                    alpha = 1;
                     nu_t = beta1 * nu_t + (1-beta1) * G;
                     % display(s_t);
                     switch l
                         case 1
-                            fprintf('update %d\n', int32(nu_t / sqroot(s_t+epsilon)));
+                            fprintf('update %d\n', round(alpha*nu_t / sqroot(s_t+epsilon)));
                     end
-                    locality = locality + round(alpha * nu_t / sqroot(s_t+epsilon));
+
+                    d_current_locality = round(alpha * nu_t / sqroot(s_t+epsilon));
                     
+                    current_locality = current_locality + d_current_locality;
+                    if current_locality < 0
+                        current_locality = 0;
+                    % elseif current_locality > 840
+                    %     current_locality = 1;
+                    end
                     % switch l
                     %     case 1
                     %         labBarrier;
@@ -877,6 +896,7 @@ for jobid = jobid_list
                     % dsave filename pred_collect error diff resparams
                     % display(filename);
                 end
+                
             case 'LSM_GD_short_prediction_time'
                 locality = locality_array;
                 % max_iter = 20;

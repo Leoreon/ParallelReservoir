@@ -23,7 +23,7 @@
 %% 
 
 %% 完了
-data_kind = 'KS'; L = 22; dt = 1/4; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+data_kind = 'KS'; L = 22; dt = 1/4; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1:3; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS'; L = 44; dt = 1/4; Ntotal = 10080; N=1680; train_steps = 80000; locality_list = 20:20:280; num_workers_list = 4:2:16; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow'; dt = 1/8; L = 22; Ntotal = 5040; N=840; train_steps = 160000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow_short'; dt = 1/8; L = 22; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];

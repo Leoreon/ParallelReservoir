@@ -90,13 +90,13 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = [25 30 35 40 45];
 % locality_list = 10:10:80;
 % locality_list = 90:10:160;
-% locality_list = 20:20:280;
+locality_list = 20:20:280;
 % locality_list = 20:20:160;
 % locality_list = 160:-20:20;
 % locality_list = 180:20:280;
 % locality_list = 240:20:280;
 % locality_list = 40:20:100;
-locality_list = 40:130;
+% locality_list = 40:130;
 % locality_list = 80:20:160;
 % locality_list = [50 55];
 % locality_list = 20:5:60;
@@ -162,8 +162,8 @@ train_steps_list = 8e4;
 % jobid_list = 1:3;
 % jobid_list = 4;
 % jobid_list = 2:3;
-% jobid_list = 2:5;
-jobid_list = 1:5;
+jobid_list = 2:5;
+% jobid_list = 1:5;
 % jobid_list = 6:10;
 % jobid_list = 5;
 % jobid_list = [1 2 5];
@@ -202,9 +202,9 @@ for jobid = jobid_list
         % jobid = 3;
         % jobid = 1;
         
-        % data_kind = 'KS';
+        data_kind = 'KS';
         % data_kind = 'KS_slow';
-        data_kind = 'KS_slow_short';
+        % data_kind = 'KS_slow_short';
         % data_kind = 'NLKS';
         % data_kind = 'CGL';
         % data_kind = 'NLCGL';
@@ -258,7 +258,8 @@ for jobid = jobid_list
                 iter = false;
                 switch L
                     case 22
-                        max_lyapunov = 0.0825;
+                        % max_lyapunov = 0.0825;
+                        max_lyapunov = 0.0479;
                     case 25
                         max_lyapunov = 0.0877;
                     case 26
@@ -640,13 +641,13 @@ for jobid = jobid_list
         overlap_size_data = length(rear_overlap_data) + length(forward_overlap_data); 
         overlap_size_input = length(rear_overlap_input) + length(forward_overlap_input); 
         
-        % approx_reservoir_size = 5040;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 5040;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 192 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 256 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 1680 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 2520 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 3360 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 5880 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 5880 / num_reservoirs;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = (6720 + 840) / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)

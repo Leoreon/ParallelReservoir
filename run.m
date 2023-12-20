@@ -7,9 +7,9 @@ clear all;
 % parallel fix number of all nodes KS_slow L22
 Copy_4_of_parallel_reservoir_benchmarking_forKS();
 
-clear all;
-% parallel fix number of all nodes vary locality by 1 
-Copy_of_parallel_reservoir_benchmarking_forKS();
+% clear all;
+% % parallel fix number of all nodes vary locality by 1 
+% Copy_of_parallel_reservoir_benchmarking_forKS();
 
 
 % clear all;
