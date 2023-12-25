@@ -98,7 +98,8 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = 240:20:280;
 % locality_list = 40:20:100;
 % locality_list = 20:180;
-% locality_list = 131:280;
+% locality_list = 181:220;
+% locality_list = 221:240;
 locality_list = 0:280;
 % locality_list = 80:20:160;
 % locality_list = [50 55];
@@ -162,12 +163,13 @@ train_steps_list = 8e4;
 % locality_list = 3:4:8;
 % jobid_list = 1;
 % jobid_list = 2;
-jobid_list = 4:7;
 % jobid_list = 1:2;
 % jobid_list = 1:3;
+% jobid_list = 3;
 % jobid_list = 4;
 % jobid_list = 2:3;
 % jobid_list = 3:7;
+jobid_list = 4:7;
 % jobid_list = 1:5;
 % jobid_list = 6:10;
 % jobid_list = 5;
@@ -582,8 +584,8 @@ for jobid = jobid_list
         chunk_end_input = num_reservoirs_per_worker*chunk_size_input*l;
         
         % reservoir_kind = 'spatial';
-        % reservoir_kind = 'uniform';
-        reservoir_kind = 'uniform_fix';
+        reservoir_kind = 'uniform';
+        % reservoir_kind = 'uniform_fix';
         
         % learn = 'RLS';
         % learn = 'LSM';
@@ -1097,13 +1099,11 @@ for jobid = jobid_list
                         
                         switch reservoir_kind
                             case 'uniform_fix'
-                                % max_locality = 130;
-                                max_locality = 280;
                                 % n_nodes depending on locality
-                                original_inputs = chunk_size_data + chunk_size_input + 2 * max_locality;
+                                original_inputs = chunk_size_data + chunk_size_input + 2 * 130;
                                 original_nodes = nodes_per_input*original_inputs;
                                 A = generate_reservoir(original_nodes, resparams.radius, resparams.degree, labindex, jobid);
-                                shrink_input = (max_locality - locality);
+                                shrink_input = (130 - locality);
                                 shrink_nodes = nodes_per_input*shrink_input;
                                 A = A(1+shrink_nodes:end-shrink_nodes, 1+shrink_nodes:end-shrink_nodes);
                                 % fixed n_nodes
@@ -1549,7 +1549,9 @@ for jobid = jobid_list
     % clear pred_marker_array which_index_iter rho_array locality_array;
     toc
     % close all;
-    clear trajectories_true pred_collect diff 
+    if total > 1
+        clear trajectories_true pred_collect diff 
+    end
 end
 end
 end

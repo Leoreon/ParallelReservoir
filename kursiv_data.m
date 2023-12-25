@@ -9,6 +9,7 @@ clear;
 % data_kind = 'KS_science';
 data_kind = 'KS';
 % data_kind = 'KS_sync';
+% data_kind = 'KS_small_step';
 % data_kind = 'KS_slow'; % sampling timeが小さい→1ステップの変化がゆっくり
 % data_kind = 'KS_slow_short'; % sampling timeが小さい→1ステップの変化がゆっくり
 % data_kind = 'KS_fast'; % sampling timeが小さい→1ステップの変化がゆっくり
@@ -18,7 +19,7 @@ rng(1);
 % N = 2048;
 % N = 1680;
 % N = 1024;
-N = 840;
+% N = 840;
 % N = 832;
 % N = 836;
 % N = 924;
@@ -26,7 +27,7 @@ N = 840;
 % N = 256;
 % N = 192;
 % N = 128;
-% N = 120;
+N = 120;
 % N = 64;
 % d = 800; % chaos
 % d = 400; % chaos
@@ -73,6 +74,12 @@ switch data_kind
     case 'KS'
         h = 1/4; % time step
         tmax =25000; 
+    case 'KS_small_step'
+        h = 0.02;
+        % tmax = 2500;
+        % tmax = 6250;
+        % tmax = 12500;
+        tmax = 25000;
     case 'KS_slow'
         h = 1/8; % time step
         tmax =25000; 
@@ -151,9 +158,9 @@ colorbar;
 
 % train_input_sequence = uu(1:80000,:);
 % test_input_sequence = uu(80001:end,:);
-train_input_sequence = uu(floor(0.8*nmax)-100+1:floor(0.8*nmax),:);
+% train_input_sequence = uu(floor(0.8*nmax)-100+1:floor(0.8*nmax),:);
 % train_input_sequence = uu(floor((0.8-0.0125/2)*nmax)+1:floor(0.8*nmax),:);
-% train_input_sequence = uu(1:floor(0.8*nmax),:);
+train_input_sequence = uu(1:floor(0.8*nmax),:);
 test_input_sequence = uu(floor(0.8*nmax)+1:end,:);
 
 % save('test_input_sequence_L44.mat', 'test_input_sequence', '-v7.3');
