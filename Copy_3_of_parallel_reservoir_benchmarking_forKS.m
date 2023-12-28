@@ -99,7 +99,11 @@ indices_per_job = num_indices/num_divided_jobs;
 % locality_list = 40:20:100;
 % locality_list = 20:180;
 % locality_list = 131:280;
-locality_list = 0:280;
+% locality_list = 0:280;
+% locality_list = 60:100;
+% locality_list = 101:120;
+% locality_list = 121:130;
+locality_list = 60:130;
 % locality_list = 80:20:160;
 % locality_list = [50 55];
 % locality_list = 20:5:60;
@@ -161,8 +165,10 @@ train_steps_list = 8e4;
 % rho_list = 0.2:1:1.7;
 % locality_list = 3:4:8;
 % jobid_list = 1;
+% jobid_list = 10;
+jobid_list = 11:14;
 % jobid_list = 2;
-jobid_list = 4:7;
+% jobid_list = 4:7;
 % jobid_list = 1:2;
 % jobid_list = 1:3;
 % jobid_list = 4;
@@ -259,7 +265,8 @@ for jobid = jobid_list
                 % L = 50; N = 1024; 
                 % L = 50; N = 2048; 
                 % L = 100; N = 256; 
-                train_steps = 80000; test_steps = 20000; 
+                % train_steps = 80000; test_steps = 20000; 
+                train_steps = 20001; test_steps = 20000; 
                 iter = false;
                 switch L
                     case 22
@@ -609,8 +616,8 @@ for jobid = jobid_list
                 locality = locality_array; % there are restrictions on the allowed range of this parameter. check documentation
         
                 % dl = 0;
-                % u_length = train_steps;
-                u_length = 80000;
+                u_length = train_steps;
+                % u_length = 80000;
                 train_start = 1;
         end
         % locality = locality + dl;
