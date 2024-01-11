@@ -9,8 +9,12 @@
 % L = 800; N = 2048;
 % data_kind = 'KS';
 data_kind = 'LFP';
-L_list = 1e-3;
-N_list = 100;
+L_list = 5.66e-3;
+N_list = 120;
+dps = 1000;
+% L_list = 1e-3;
+% N_list = 100;
+
 % L_list = [22 26 30 34 38 44 50 100 200 400 800];
 % N_list = [64 128 128 128 128 128 128 256 512 1024 2048];
 % L_list = [22 50 100 200 400 800];
@@ -39,7 +43,7 @@ for k = 1:length(L_list)
     switch data_kind 
         case 'KS'
             % load(['KS_science_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
-            load(['KS_L' num2str(L) '_N_' num2str(N) '_dps20000.mat']);
+            load(['KS_L' num2str(L) '_N_' num2str(N) '_dps' num2str(dps) '.mat']);
         case 'CGL'
             load([data_kind '_L' num2str(L) '_N_' num2str(N) '_dps20000' 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']);
         case 'LCD'
@@ -47,7 +51,8 @@ for k = 1:length(L_list)
             test_filename = [test_dir 'LCD_data.mat'];
             load(test_filename); L = 5e-6; N = 100;
         case 'LFP'
-            load('Neurons_L0.001_N100_dps18000.mat');
+            load(['LFP_L' num2str(L) '_N' num2str(N) '_dps'  '.mat']);
+            % load('Neurons_L0.001_N100_dps18000.mat');
     end
     % test_input_sequence = test_input_sequence.';
     

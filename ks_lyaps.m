@@ -10,13 +10,14 @@
 
 
 clear;
-d = 22;  %domain size/periodicity length (denoted by L in Pathak et al)
+% d = 22;  %domain size/periodicity length (denoted by L in Pathak et al)
+d = 44;
 % d = 25;  %domain size/periodicity length (denoted by L in Pathak et al)
 % d = 50;  %domain size/periodicity length (denoted by L in Pathak et al)
 % d = 60;  %domain size/periodicity length (denoted by L in Pathak et al)
-N = 64; % discretization grid size (denoted by Q)
+% N = 64; % discretization grid size (denoted by Q)
 % N = 128; % discretization grid size (denoted by Q)
-% N = 840;
+N = 840;
 
 x = d*(-N/2+1:N/2)'/N;
 

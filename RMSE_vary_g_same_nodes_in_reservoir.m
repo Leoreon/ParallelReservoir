@@ -19,7 +19,12 @@
 %% フィードバックありの予測誤差
 % data_kind = 'KS_slow'; L = 22; dt = 1/8; Ntotal_list = 5040 * [2:8]; N=840; train_steps = 160000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow_short'; L = 22; dt = 1/8; Ntotal_list = 5040 * [2:8]; N=840; train_steps = 80000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_list = 5040 * num_workers_list; N=840; train_steps = 80000; locality_list = 80; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_list = 5040 * num_workers_list; N=840; train_steps = 80000; locality_list = 100; jobid_list = 1:4; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_list = 10080 * ones(1, length(num_workers_list)); N=840; train_steps = 80000; locality_list = 100; jobid_list = 1000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% beta = 0.0001;
+% % % data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_list = 5040 * ones(1, length(num_workers_list)); N=840; train_steps = 80000; locality_list = 100; jobid_list = 1:3; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+beta = 0.01;
+learn = 'LSM_GD_short_prediction_time'; reservoir_kind = 'uniform'; data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2:2:8]; Ntotal_list = 5040 * ones(1, length(num_workers_list)); N=840; train_steps = 80000; locality_list = 80; jobid_list = 101; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_list = 5040 * num_workers_list; N=840; train_steps = 80000; locality_list = 0:20:280; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS'; L = 44; dt = 1/4; num_workers_list = 2*[2 3 4 5 6 7 8]; Ntotal_list = 5040 * num_workers_list; N=1680; train_steps = 80000; locality_list = 180:20:280; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 
@@ -70,7 +75,9 @@ data_kind = 'KS'; L = 22; dt = 1/4; num_workers_list = [2 3 4 5 6 7 8]; Ntotal_l
 % num_workers_list = [2 3 4 5 6 7 8];
 % num_workers_list = [2 4 8 12 15];
 % pred_length = 2499; num_pred = 49;
-pred_length = 2499; num_pred = 20;
+% pred_length = 2899; num_pred = 40;
+pred_length = 2899; num_pred = 1;
+% % % % pred_length = 2499; num_pred = 20;
 lineWidth = 1.5;
 % dt = 1/4;
 % max_lyapunov = 0.0743;
@@ -89,7 +96,8 @@ show_error_plot = true;
 n_data = N;
 times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
 locations = repmat((1:n_data).', 1, n_steps);
-threshold = 0.30;
+% threshold = 0.30;
+threshold = 1.0;
 T_list = zeros(length(num_workers_list), length(locality_list));
 % RMSE_list = zeros(length(num_workers_list), length(locality_list));
 RMSE_list = zeros(length(locality_list), length(locality_list));
@@ -116,7 +124,12 @@ for h = 1:length(locality_list)
             Dr = Ntotal / num_workers;
             % filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_uniform_train80000_node' num2str(Dr) '-L' num2str(L) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
             % filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\KS\KS_result_LSM_common_uniform_reservoir_train80000_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
-            filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_LSM_common_uniform_reservoir_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            % filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            if beta == 1e-4 % beta = 1e-4;
+                        filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            else % beta = 1e-2
+                filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_' 'beta' num2str(beta) '_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+            end% filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_LSM_common_uniform_reservoir_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
             if RMSE_pred
                 load(filename, 'error', 'RMSE_mean', 'RMSE_pred_data');
             else

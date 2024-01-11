@@ -7,12 +7,12 @@ clear
 % function jobid = parallel_reservoir_benchmarking(request_pool_size)
 
 
-request_pool_size_list = 1;
-% % request_pool_size_list = 2;
-% % request_pool_size_list = 3;
+% request_pool_size_list = 1;
+% request_pool_size_list = 2;
+% request_pool_size_list = 3;
 % request_pool_size_list = 4;
 % request_pool_size_list = 5;
-% request_pool_size_list = 6;
+request_pool_size_list = 6;
 % request_pool_size_list = 7;
 % request_pool_size_list = 8;
 % request_pool_size_list = 10;
@@ -21,8 +21,14 @@ request_pool_size_list = 1;
 % request_pool_size_list = 14;
 % request_pool_size_list = 15;
 % request_pool_size_list = 16;
-% request_pool_size_list = 3:8;
-% request_pool_size_list = 1:8;
+% request_pool_size_list = 6:8;
+% request_pool_size_list = 2:8;
+% request_pool_size_list = 4:8;
+% request_pool_size_list = 8:-1:2;
+% request_pool_size_list = 7:-1:2;
+% request_pool_size_list = 5:-1:3;
+% request_pool_size_list = 2;
+% request_pool_size_list = 4:-1:3;
 % request_pool_size_list = 4:2:16;
 % request_pool_size_list = 14:2:16;
 % request_pool_size_list = 16:-2:2;
@@ -35,8 +41,8 @@ request_pool_size_list = 1;
 for request_pool_size = request_pool_size_list
 num_reservoirs = request_pool_size;
 num_reservoirs_per_worker = 1;
-show_fig = true;
-% show_fig = false;
+% show_fig = true;
+show_fig = false;
 data_dir = './';
 % index_file = matfile('/lustre/jpathak/KS100/testing_ic_indexes.mat');
 index_file = matfile([data_dir 'testing_ic_indexes.mat']);
@@ -55,49 +61,98 @@ indices_per_job = num_indices/num_divided_jobs;
 %% settings
 % reservoir_kind = 'spatial';
 reservoir_kind = 'uniform';
+% reservoir_kind = 'uniform_fix';
 
 % learn = 'RLS';
 % learn = 'LSM';
-learn = 'LSM_common';
+% learn = 'LSM_common';
+% learn = 'LSM_GD';
 % learn = 'LSM_GD_training_error';
-% learn = 'LSM_GD_short_prediction_time';
+learn = 'LSM_GD_short_prediction_time';
+
+calc_gradient_fix = true;
+% calc_gradient_fix = false;
+
+% cost_function = 'pred_time';
+cost_function = 'train_error';
 
 data_kind = 'KS';
-data_kind = 'LFP';
-% data_kind = 'LFP_maxmin';
-% data_kind = 'LFP_log';
+% data_kind = 'KS_small_step';
 % data_kind = 'NLKS';
 % data_kind = 'CGL';
 % data_kind = 'NLCGL';
 % data_kind = 'LCD';
 % data_kind = 'KS_sync';
 
-locality_list = 0;
-locality_list = 1;
+% locality_list = 0;
+% locality_list = 1;
 % locality_list = 2;
 % locality_list = 3;
+% locality_list = 4;
 % locality_list = 5;
 % locality_list = 6;
 % locality_list = 8;
 % locality_list = 9;
+% locality_list = 10;
+% locality_list = 11;
 % locality_list = 12;
+% locality_list = 13;
 % locality_list = 16;
 % locality_list = 18;
 % locality_list = 20;
+% locality_list = [26 27 28 29 30];
 % locality_list = 30;
+% locality_list = 29;
 % locality_list = 35;
 % locality_list = 40;
+% locality_list = 40:50;
+% locality_list = 63:80;
+% locality_list = 50:90;
+% % % % % % locality_list = 60:80;
+% locality_list = [20:40 80:160];
+% locality_list = [0:19 40:79 161:200];
+% locality_list = [0:200];
+locality_list = [];
+for jj = 199:20:319
+    locality_list = [locality_list jj+[19]];
+end
+
+% locality_list = 199+40:20:340;
+% locality_list = 349;
+% locality_list = 60:160;
+% locality_list = 0;
+% locality_list = 90:-1:50;
+% % % % % % % % % % % % % locality_list = 70:-1:50;
+% locality_list = 120;
+% locality_list = [30:60];
+% locality_list = [60:-1:30];
+% locality_list = [61:120];
+% locality_list = [41:70];
+% locality_list = [71:100];
+% locality_list = 120:20:200;
+% locality_list = [40:-1:0];
+% locality_list = 200;
+% locality_list = 40;
+% locality_list = 41;
+% locality_list = 42;
+% locality_list = 45;
+% locality_list = 47;
 % locality_list = 50;
 % locality_list = 60;
+% locality_list = 62;
 % locality_list = 65;
 % locality_list = 70;
 % locality_list = 80;
 % locality_list = 90;
 % locality_list = 100;
 % locality_list = 120;
+% locality_list = 140;
+% locality_list = 150;
+% locality_list = 155;
 % locality_list = 160;
+% locality_list = 180;
 % locality_list = 200;
-% locality_list = 280;
+% locality_list = 300;
 % locality_list = 1:2:15;
 % locality_list = 2:2:15;
 % locality_list = [100 150 200];
@@ -111,8 +166,15 @@ locality_list = 1;
 % locality_list = 90:10:160;
 % locality_list = 20:20:160;
 % locality_list = 160:-20:20;
-% locality_list = 180:20:220;
-% locality_list = 20:20:280;
+% locality_list = 180:20:200;
+% % % % % % % locality_list = 0:20:200;
+% locality_list = 60:20:200;
+% locality_list = [65:5:75 85:5:95];
+% locality_list = 60:5:100;
+% locality_list = [20:20:200];
+% locality_list = 160;
+% locality_list = 120;//
+% locality_list = 220;
 % locality_list = 60:20:80;
 % locality_list = 40:20:100;
 % locality_list = 80:20:160;
@@ -124,6 +186,8 @@ locality_list = 1;
 % locality_list = 16:-2:8;
 % locality_list = 8:-2:2;
 % locality_list = 40:130;
+% locality_list = 40:160;
+% locality_list = 0:200;
 % locality_list = [130:140];
 % locality_list = [1 2 3 4 5 6 7 8 12];
 % locality_list = [3 4 5 6 7 8];
@@ -153,11 +217,10 @@ locality_list = 1;
 % width_list = 400;
 width_list = 1e5; % uniform reservoirでそう設定することでミスを防ぐ
 
-% rho_list = 0.6;
+rho_list = 0.6;
 % rho_list = 0.75;
-rho_list = 0.8;
+% rho_list = 0.8;
 % rho_list = 0.9;
-% rho_list = 1.1;
 % rho_list = 1.5;
 % rho_list = 1.6;
 % rho_list = 0.05:0.05:1.5;
@@ -171,36 +234,40 @@ rho_list = 0.8;
 
 % train_steps_list = [2e4+1];
 % train_steps_list = 1.1e4;
-train_steps_list = 8e4;
+% train_steps_list = 8e4;
 % train_steps_list = 15e4;
 % train_steps_list = 30e4;
 % train_steps_list = [2e4+1 4e4 6e4];
+% train_steps_list = [2e4+1 4e4];
+train_steps_list = 2e4+1;
 % rho_list = 0.2:1:1.7;
 % locality_list = 3:4:8;
 jobid_list = 1;
-% jobid_list = 1:3;
-% jobid_list = 4;
+% % % % % jobid_list = 1:3;
+% jobid_list = 4:6;
+% % % % % % % % jobid_list = 7:10;
+% jobid_list = 5;
+% jobid_list = 6:7;
 % jobid_list = 2:3;
+% jobid_list = 1:3;
+% jobid_list = 11:20;
+% jobid_list = 1000;
+% jobid_list = 1039;
+% jobid_list = 1051;
+% jobid_list = 1001:1010;
+% jobid_list = 1e2;
+% % % % jobid_list = 1e5 + [1:30];
+% jobid_list = 1:3;
+% jobid_list = 4:5;
+% jobid_list = 4:10;
+% jobid_list = 9992553;
 % jobid_list = 2:5;
 % jobid_list = 1:5;
 % jobid_list = 6:10;
-% jobid_list = 5;
+% jobid_list = 5:7;
 % jobid_list = [1 2 5];
 h = waitbar(0,'Please wait...');
 progress = 0;
-% batch_size_list = [20 40];
-batch_size_list = 1;
-% batch_size_list = 20;
-% batch_size_list = 40;
-% delta_locality_list = [1 5 10 15];
-delta_locality_list = [5];
-% delta_locality_list = [5];
-% threshold_list = [0.1 0.3];
-threshold_list = [0.1];
-% threshold_list = [0.3];
-for batch_size_ = batch_size_list
-for delta_locality_ = delta_locality_list
-for threshold_ = threshold_list
 for index_iter = 1:1
 % for index_iter = 2:10
 for rho = rho_list
@@ -209,14 +276,12 @@ for width = width_list
 for train_steps = train_steps_list
 for jobid = jobid_list
     tic;
-    % batch_size = 20;
-    batch_size = batch_size_;
     % partial_pred_marker_array = full_pred_marker_array((index_iter-1)*indices_per_job + 1:index_iter*indices_per_job);
     % partial_pred_marker_array = full_pred_marker_array(1);
-    partial_pred_marker_array = full_pred_marker_array(20);
-    % partial_pred_marker_array = full_pred_marker_array(1:batch_size);
-    % partial_pred_marker_array = full_pred_marker_array(15);
-    % partial_pred_marker_array = full_pred_marker_array(1:40);
+    % partial_pred_marker_array = full_pred_marker_array(1:5);
+    % partial_pred_marker_array = full_pred_marker_array(1:10);
+    % partial_pred_marker_array = full_pred_marker_array(1:20);
+    partial_pred_marker_array = full_pred_marker_array(1:40); %% ///
     pred_marker_array = Composite(request_pool_size);
     which_index_iter = Composite(request_pool_size);
     rho_array = Composite(request_pool_size);
@@ -237,8 +302,7 @@ for jobid = jobid_list
         % jobid = 3;
         % jobid = 1;
         
-        % % data_kind = 'KS';
-        % data_kind = 'LFP';
+        % data_kind = 'KS';
         % % data_kind = 'NLKS';
         % % data_kind = 'CGL';
         % % data_kind = 'NLCGL';
@@ -268,8 +332,9 @@ for jobid = jobid_list
                 train_input = m.Input; 
                 test_input = tf.Input;
             case 'KS'
-                n_kind_data = 1; n_kind_input = 0;
+                n_kind_data = 1; n_kind_input = 0; dt = 1/4;
                 % L = 22; N = 64; 
+                % L = 22; N = 120;
                 L = 22; N = 840;
                 % L = 26; N = 840;
                 % L = 44; N = 832;
@@ -288,8 +353,68 @@ for jobid = jobid_list
                 % L = 50; N = 1024; 
                 % L = 50; N = 2048; 
                 % L = 100; N = 256; 
-                train_steps = 20001; test_steps = 20000; 
+                % train_steps = 20001; test_steps = 20000; 
+                test_steps = 20000; 
                 % train_steps = 80000; test_steps = 20000; 
+                iter = false;
+                switch L
+                    case 22
+                        % max_lyapunov = 0.0825;
+                        max_lyapunov = 0.0479;
+                    case 25
+                        max_lyapunov = 0.0877;
+                    case 26
+                        max_lyapunov = 0.0526; % tekitou
+                        % max_lyapunov = 0.0877; % tekitou
+                    case 44
+                        max_lyapunov = 0.09;
+                    case 50
+                        max_lyapunov = 0.0743;
+                    case 52
+                        max_lyapunov = 0.0776;
+                    case 66
+                        max_lyapunov = 0.0856;
+                    case 88
+                        max_lyapunov = 0.0886;
+                    case 100
+                        max_lyapunov = 0.09;
+                    case 200
+                        max_lyapunov = 0.09;
+                end
+
+                m = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat']); % KS
+                tf = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(test_steps) '.mat']); % KS
+            
+                % m = matfile([data_dir 'train_input_sequence.mat']); % KS
+                % tf = matfile([data_dir 'test_input_sequence.mat']); % KS
+                train_input = []; test_input = [];
+            case 'KS_small_step'
+                n_kind_data = 1; n_kind_input = 0; dt = 0.02;
+                % L = 22; N = 64; 
+                L = 22; N = 120;
+                % L = 22; N = 840;
+                % L = 26; N = 840;
+                % L = 44; N = 832;
+                % L = 44; N = 840;
+                % L = 44; N = 1680;
+                % L = 50; N = 840;
+                % L = 66; N = 840;
+                % L = 88; N = 924;
+                % L = 88; N = 840;
+                % L = 100; N = 840;
+                % L = 25; N = 64;
+                % L = 50; N = 120;
+                % L = 52; N = 128; 
+                % L = 52; N = 192; 
+                % L = 50; N = 512; 
+                % L = 50; N = 1024; 
+                % L = 50; N = 2048; 
+                % L = 100; N = 256; 
+                % train_steps = 20001; test_steps = 20000; 
+                % train_steps = 100000; test_steps = 25000; 
+                % train_steps = 250000; test_steps = 62500; 
+                % train_steps = 500000; test_steps = 125000; 
+                train_steps = 1000000; test_steps = 250000; 
                 iter = false;
                 switch L
                     case 22
@@ -465,41 +590,6 @@ for jobid = jobid_list
                     m = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
                 end
                 tf = matfile([data_dir data_kind '_L', num2str(L) '_N_' num2str(N) '_dps' num2str(test_steps) 'c1_' num2str(c1) 'c2_' num2str(c2) '.mat']); % CGL
-            case {'LFP', 'LFP_log', 'LFP_maxmin'}
-                % n_kind_data = 3; n_kind_input = 0;
-                n_kind_data = 1; n_kind_input = 0;
-                % train_steps = 4000; test_steps = 4000; 
-                % train_steps = 18000; test_steps = 18000; 
-                % train_steps = 4000; test_steps = 4000; 
-                % train_steps = 19000; test_steps = 19000; 
-                % train_steps = 199000; test_steps = 199000; 
-                % train_steps = 4000; test_steps = 4000; 
-                % train_steps = 5000; test_steps = 5000; 
-                % L = 5.66e-3; N = 120; train_steps = 40000; test_steps = 40000;
-                % L = 5.66e-3; N = 120; train_steps = 100000; test_steps = 100000; 
-                % L = 5.66e-3; N = 36; train_steps = 40000; test_steps = 40000; 
-                L = 1.66e-3; N = 36; train_steps = 60000; test_steps = 60000; 
-                max_lyapunov = 1;
-                iter = false;
-                % L = 1e-3; N = 100;
-                % L = 5.66e-3; N = 450;
-                % L = 5.66e-3; N = 45;
-                % L = 1.66e-3; N = 45;
-                % L = 5.66e-3; N = 36;
-                % L = 1.66e-3; N = 36;
-                % switch L
-                %     case 22
-                %         max_lyapunov = 0.0825;
-                % end
-
-                filename = [data_dir data_kind '_L', num2str(L) '_N', num2str(N) '_dps', num2str(train_steps) '.mat'];
-                % filename = [data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(train_steps) '.mat'];
-                m = matfile(filename); % KS
-                tf = matfile(filename); % KS
-                
-                % m = matfile([data_dir 'train_input_sequence.mat']); % KS
-                % tf = matfile([data_dir 'test_input_sequence.mat']); % KS
-                train_input = []; test_input = [];
         end
         % fprintf(['use ', data_kind, '\n']);
         % m = matfile('/lustre/jpathak/KS100/train_input_sequence.mat'); 
@@ -507,17 +597,9 @@ for jobid = jobid_list
 %        tf = matfile('KS100/test_input_sequence.mat');
         % tf = matfile('/lustre/jpathak/KS100/test_input_sequence.mat');
         
-        sigma = 10.0;  %% simple scaling of data by a scalar
-        sigma = 8.0;  %% simple scaling of data by a scalar
-        % sigma = 4.0;  %% simple scaling of data by a scalar
-        sigma = 2.0;  %% simple scaling of data by a scalar
-        % sigma = 1.0;  %% simple scaling of data by a scalar
+        sigma = 1.0;  %% simple scaling of data by a scalar
         % sigma = 0.5;  %% simple scaling of data by a scalar
-        % sigma = 0.4;
-        % sigma = 0.2;  %% simple scaling of data by a scalar
-        % sigma = 0.15;  %% simple scaling of data by a scalar
-
-
+        
         train_uu = m.train_input_sequence;
         % [len, num_inputs] = size(m, 'train_input_sequence');
         % clear m;
@@ -553,7 +635,7 @@ for jobid = jobid_list
         % % learn = 'RLS';
         % % learn = 'LSM';
         % % learn = 'LSM_common';
-        % % learn = 'LSM_GD_training_error';
+        % learn = 'LSM_GD_training_error';
         % learn = 'LSM_GD_short_prediction_time';
         % Gradient Descentの時はlocalityを最大に、時間はworkerごとに変える
         switch learn
@@ -563,32 +645,29 @@ for jobid = jobid_list
                 u_length = train_steps;
                 % train_start = 1;
                 train_start = 1 + (l-1)*(train_steps-u_length)/numlabs;
-            case 'LSM_GD_training_error'
+            case {'LSM_GD_training_error', 'LSM_GD'}
                 locality = floor((num_inputs_data-num_reservoirs_per_worker*chunk_size_data) / 2);
                 % u_length = floor(train_steps/2);
-                u_length = 10000;
-                % u_length = train_steps;
+                u_length = train_steps;
                 % train_start = 1;
                 train_start = 1 + (l-1)*(train_steps-u_length)/numlabs;
-            case 'LSM_GD'
-                % dl = rem(l, 2);
-                locality = floor((num_inputs_data-num_reservoirs_per_worker*chunk_size_data) / 2);
-                % resparams.train_length = floor(resparams.train_length / num_workers);
-                u_length = floor(train_steps * (num_workers-1) / num_workers);
-                train_start = floor((train_steps-u_length) / num_workers + 1);
+            % case 'LSM_GD'
+            %     % dl = rem(l, 2);
+            %     locality = floor((num_inputs_data-num_reservoirs_per_worker*chunk_size_data) / 2);
+            %     % resparams.train_length = floor(resparams.train_length / num_workers);
+            %     u_length = floor(train_steps * (num_workers-1) / num_workers);
+            %     train_start = floor((train_steps-u_length) / num_workers + 1);
             otherwise
                 % locality = 6; % there are restrictions on the allowed range of this parameter. check documentation
                 locality = locality_array; % there are restrictions on the allowed range of this parameter. check documentation
         
                 % dl = 0;
                 u_length = train_steps;
-                % u_length = 20000; %%%%%%%%%%%%%%%%%%%%%%%%%%
                 train_start = 1;
         end
         % locality = locality + dl;
 
-        % resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
-        resparams.discard_length = 500;  %number of time steps used to discard transient (generously chosen)
+        resparams.discard_length = 1000;  %number of time steps used to discard transient (generously chosen)
         
         resparams.train_length = u_length-resparams.discard_length;  %number of time steps used for training
         % resparams.train_length = 99000;  %number of time steps used for training
@@ -598,11 +677,17 @@ for jobid = jobid_list
         % sync_length = 32; % use a short time series to synchronize to the data at the prediction_marker
         % sync_length = 100; % use a short time series to synchronize to the data at the prediction_marker
         sync_length = 500; % use a short time series to synchronize to the data at the prediction_marker
+        % sync_length = 800;
+        % sync_length = 5000; % use a short time series to synchronize to the data at the prediction_marker
         
         % resparams.predict_length = 2999;  %number of steps to be predicted
         % resparams.predict_length = test_steps-sync_length-1;  %number of steps to be predicted
         % resparams.predict_length = test_steps-sync_length-pred_marker_array(end);  %number of steps to be predicted
-        resparams.predict_length = 3000-sync_length-1;  %number of steps to be predicted
+        % resparams.predict_length = 3000-sync_length-1;  %number of steps to be predicted
+        resparams.predict_length = 3000/4/dt-sync_length-1;  %number of steps to be predicted
+        
+        % resparams.predict_length = 10000/4/dt-sync_length-1;  %number of steps to be predicted
+        % resparams.predict_length = 20000/4/dt-sync_length-1;  %number of steps to be predicted
         
         
         rear_overlap_data = indexing_function_rear(chunk_begin_data, n_kind_data*locality, num_inputs_data, chunk_size_data, data_kind, l);  %spatial overlap on the one side
@@ -620,24 +705,23 @@ for jobid = jobid_list
         overlap_size_data = length(rear_overlap_data) + length(forward_overlap_data); 
         overlap_size_input = length(rear_overlap_input) + length(forward_overlap_input); 
         
-        approx_reservoir_size = 3360;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 5040;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 9040;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 5040;
+        % approx_reservoir_size = 3000;
         % approx_reservoir_size = 192 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 256 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 1680 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 2520 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 3360 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        approx_reservoir_size = 5040 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 5880 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 5880 / num_reservoirs;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = (6720 + 840) / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 7560 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 10080 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % % approx_reservoir_size = 15120 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 15120 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 19968 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % % approx_reservoir_size = 20160 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
-        % % approx_reservoir_size = 25200 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 20160 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
+        % approx_reservoir_size = 25200 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 30240 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 35280 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 40320 / num_workers;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
@@ -649,9 +733,7 @@ for jobid = jobid_list
         % approx_reservoir_size = 9984;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
         % approx_reservoir_size = 12000;  % number of nodes in an individual reservoir network (approximate upto the next whole number divisible by number of inputs)
 
-        % avg_degree = 3; %average connection degree
-        % avg_degree = 2; %average connection degree
-        avg_degree = 1; %average connection degree
+        avg_degree = 3; %average connection degree
 
         resparams.sparsity = avg_degree/approx_reservoir_size;
         
@@ -668,10 +750,10 @@ for jobid = jobid_list
         % resparams.radius = 0.6; % spectral radius of the reservoir
         resparams.radius = rho; % spectral radius of the reservoir
         
-        resparams.beta = 0.0000001; % ridge regression regularization parameter
         % resparams.beta = 0.0001; % ridge regression regularization parameter
-        % resparams.beta = 0.01; % ridge regression regularization parameter
+        resparams.beta = 0.01; % ridge regression regularization parameter
         % resparams.beta = 1; % ridge regression regularization parameter
+        % resparams.beta = 100; % ridge regression regularization parameter
         
         train_in = zeros(u_length, chunk_size_input + overlap_size_input); % this will be populated by the input data to the reservoir
         
@@ -686,13 +768,12 @@ for jobid = jobid_list
         
         train_in = sigma*train_in;
 
-
+        
         switch learn
-            case 'LSM_GD_training_error'
+            case {'LSM_GD_training_error', 'LSM_GD'}
                 u = train_uu;
             otherwise
                 u = zeros(u_length, num_reservoirs_per_worker*chunk_size_data + overlap_size_data); % this will be populated by the input data to the reservoir
-                
                 % u(:,1:n_kind_data*locality) = train_uu(train_start:train_start+u_length-1, rear_overlap_data);
                 u(:,1:rear_locality_data) = train_uu(train_start:train_start+u_length-1, rear_overlap_data);
                 
@@ -714,7 +795,6 @@ for jobid = jobid_list
         % u = sigma*u;
         % [x, w_out, w, w_in, RMSE] = train_reservoir(resparams, in, labindex, jobid, locality, chunk_size);
         
-        train_uu = [];
 
         test_in = zeros(size(test_input, 1), num_reservoirs_per_worker*chunk_size_input + overlap_size_input); % this will be populated by the input data to the reservoir
         
@@ -732,8 +812,13 @@ for jobid = jobid_list
         test_uu = tf.test_input_sequence;
         % clear tf;
         switch learn
-            case 'LSM_GD_short_prediction_time'
-                test_u = test_uu;
+            case {'LSM_GD_short_prediction_time', 'LSM_GD'}
+                if true
+                    test_u = test_uu;
+                else
+                    test_u = train_uu(50001:70000,:);
+                    fprintf('use train data for validation\n');
+                end
             otherwise
                 test_u = zeros(test_steps, num_reservoirs_per_worker*chunk_size_data + overlap_size_data); % this will be populated by the input data to the reservoir
                 
@@ -748,6 +833,10 @@ for jobid = jobid_list
         end
         test_u = sigma*test_u;
         
+        if calc_gradient_fix
+            error_locality = zeros(2, length(pred_marker_array)*resparams.predict_length);
+        end
+        train_uu = [];
         tf = [];
         test_uu = [];
         % fprintf('start res train predict');
@@ -755,12 +844,377 @@ for jobid = jobid_list
         
         % fprintf('start learning %s\n', learn);
         switch learn
+            case 'LSM_GD'
+                current_locality = locality_array;
+                % algo = 'Newton';
+                algo = 'Adam';
+                % max_iter = 30;
+                max_iter = 15;
+                % max_iter = 10;
+                % max_iter = 5;
+                % max_iter = 2;
+                % max_iter = 1;
+                % E_list = zeros(1, max_iter);
+                costFunction_list = zeros(1, max_iter);
+                E_list = zeros(1, max_iter);
+                l_list = zeros(1, max_iter);
+                iter = 1;
+                s_t = 0;
+                nu_t = 0;
+                while iter <= max_iter
+                    switch l 
+                        case 1
+                            fprintf('\n------------------------------\n');  
+                            fprintf('iter%d->\n', iter);
+                    end
+                    del_locality = 1;
+                    % del_locality = 3;
+                    % del_locality = 5;
+                    % delta_locality = 15;
+                    % delta_locality = 15;
+                    switch algo
+                        case 'Adam'
+                            dlocality_list = [0 del_locality];
+                        case 'Newton'
+                            dlocality_list = [-del_locality 0 del_locality];
+                    end
+                    % dlocality_list = [0 20];
+                    l_list(iter) = locality;
+                    currentAndNextCost = zeros(1, length(dlocality_list));
+                    currentAndNextT = zeros(1, length(dlocality_list));
+                    currentAndNextRMSE = zeros(1, length(dlocality_list));
+                    % for dlocality_index = 1:2
+                    % for dlocality_index = 2:-1:1
+                    for dlocality_index = length(dlocality_list):-1:1
+                        dlocality = dlocality_list(dlocality_index);
+                        locality = current_locality + dlocality;
+                        % display(locality);
+                        num_inputs2 = chunk_size_data + 2 * (n_kind_data + n_kind_input) * locality;
+                        
+                        % rng(jobid*max_iter*2+iter*2+dlocality_index);
+                        rng(jobid*max_iter*num_workers+iter*num_workers+l);
+                        % rng(num_workers*jobid+l);
+                        % [num_inputs2,~] = size(u.');
+                        % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                        switch reservoir_kind
+                            case 'uniform'
+                                A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                            case 'spatial'
+                                loc = int32(num_inputs2/2/nodes_per_input/4);
+                                A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
+                        end
+                        switch dlocality_index
+                            case length(dlocality_list)
+                                q = resparams.N/num_inputs2;
+                                
+                                win = zeros(resparams.N, num_inputs2);
+                                % display(size(win));
+                                n_additional = rem(resparams.N, num_inputs2);
+                                nodes_per_in = floor(double(resparams.N) / double(num_inputs2));
+                                % display('eee');
+                                add_id = randsample(num_inputs2, n_additional);
+                                % display('eeeq');
+                                nodes_list = double(nodes_per_in) * ones(1, num_inputs2);
+                                % display('fff');
+                                nodes_list(add_id) = nodes_list(add_id) + 1;
+                                beg = 1;
+                                for i=1:num_inputs2
+                                    rng(i)
+                                    % ip = (-1 + 2*rand(q,1));
+                                    % win((i-1)*q+1:i*q,i) = ip;
+                                    ip = (-1 + 2*rand(nodes_list(i), 1));
+                                    fin = beg + nodes_list(i)-1;
+                                    win(beg:fin,i) = ip;
+                                    beg = fin + 1;
+                                end
+                                % display('finish defining reservoirs');
+                                % display(size(win));
+                                % display(size(A));
+                            otherwise
+                                % win = [];
+                                win = win(:, del_locality+1:end-del_locality);
+                        end
+
+                        win = sparse(win);
+
+                        rear_locality_data = n_kind_data * locality;
+                        forward_locality_data = n_kind_data * locality;
+                        
+                        data = zeros(train_steps, chunk_size_data + rear_locality_data + forward_locality_data); % this will be populated by the input data to the reservoir
+                        
+                        data(:,1:rear_locality_data) = u(1:end, rear_overlap_data(end-rear_locality_data+1:end));
+                        % test_u(:,n_kind_data*locality+1:n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end, chunk_begin_data:chunk_end_data);
+                        data(:,rear_locality_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data) = u(1:end, chunk_begin_data:chunk_end_data);
+                        
+                        % test_u(:,n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data+1:2*n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end,forward_overlap_data);
+                        data(:,rear_locality_data+num_reservoirs_per_worker*chunk_size_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data+forward_locality_data) = u(1:end,forward_overlap_data(1:forward_locality_data));
+                        
+                        data = transpose(data);
+                        % data = transpose(u);
+                        % data = transpose(u(:, 1:locality*2+chunk_size_data));
+                        % fprintf('size of data: %d, %d', size(data));
+                        % display('jj');
+                        % wout = zeros(chunk_size, resparams.N);
+                        % [x, wout] = recursive_least_square(resparams, u.', win, A, wout, locality, chunk_size, sync_length);
+                        states = reservoir_layer(A, win, data, resparams, train_in);
+                        % states(2:2:resparams.N,:) = states(2:2:resparams.N,:).^2;
+                        % display('ff');
+                        wout = fit(resparams, states, data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
+                        x = states(:,end);
+                        % display('gg');
+                        switch cost_function
+                            case 'train_error'
+                                error = wout*states - data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+                                error = error .^ 2;
+                                RMSE = sqrt(mean(mean(error)));
+                                % currentAndNextRMSE(dlocality_index) = RMSE;
+                                currentAndNextCost(dlocality_index) = RMSE;
+                            case 'pred_time'
+                                rear_locality_data = n_kind_data * locality;
+                                forward_locality_data = n_kind_data * locality;
+                                
+                                test_data = zeros(test_steps, chunk_size_data + rear_locality_data + forward_locality_data); % this will be populated by the input data to the reservoir
+                                
+                                test_data(:,1:rear_locality_data) = test_u(1:end, rear_overlap_data(end-rear_locality_data+1:end));
+                                % test_u(:,n_kind_data*locality+1:n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end, chunk_begin_data:chunk_end_data);
+                                test_data(:,rear_locality_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data) = test_u(1:end, chunk_begin_data:chunk_end_data);
+                                
+                                % test_u(:,n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data+1:2*n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end,forward_overlap_data);
+                                test_data(:,rear_locality_data+num_reservoirs_per_worker*chunk_size_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data+forward_locality_data) = test_u(1:end,forward_overlap_data(1:forward_locality_data));
+                                
+                                test_data = transpose(test_data);
+                                % test_data = transpose(test_u(:, [rear_overlap_data(end-rear_locality_data+1:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)]));
+                                % test_in = transpose(test_in(:, [rear_overlap_input(end-rear_locality_input:end) chunk_begin_input:chunk_end_input forward_overlap_input(1:forward_locality_input)]));
+                                
+                                % pred_collect = res_predict(x, wout, A, win, test_data(1:2*locality+chunk_size_data, :), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                                [pred_collect, deltas] = res_predict_GD(L, x, wout, A, win, test_data(1:2*locality+chunk_size_data, :), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, test_in);
+                                
+                                % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, locality, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                                % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                                % [pred_collect, deltas] = res_predict_GD(L, x, wout, A, win, test_data, resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, test_in);
+                                % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, [rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)])), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in(:, [rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)])));
+                                % fprintf('calculated pred_collect of %d\n', l);
+                                collated_prediction = gcat(pred_collect,1,1);
+                                % prediction error
+                                % val_length = ;
+                                num_preds = length(pred_marker_array);
+                                trajectories_true = zeros(chunk_size_data, num_preds*resparams.predict_length);
+                                diff = zeros(chunk_size_data, num_preds*resparams.predict_length);
+                                % display('eee');
+                                for pred_iter = 1:num_preds
+                                    prediction_marker = pred_marker_array(pred_iter);
+                                    % trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length,:));
+                                    % display(pred_iter);
+                                    trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data(rear_locality_data+1:rear_locality_data+chunk_size_data, prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                                    % trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data([rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)], prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                                    
+                                    % diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
+                                    %     = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length,:))...
+                                    % -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
+                                    % display('ggg');
+                                    diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
+                                        = test_data(rear_locality_data+1:rear_locality_data+chunk_size_data, prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length) ...
+                                    -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
+                                end
+                                % display('hhh');
+                                RMSE = sqrt(mean(diff.^2, 1));
+                                % test_data = transpose(test_u(:, locality+1:locality+chunk_size));
+                                % error = pred_collect - test_data(locality+1:locality+chunk_size, sync_length+1:sync_length+resparams.predict_length);
+                                % RMSE = sum(error, 1);
+                                % display('ii');
+                                
+                                % threshold = 0.15;
+                                % threshold = 0.3;
+                                threshold = 0.1;
+                                % threshold = 1.0;
+                                % pred_criteria = 'average';
+                                pred_criteria = 'median';
+                                switch pred_criteria
+                                    case 'average'
+                                        mean_error = zeros(size(RMSE(1:resparams.predict_length)));
+                                        
+                                        for k = 1:num_preds
+                                            mean_error = mean_error + RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k);
+                                            out_times = find(RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
+                                            out_time = out_times(1);
+                                            % currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) + out_time;
+                                            currentAndNextCost(dlocality_index) = currentAndNextCost(dlocality_index) + out_time;
+                                        end
+                                        % display('kk');
+                                        mean_error = mean_error / num_preds;
+                                        out_time2 = find(mean_error>threshold);
+                                        % currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) / num_preds;
+                                        currentAndNextCost(dlocality_index) = currentAndNextCost(dlocality_index) / num_preds;
+                                        % display(locality);
+                                        % display(currentAndNextT);
+                                    case 'median'
+                                        T_preds = zeros(num_preds, 1);
+                                        for k = 1:num_preds
+                                            % mean_error = mean_error + RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k);
+                                            out_times = find(RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
+                                            out_time = out_times(1);
+                                            T_preds(k) = out_time;
+                                            % currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) + out_time;
+                                        end
+                                        % currentAndNextT(dlocality_index) = median(T_preds);
+                                        currentAndNextCost(dlocality_index) = median(T_preds);
+                                        % display('kk');
+                                        % mean_error = mean_error / num_preds;
+                                        % out_time2 = find(mean_error>threshold);
+                                        % currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) / num_preds;
+                                        % display(locality);
+                                        % display(currentAndNextT);
+                                end
+                                currentAndNextCost(dlocality_index) = - currentAndNextCost(dlocality_index);    
+                        end
+                        % display('rr');
+                        % display(locality)
+
+                    end
+                    % display('bb');
+                    % locality = locality - dlocality;
+                    
+                    switch algo
+                        case 'Adam'
+                            % E_list(iter) = currentAndNextRMSE(1);
+                            costFunction_list(iter) = currentAndNextCost(1);
+                            l_list(iter) = current_locality;
+                            % currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
+                            % currentRMSE = mean(currentAndNextRMSE(:, 1), 1);
+                            currentAndNextCost = spmdCat(currentAndNextCost, 1);
+                            currentCost = mean(currentAndNextCost(:, 1), 1);
+                            
+                            % nextRMSE = mean(currentAndNextRMSE(:, 2), 1);
+                            % gradE = (nextRMSE - currentRMSE) / del_locality;
+                            nextCost = mean(currentAndNextCost(:, 2), 1);
+                            gradE = (nextCost - currentCost) / del_locality;
+                            
+                            % currentAndNextT = gcat(currentAndNextT, 1); 
+                            % T_list(iter) = mean(currentAndNextT(:, 1), 1); 
+                            % % T_list(iter) = mean(currentAndNextT(1:2:end), 1); 
+                            % % nextT = mean(currentAndNextT(2:2:end), 1); 
+                            % nextT = mean(currentAndNextT(:, 2), 1); 
+                            % % currentT = mean(currentAndNextT(1:2:end), 1); 
+                            % currentT = mean(currentAndNextT(:, 1), 1); 
+                            % gradT = nextT - currentT;
+                            switch l
+                                case 1
+                                    % fprintf('\n------------------------------\n');
+                                    % fprintf('iter%d->\n', iter); 
+                                            
+                                    % fprintf('  locality:%d\n', locality-1);
+                                    % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
+                                    % fprintf('  gradE: %f\n', gradT);
+                                    fprintf('  Cost(%d)=%f\n  Cost(%d)=%f\n', current_locality+del_locality, nextCost, current_locality, currentCost);
+                                    fprintf('  gradE: %f\n', gradE);
+                                    % fprintf('  E(%d)=%f\n  E(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE);
+                                    % fprintf('  gradE: %f\n', gradE);
+                            end
+                            % delta_locality = int32(150/(5+5*iter)); N = 840;
+                            % delta_locality = int32(200/(3+1*iter)); N = 840;
+                            % delta_locality = int32(300/(10+1*iter)); N = 840;
+        
+                            % delta_locality = int32(100/(1+1*iter)); % N = 840;
+                            % delta_locality = sqrt(gradE^2);
+                            % delta_locality = round(300/(10+1*iter)); N = 840;
+                            delta_locality = 100;
+                            % alpha = 50;
+                            alpha = 20;
+                            % alpha = 10;
+                            % alpha = 1;
+                            beta1 = 0.5; beta2 = 0.6;
+                            % delta_locality = int32(600/(20+2*iter)); N = 840;
+                            % delta_locality = 5;
+                            % delta_locality = 1;
+                            % delta_locality = int32(50/(5+5*iter)); % N = 64;
+                            % delta_locality = int32(15/(4+1*iter)); % N = 64;
+                            % delta_locality = 20;
+                            % display(delta_locality);
+                            % display(10/iter);
+        
+                            if gradE > 0
+                                G = - min(locality-1, delta_locality);
+                                % locality = locality - min(locality-1, delta_locality);
+                                % fprintf('decrease locality to %d\n', locality);
+                            else
+                                G = delta_locality;
+                                % locality = locality + delta_locality;
+                                % fprintf('increase locality to %d\n', locality);
+                            end
+                            epsilon = 1e-12;
+                            s_t = beta2 * s_t + (1-beta2) * G^2;
+                            nu_t = beta1 * nu_t + (1-beta1) * G;
+                            % display(s_t);
+                            switch l
+                                case 1
+                                    fprintf('update %d\n', round(alpha*nu_t / sqroot(s_t+epsilon)));
+                            end
+        
+                            d_current_locality = round(alpha * nu_t / sqroot(s_t+epsilon));
+                            
+                            current_locality = current_locality + d_current_locality;
+                        case 'Newton'
+                            currentAndNextRMSE = spmdCat(currentAndNextRMSE, 1);
+                            beforeRMSE = mean(currentAndNextRMSE(:, 1));
+                            currentRMSE = mean(currentAndNextRMSE(:, 2), 1);
+                            nextRMSE = mean(currentAndNextRMSE(:, 3), 1);
+                            
+                            E_list(iter) = currentRMSE;
+                            l_list(iter) = current_locality;
+                            % gradE = (nextRMSE - currentRMSE) / del_locality;
+                            d2fdt2 = ((nextRMSE-currentRMSE) - (currentRMSE-beforeRMSE)) / del_locality^2;
+                            dfdt = (nextRMSE-beforeRMSE) / del_locality;
+                            switch l
+                                case 1
+                                    % fprintf('\n------------------------------\n');
+                                    % fprintf('iter%d->\n', iter); 
+                                            
+                                    % fprintf('  locality:%d\n', locality-1);
+                                    % fprintf('  T(%d)=%f\n  T(%d)=%f\n', locality+dlocality, nextT, locality, currentT);
+                                    % fprintf('  gradE: %f\n', gradT);
+                                    fprintf('  E(%d)=%f\n  E(%d)=%f\n  E(%d)=%f\n', current_locality+del_locality, nextRMSE, current_locality, currentRMSE, current_locality-del_locality, beforeRMSE);
+                                    fprintf(' dEdl = %f \n  d^2Edl^2 = %f \n', dfdt, d2fdt2);
+                                    fprintf("update %f\n", - dfdt / d2fdt2);
+                            end
+                            current_locality = current_locality - round(dfdt / d2fdt2);
+                    end
+                    if current_locality < 0
+                        current_locality = 0;
+                    % elseif current_locality > 840
+                    %     current_locality = 1;
+                    end
+                    % switch l
+                    %     case 1
+                    %         labBarrier;
+                    %         labSend(locality, 2:num_workers);
+                    %     otherwise
+                    %         labBarrier;
+                    %         labSend(RMSE, 1);
+                    %         labBarrier;
+                    %         locality = labReceive(1);
+                    % end
+                    % E_list(iter) = RMSE;
+                    iter = iter + 1;
+                    collated_l = gcat(l_list, 1, 1);
+                    collated_E = gcat(E_list, 1, 1);
+                    collated_prediction = 0;
+                    % bef = size(trajectories_true);
+                    % trajectories_true = gcat(trajectories_true, 1);
+                    % aft = size(trajectories_true);
+                    % diff = gcat(diff, 1);
+                    % filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_uniform_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+                    % filename = [data_dir '/', data_kind, '/', data_kind, 'result_linear_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+                    % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+                    % save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size', 'runtime', '-v7.3');
+                    % dsave filename pred_collect error diff resparams
+                    % display(filename);
+                end
             case 'LSM_GD_training_error'
                 current_locality = locality_array;
                 % algo = 'Newton';
                 algo = 'Adam';
-                max_iter = 30;
-                % max_iter = 15;
+                % max_iter = 30;
+                max_iter = 15;
                 % max_iter = 10;
                 % max_iter = 5;
                 % max_iter = 2;
@@ -777,7 +1231,6 @@ for jobid = jobid_list
                             fprintf('\n------------------------------\n');  
                             fprintf('iter%d->\n', iter);
                     end
-                    % del_locality = 1*(n_kind_data+n_kind_input);
                     del_locality = 1;
                     % del_locality = 3;
                     % del_locality = 5;
@@ -837,14 +1290,13 @@ for jobid = jobid_list
                                     win(beg:fin,i) = ip;
                                     beg = fin + 1;
                                 end
-                                % display('finish defining reservoirs');we
+                                % display('finish defining reservoirs');
                                 % display(size(win));
                                 % display(size(A));
                             otherwise
                                 % win = [];
-                                win = win(:, (n_kind_data+n_kind_input)*del_locality+1:end-(n_kind_data+n_kind_input)*del_locality);
+                                win = win(:, del_locality+1:end-del_locality);
                         end
-                        % display(size(win));
 
                         win = sparse(win);
 
@@ -920,7 +1372,8 @@ for jobid = jobid_list
                             % delta_locality = sqrt(gradE^2);
                             % delta_locality = round(300/(10+1*iter)); N = 840;
                             delta_locality = 100;
-                            alpha = 50;
+                            % alpha = 50;
+                            alpha = 20;
                             % alpha = 10;
                             % alpha = 1;
                             beta1 = 0.5; beta2 = 0.6;
@@ -1013,12 +1466,12 @@ for jobid = jobid_list
                 
             case 'LSM_GD_short_prediction_time'
                 locality = locality_array;
-                max_iter = 20;
+                % max_iter = 20;
                 % max_iter = 15;
                 % max_iter = 10;
                 % max_iter = 5;
                 % max_iter = 2;
-                % max_iter = 1;
+                max_iter = 1;
                 % E_list = zeros(1, max_iter);
                 T_list = zeros(1, max_iter);
                 l_list = zeros(1, max_iter);
@@ -1032,13 +1485,22 @@ for jobid = jobid_list
                     end
                     l_list(iter) = locality;
                     currentAndNextT = zeros(1, 2);
-                    delta_locality = 1;
-                    % delta_locality = 5;
-                                        % delta_locality = 15;
-                    % delta_locality = 15;
-                    dlocality_list = [0 delta_locality];
+                    del_locality = 1;
+                    % del_locality = 5;
+                    % del_locality = 10;
+                    % del_locality = 15;
+                    % del_locality = 15;
+                    dlocality_list = [0 del_locality];
                     % dlocality_list = [0 20];
-                    for dlocality_index = 1:2
+                    if calc_gradient_fix
+                        dlocality_index_list = 1:2;
+                        TrainErrors = zeros(1, 2);
+                    else
+                        dlocality_index_list = 1;
+                    end
+                    for dlocality_index = dlocality_index_list
+                    % for dlocality_index = 1
+                    % for dlocality_index = 1:2
                     % for dlocality = 2:-1:1
                         dlocality = dlocality_list(dlocality_index);
                         locality = locality + dlocality;
@@ -1054,12 +1516,34 @@ for jobid = jobid_list
                                 switch reservoir_kind
                                     case 'uniform'
                                         A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
+                                    case 'uniform_fix'
+                                        max_locality = max(locality_array + dlocality_list);
+                                        % max_locality = 130;
+                                        % max_locality = 60;
+                                        % max_locality = max(locality_list);
+                                        % n_nodes depending on locality
+                                        original_inputs = chunk_size_data + chunk_size_input + 2 * max_locality;
+                                        original_nodes = nodes_per_input*original_inputs;
+                                        A = generate_reservoir(original_nodes, resparams.radius, resparams.degree, labindex, jobid);
+                                        shrink_input = (max_locality - locality);
+                                        shrink_nodes = nodes_per_input*shrink_input;
+                                        A = A(1+shrink_nodes:end-shrink_nodes, 1+shrink_nodes:end-shrink_nodes);
+                                        % fixed n_nodes
+                                        % A = generate_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid);
                                     case 'spatial'
                                         loc = int32(num_inputs2/2/nodes_per_input/4);
                                         A = generate_spatial_reservoir(resparams.N, resparams.radius, resparams.degree, labindex, jobid, nodes_per_input, loc);
                                 end
                                 q = resparams.N/num_inputs2;
-                                
+                                % win = zeros(original_nodes, original_inputs);
+                                % num_inputs2 = num_inputs2 + 2*shrink_input; % shrink
+                                % resparams.N = resparams.N + shrink_nodes;
+                                switch reservoir_kind 
+                                    case 'uniform_fix'
+                                        num_inputs2 = original_inputs;
+                                        resparams.N = original_nodes;
+                                end
+
                                 win = zeros(resparams.N, num_inputs2);
                                 % display(size(win));
                                 n_additional = rem(resparams.N, num_inputs2);
@@ -1080,6 +1564,17 @@ for jobid = jobid_list
                                     win(beg:fin,i) = ip;
                                     beg = fin + 1;
                                 end
+
+                                switch reservoir_kind
+                                    case 'uniform_fix'
+                                        % adjust to locality
+                                        win = win(shrink_nodes+1:end-shrink_nodes, shrink_input+1:end-shrink_input);
+                                        num_inputs2 = num_inputs2 - 2*shrink_input; % shrink
+                                        resparams.N = resparams.N - 2*shrink_nodes;
+                                end
+
+                                win = sparse(win);
+
                                 % display('finish defining reservoirs');
                                 % display(size(win));
                                 % display(size(A));
@@ -1096,9 +1591,12 @@ for jobid = jobid_list
                                 wout = fit(resparams, states, data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length));
                                 x = states(:,end);
                                 
-                                % error = wout*states - data(locality+1:locality+chunk_size,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
-                                % error = error .^ 2;
-                                % RMSE = sqrt(mean(mean(error)));
+                                error = wout*states - data(locality+1:locality+chunk_size_data,resparams.discard_length + 1:resparams.discard_length + resparams.train_length);
+                                error = error .^ 2;
+                                RMSE = sqrt(mean(mean(error)));
+                                if calc_gradient_fix
+                                    TrainErrors(dlocality_index) = RMSE;
+                                end 
                                 
                                 destinations = 2:num_workers;
                                 % fprintf('started sending weights\n');
@@ -1124,13 +1622,29 @@ for jobid = jobid_list
                                 x = labReceive();
                                 % fprintf('finished receiving weights\n');
                         end
-                        test_data = transpose(test_u(:, locality+1:locality+chunk_size_data));
-                        test_in = transpose(test_in);
-
                         rear_locality_data = n_kind_data * locality;
                         forward_locality_data = n_kind_data * locality;
+                        
+                        test_data = zeros(test_steps, chunk_size_data + rear_locality_data + forward_locality_data); % this will be populated by the input data to the reservoir
+                        
+                        test_data(:,1:rear_locality_data) = test_u(1:end, rear_overlap_data(end-rear_locality_data+1:end));
+                        % test_u(:,n_kind_data*locality+1:n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end, chunk_begin_data:chunk_end_data);
+                        test_data(:,rear_locality_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data) = test_u(1:end, chunk_begin_data:chunk_end_data);
+                        
+                        % test_u(:,n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data+1:2*n_kind_data*locality+num_reservoirs_per_worker*chunk_size_data) = test_uu(1:end,forward_overlap_data);
+                        test_data(:,rear_locality_data+num_reservoirs_per_worker*chunk_size_data+1:rear_locality_data+num_reservoirs_per_worker*chunk_size_data+forward_locality_data) = test_u(1:end,forward_overlap_data(1:forward_locality_data));
+                        
+                        test_data = transpose(test_data);
+                        % test_data = transpose(test_u(:, [rear_overlap_data(end-rear_locality_data+1:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)]));
+                        % test_in = transpose(test_in(:, [rear_overlap_input(end-rear_locality_input:end) chunk_begin_input:chunk_end_input forward_overlap_input(1:forward_locality_input)]));
+                        
+                        % pred_collect = res_predict(x, wout, A, win, test_data(1:2*locality+chunk_size_data, :), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                        [pred_collect, deltas] = res_predict_GD(L, x, wout, A, win, test_data(1:2*locality+chunk_size_data, :), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, test_in);
+                        
                         % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, locality, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
-                        pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                        % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, 1:2*locality+chunk_size_data)), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in));
+                        % [pred_collect, deltas] = res_predict_GD(L, x, wout, A, win, test_data, resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, test_in);
+                        % pred_collect = res_predict_GD(x, wout, A, win, transpose(test_u(:, [rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)])), resparams, jobid, rear_locality_data, forward_locality_data, n_kind_data, chunk_size_data, num_reservoirs_per_worker, pred_marker_array, sync_length, transpose(test_in(:, [rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)])));
                         % fprintf('calculated pred_collect of %d\n', l);
                         collated_prediction = gcat(pred_collect,1,1);
                         % prediction error
@@ -1143,35 +1657,41 @@ for jobid = jobid_list
                             prediction_marker = pred_marker_array(pred_iter);
                             % trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length,:));
                             % display(pred_iter);
-                            trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data(:, prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                            trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data(rear_locality_data+1:rear_locality_data+chunk_size_data, prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                            % trajectories_true(:, (pred_iter-1)*resparams.predict_length + 1: pred_iter*resparams.predict_length) = sigma * test_data([rear_overlap_data(end-rear_locality_data:end) chunk_begin_data:chunk_end_data forward_overlap_data(1:forward_locality_data)], prediction_marker+sync_length + 1:prediction_marker+sync_length + resparams.predict_length);
+                            
                             % diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
                             %     = transpose(sigma*test_file.test_input_sequence(prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length,:))...
                             % -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
                             % display('ggg');
                             diff(:, (pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length) ...
-                                = test_data(:, prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length) ...
+                                = test_data(rear_locality_data+1:rear_locality_data+chunk_size_data, prediction_marker+sync_length +1:prediction_marker + sync_length + resparams.predict_length) ...
                             -  pred_collect(:,(pred_iter-1)*resparams.predict_length+1:pred_iter*resparams.predict_length);
                         end
                         % display('hhh');
-                        RMSE = sqrt(mean(diff.^2, 1));
+                        RMSE_pred = sqrt(mean(diff.^2, 1));
+                        if calc_gradient_fix
+                            error_locality(dlocality_index, :) = RMSE_pred;
+                            % display('error locality');
+                        end
                         % test_data = transpose(test_u(:, locality+1:locality+chunk_size));
                         % error = pred_collect - test_data(locality+1:locality+chunk_size, sync_length+1:sync_length+resparams.predict_length);
                         % RMSE = sum(error, 1);
                         % display('ii');
                         
-                        threshold = threshold_;
                         % threshold = 0.15;
-                        % threshold = 0.1;
+                        % threshold = 0.3;
+                        threshold = 0.1;
                         % threshold = 1.0;
                         % pred_criteria = 'average';
                         pred_criteria = 'median';
                         switch pred_criteria
                             case 'average'
-                                mean_error = zeros(size(RMSE(1:resparams.predict_length)));
+                                mean_error = zeros(size(RMSE_pred(1:resparams.predict_length)));
                                 
                                 for k = 1:num_preds
-                                    mean_error = mean_error + RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k);
-                                    out_times = find(RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
+                                    mean_error = mean_error + RMSE_pred(resparams.predict_length*(k-1)+1:resparams.predict_length*k);
+                                    out_times = find(RMSE_pred(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
                                     out_time = out_times(1);
                                     currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) + out_time;
                                 end
@@ -1185,7 +1705,7 @@ for jobid = jobid_list
                                 T_preds = zeros(num_preds, 1);
                                 for k = 1:num_preds
                                     % mean_error = mean_error + RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k);
-                                    out_times = find(RMSE(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
+                                    out_times = find(RMSE_pred(resparams.predict_length*(k-1)+1:resparams.predict_length*k) > threshold);
                                     out_time = out_times(1);
                                     T_preds(k) = out_time;
                                     % currentAndNextT(dlocality_index) = currentAndNextT(dlocality_index) + out_time;
@@ -1200,14 +1720,15 @@ for jobid = jobid_list
                         end
 
                     end
-                    locality = locality - dlocality;
+                    %  %%%% no
+                    % locality = locality - dlocality;
                     currentAndNextT = gcat(currentAndNextT, 1); 
-                    T_list(iter) = mean(currentAndNextT(1, :), 1); 
+                    T_list(iter) = mean(currentAndNextT(:, 1), 1); 
                     % T_list(iter) = mean(currentAndNextT(1:2:end), 1); 
                     % nextT = mean(currentAndNextT(2:2:end), 1); 
-                    nextT = mean(currentAndNextT(2), 1); 
+                    nextT = mean(currentAndNextT(:, 2), 1); 
                     % currentT = mean(currentAndNextT(1:2:end), 1); 
-                    currentT = mean(currentAndNextT(1), 1); 
+                    currentT = mean(currentAndNextT(:, 1), 1); 
                     gradT = nextT - currentT;
                     switch l
                         case 1
@@ -1221,8 +1742,7 @@ for jobid = jobid_list
 
                     % delta_locality = int32(150/(5+5*iter)); N = 840;
                     % delta_locality = int32(200/(3+1*iter)); N = 840;
-                    delta_locality = int32(300/(10+1*iter)); N = 840; % dlocality = 15
-                    % delta_locality = int32(250/(20+2*iter)); N = 840; % dlocality = 15
+                    delta_locality = int32(300/(10+1*iter)); N = 840;
                     % delta_locality = int32(600/(20+2*iter)); N = 840;
                     % delta_locality = 5;
                     % delta_locality = 1;
@@ -1231,12 +1751,14 @@ for jobid = jobid_list
                     % delta_locality = 20;
                     % display(delta_locality);
                     % display(10/iter);
-                    if gradT < 0
-                        locality = locality - min(locality-1, delta_locality);
-                        % fprintf('decrease locality to %d\n', locality);
-                    else
-                        locality = locality + delta_locality;
-                        % fprintf('increase locality to %d\n', locality);
+                    if iter < max_iter
+                        if gradT < 0
+                            locality = locality - min(locality-1, delta_locality);
+                            % fprintf('decrease locality to %d\n', locality);
+                        else
+                            locality = locality + delta_locality;
+                            % fprintf('increase locality to %d\n', locality);
+                        end
                     end
                     % switch l
                     %     case 1
@@ -1559,11 +2081,12 @@ for jobid = jobid_list
             % data_file = load([data_dir 'train_input_sequence.mat']); % KS
             % test_file = load([data_dir 'test_input_sequence.mat']); % KS
             test_file = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(test_steps) '.mat']); % KS
-        case {'LFP', 'LFP_log', 'LFP_maxmin'}
-            dt = 1e-4;
-            N = N{1};
-            % test_file = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(test_steps) '.mat']); % KS
-            test_file = matfile([data_dir data_kind '_L', num2str(L) '_N', num2str(N) '_dps', num2str(test_steps) '.mat']); % KS
+        case 'KS_small_step'
+            dt = 0.02;
+            N = N{1}; 
+            % data_file = load([data_dir 'train_input_sequence.mat']); % KS
+            % test_file = load([data_dir 'test_input_sequence.mat']); % KS
+            test_file = matfile([data_dir data_kind '_L', num2str(L) '_N_', num2str(N) '_dps', num2str(test_steps) '.mat']); % KS
         case 'KS_sync'
             dt = 1/4;
             N = N{1}; 
@@ -1591,7 +2114,7 @@ for jobid = jobid_list
     num_preds = length(pred_marker_array);
     
     switch learn
-        case 'LSM_GD_training_error'
+        case {'LSM_GD_training_error', 'LSM_GD'}
             RMSE_mean = 0;
             % y = collated_E{1};
             y = collated_E{1};
@@ -1600,28 +2123,66 @@ for jobid = jobid_list
             figure(); plot(collated_l{1}(1, :));
             xlabel('iterations'); ylabel('locality'); grid on;
         case 'LSM_GD_short_prediction_time'
-            delta_locality = delta_locality{1}; threshold = threshold{1}; max_iter = max_iter{1};
-            RMSE_mean = 0;
-            % y = collated_E{1};
-            y = collated_T{1};
-            fig_time = figure(); plot(mean(y, 1));
+            % RMSE_mean = 0;
+            RMSE_mean = RMSE{1};
+            % % y = collated_E{1};
+            % y = collated_T{1};
             % figure(); errorbar(mean(y, 1), std(y, 1));
-            xlabel('iterations'); ylabel('short-term prediction time'); grid on; fontsize(16, 'points');
-            img_time_filename = [data_dir '/GradientDescent/' 'iteration-time_' data_kind 'L' num2str(L) '_N' num2str(N) '_g' num2str(request_pool_size) '_deltalocality' num2str(delta_locality_) '_batchsize' num2str(batch_size_) '_threshold' num2str(threshold_) '_maxiter' num2str(max_iter) '.fig'];
-            savefig(img_time_filename);
+            % xlabel('iterations'); ylabel('short-term prediction time'); grid on;
+            % figure(); plot(collated_l{1}(1, :));
+            % xlabel('iterations'); ylabel('locality'); grid on;
+            deltas = deltas{1};
+            lambdas = (log(deltas(:,2:end)./deltas(:,1))./(2:size(deltas,2)));
+            Lambdas = mean(lambdas, 1);
+            if show_fig
+                figure(); plot(deltas(1,:)); title(['locality=' num2str(locality)]);
+                xlabel('k'); ylabel('\Delta_k'); grid on;
+                % figure(); plot(Lambdas); 
+                % xlabel('k'); ylabel('\lambda_k'); title(['locality=' num2str(locality)]); 
+                % grid on;
+            end
             
-            fig_loc = figure(); plot(collated_l{1}(1, :));
-            xlabel('iterations'); ylabel('locality'); grid on; fontsize(16, 'points');
-            img_loc_filename = [data_dir '/GradientDescent/' 'iteration-locality_' data_kind 'L' num2str(L) '_N' num2str(N) '_g' num2str(request_pool_size) '_deltalocality' num2str(delta_locality_) '_batchsize' num2str(batch_size_) '_threshold' num2str(threshold_) '_maxiter' num2str(max_iter) '.fig'];
-            savefig(img_loc_filename);
-        case 'LSM_GD'
-            % y = collated_E{1};
-            y = collated_E{1}(1:2:end);
-            figure(); plot(mean(y, 1));
-            % figure(); errorbar(mean(y, 1), std(y, 1));
-            xlabel('iterations'); ylabel('RMSE'); grid on; fontsize(16, 'points');
-            figure(); plot(collated_l{1}(1, :));
-            xlabel('iterations'); ylabel('locality'); grid on; fontsize(16, 'points');
+            % Dth_list = 0.03;
+            Dth_list = 0.01:0.04:0.09;
+            % Dth_list = 0.01:0.02:0.09;
+            % Tth_list = 800;
+            % Tth_list = 10:200:1010;
+            Tth_list = 10:500:1010;
+            fprintf('locality=%d\n', locality);
+            lambda_list = zeros(length(Dth_list), length(Tth_list));
+            for dd = 1:length(Dth_list)
+                Dth = Dth_list(dd);
+                for tt = 1:length(Tth_list)
+                    Tth = Tth_list(tt);
+                    t1list = zeros(num_preds, 1);
+                    delta1_list = zeros(num_preds, 1);
+                    % ln_mean = 0;
+                    for k = 1:num_preds
+                        over_Dth_list = find(deltas(k,:)>Dth);
+                        if size(over_Dth_list, 2) == 0
+                            t1list(k) = Tth;
+                        elseif over_Dth_list(1) > Tth
+                            t1list(k) = Tth;
+                        else
+                            t1list(k) = over_Dth_list(1);
+                        end
+                        delta1_list(k) = deltas(k, t1list(k));
+                    end
+                    ln_list = log(delta1_list./deltas(:, 1));
+                    ln_mean = mean(ln_list);
+                    t_mean = mean(t1list);
+                    lambda = ln_mean / t_mean;
+                    lambda_list(dd, tt) = lambda;
+                    fprintf('Dth=%f, Tth=%f: lambda=%f\n', Dth, Tth, lambda);
+                end
+            end
+        % case 'LSM_GD'
+        %     % y = collated_E{1};
+        %     y = collated_E{1}(1:2:end);
+        %     figure(); errorbar(mean(y, 1), std(y, 1));
+        %     xlabel('iterations'); ylabel('RMSE'); grid on;
+        %     figure(); plot(collated_l{1}(1, :));
+        %     xlabel('iterations'); ylabel('locality'); grid on;
         case 'LSM'
             RMSE_mean = 0;
             for i = 1:num_workers
@@ -1635,12 +2196,13 @@ for jobid = jobid_list
             RMSE_mean = RMSE{1};
     end
     switch learn
-        case 'LSM_GD_training_error'
+        case {'LSM_GD_training_error', 'LSM_GD'}
             break;
         case 'LSM_GD_short_prediction_time'
             trajectories_true = trajectories_true{1};
             diff = diff{1};
-            error = RMSE{1};
+            error = RMSE_pred{1};
+            % deltas = deltas{1};
         otherwise
             diff = zeros(num_inputs_data, num_preds*resparams.predict_length);
             trajectories_true = zeros(num_inputs_data, num_preds*resparams.predict_length);
@@ -1662,9 +2224,13 @@ for jobid = jobid_list
     % filename = ['/lustre/jpathak/KS100/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     % filename = [data_dir '/KS100-' num2str(approx_reservoir_size) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter)];
     switch reservoir_kind 
-        case 'uniform'
+        case {'uniform', 'uniform_fix'}
+            if resparams.beta == 0.0001
+                filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            else
+                filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_beta' num2str(resparams.beta) '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+            end
             % filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
-            filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
         case 'spatial'
             % filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
             filename = [data_dir '/', data_kind, '/', data_kind, '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-width' num2str(width) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
@@ -1673,117 +2239,56 @@ for jobid = jobid_list
     % filename = [data_dir '/', data_kind, '/', data_kind '100-' num2str(approx_reservoir_size) '-L' num2str(L) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
     
     % if jobid == 1
-    if jobid == 0
-        % true, predicted, error data
-        save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
-    else
-        % just RMSEs
-        save(filename, 'error', 'resparams', 'RMSE_mean', 'pred_marker_array', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
-    end
+    % if jobid == 0
+    %     % true, predicted, error data
+    %     switch learn
+    %         case 'LSM_GD_short_prediction_time'
+    %             save(filename, 'lambda_list', 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+    %         otherwise
+    %             save(filename, 'pred_collect', 'error', 'diff', 'resparams', 'RMSE_mean', 'pred_marker_array', 'trajectories_true', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+    %     end
+    % else
+    %     % just RMSEs
+    %     % save(filename, 'error', 'resparams', 'RMSE_mean', 'pred_marker_array', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+        switch learn
+            case 'LSM_GD_short_prediction_time'
+                if calc_gradient_fix
+                    error_locality = error_locality{1};
+                    TrainErrors = TrainErrors{1};
+                    del_locality = del_locality{1};
+                    if resparams.beta == 0.0001
+                        filename = [data_dir '/', data_kind, '/', data_kind, '_Gradient_delta', num2str(del_locality) '_result_' learn '_' reservoir_kind '_reservoir' '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+                    else
+                        filename = [data_dir '/', data_kind, '/', data_kind, '_Gradient_delta', num2str(del_locality) '_result_' learn '_' reservoir_kind '_reservoir' '_beta' num2str(resparams.beta) '_train', num2str(train_steps), '_node', num2str(approx_reservoir_size) '-L' num2str(L) '-N' num2str(N) '-radius' num2str(rho) '-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter', num2str(which_index_iter) '.mat'];
+                    end
+                    save(filename, 'TrainErrors', 'error_locality', 'del_locality', 'lambda_list', 'deltas', 'delta1_list', 'error', 'resparams', 'RMSE_mean', 'pred_marker_array', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+                else
+                    save(filename, 'lambda_list', 'deltas', 'delta1_list', 'error', 'resparams', 'RMSE_mean', 'pred_marker_array', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+                end
+            otherwise
+                save(filename, 'error', 'resparams', 'RMSE_mean', 'pred_marker_array', 'locality', 'chunk_size_data', 'runtime', '-v7.3');
+        end
+    % end
     display(filename);
     
     %% show graphs
     n_steps = size(trajectories_true, 2);
     n_data = size(trajectories_true, 1);
     times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
-    locations = repmat((1:n_data).', 1, n_steps);
+    locations = repmat(L/N*(1:n_data).', 1, n_steps);
     max_value = max(max(trajectories_true)); min_value = min(min(trajectories_true));
-    if show_fig && size(request_pool_size_list, 2) == 1
+    total = size(width_list, 2) * size(rho_list, 2) * size(locality_list, 2) * size(jobid_list, 2) * size(train_steps_list, 2);
+    
+    if show_fig || total < 2
         switch data_kind 
-            case 'KS'
+            case {'KS', 'KS_small_step'}
                 figure(); 
                 subplot(3, 1, 1); surf(times, locations, trajectories_true(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('true data'); colorbar; clim([min_value max_value]); xlim([0 50]);
                 subplot(3, 1, 2); surf(times, locations, pred_collect(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('predicted data'); colorbar; clim([min_value max_value]); xlim([0 50]);
                 subplot(3, 1, 3); surf(times, locations, diff(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 50]);
-                sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
+                % sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
+                sgtitle(['g=' num2str(request_pool_size) ', locality=' num2str(locality)]);
                 colormap(jet);
-            case {'LFP', 'LFP_log', 'LFP_maxmin'}
-                figure(); 
-                subplot(3, 1, 1); surf(times, locations, trajectories_true(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('x'); title('true data'); colorbar; clim([min_value max_value]); xlim([0 0.25]);
-                subplot(3, 1, 2); surf(times, locations, pred_collect(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('x'); title('predicted data'); colorbar; clim([min_value max_value]); xlim([0 0.25]);
-                subplot(3, 1, 3); surf(times, locations, diff(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('time'); ylabel('x'); title('error'); colorbar; clim(2 * [min_value max_value]); xlim([0 0.25]);
-                sgtitle([data_kind ' L:' num2str(L) ' rho: ' num2str(resparams.radius) ', request pool size: ' num2str(request_pool_size) ', locality: ' num2str(locality)]);
-                colormap(jet);
-
-                
-                % Temporal Powerspectrum
-                [true_temporal_p, f] = pspectrum(trajectories_true(1, :), 1/dt);
-                [pred_temporal_p, f] = pspectrum(pred_collect(1, :), 1/dt);
-                figure();
-                plot(f, true_temporal_p, 'DisplayName', ['true']);
-                hold off;
-                hold on;
-                plot(f, pred_temporal_p, 'DisplayName', ['prediction']);
-                hold off;
-                set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-                title(['Temporal Powerspectrum' ' g=' num2str(request_pool_size)]);
-                % 
-                % naverage = 1;
-                % naverage = 5;
-                naverage = 20;
-                % naverage = 50;
-                % naverage = 2000;
-                % interval = floor(10/dt/max_lyapunov);
-                interval = floor(0.01/dt/max_lyapunov);
-                % interval = 20;
-                % start_step = floor(6/dt/max_lyapunov);
-                start_step = floor(0.02/dt/max_lyapunov);
-            
-                true_sum_p = zeros(4096, 1);
-                pred_sum_p = zeros(4096, 1);
-                % true_spatial_ps = zeros(4096, naverage);
-                % pred_spatial_ps = zeros(4096, naverage);
-                figure();
-                for i =start_step:interval:start_step+interval*naverage-1
-                    % [p, f] = pspectrum(test_input_sequence(i,:), N/L*2*pi);
-                    [true_spatial_p, f] = pspectrum(trajectories_true(:, i), N/L);
-                    [pred_spatial_p, f] = pspectrum(pred_collect(:, i), N/L);
-                    % p = pspectrum(test_input_sequence(i,:), 128/50);
-                    % pp = 20*log10(p);
-                    % true_spatial_ps(:, i) = true_spatial_p;
-                    % pred_spatial_ps(:, i) = pred_spatial_p;
-                    % figure(); plot(f, p);
-                    % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-                    % xlabel('Spatial Frequency (Hz)'); ylabel('Power Spectrum(dB)');
-                    % fontsize(16, 'points');
-                    true_sum_p = true_sum_p + true_spatial_p;
-                    pred_sum_p = pred_sum_p + pred_spatial_p;
-                end
-                true_sum_p = true_sum_p / naverage;
-                pred_sum_p = pred_sum_p / naverage;
-                % sum_p = sum_p .^ (1/naverage);
-            
-                hold on;
-                % scatter(2*pi*f, sum_p);
-                plot(2*pi*f, true_sum_p, 'DisplayName', ['true']);
-                hold off;
-                hold on;
-                plot(2*pi*f, pred_sum_p, 'DisplayName', ['pred']);
-                hold off;
-                set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-                % xlabel('Spatial Frequency (Hz)'); 
-                % ylabel('Power Spectrum');
-                fontsize(16, 'points');
-                title(['Spatial Powerspectrum' ' g=' num2str(request_pool_size)]);
-                % title(['average over ' num2str(naverage)]);
-                % title(['Powerspectrum c_1=' num2str(c1) ', c_2=' num2str(c2)]);
-                % title(['Powerspectrum ' 'L=' num2str(L)]);
-                % xlim([10^-2 10^1]); ylim([10^-4 10^2]);
-                % xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
-                xlabel('q'); ylabel('g_q');
-                legend();
-                grid on;
-            
-            
-                true_fft = fftshift(abs(fft2(trajectories_true)));
-                figure(); surf(log10(true_fft)); view(0, 90); shading interp; 
-                xlabel('temporal frequency'); ylabel('spatial frequency');
-                title('2DFFT of true data');
-
-                pred_fft = fftshift(abs(fft2(pred_collect)));
-                figure(); surf(log10(pred_fft)); view(0, 90); shading interp; 
-                xlabel('temporal frequency'); ylabel('spatial frequency');
-                title('2DFFT of predicted data');
             case 'LCD'
                 figure(); 
                 subplot(3, 1, 1); surf(times, locations, trajectories_true(:,1:n_steps)); view(0, 90); shading interp, axis tight; xlabel('lyapunov time'); ylabel('x'); title('true data'); colorbar; clim([min_value max_value]); xlim([0 1.25]);
@@ -1810,30 +2315,34 @@ for jobid = jobid_list
         figure(); plot(times(1,:), sqrt(mean(diff.^2, 1)));
         xlabel('time (lyapunov*second'); ylabel('RMSE'); title('error');
     end
+
     
-    % 
-    % % Temporal Powerspectrum
-    % [true_temporal_p, f] = pspectrum(trajectories_true(1, :), 1/dt);
-    % [pred_temporal_p, f] = pspectrum(pred_collect(1, :), 1/dt);
-    % figure();
-    % plot(f, true_temporal_p, 'DisplayName', ['true']);
-    % hold off;
-    % hold on;
-    % plot(f, pred_temporal_p, 'DisplayName', ['prediction']);
-    % hold off;
-    % set(gca, 'XScale', 'log'); set(gca, 'YScale', 'log');
-    % title(['Temporal Powerspectrum' ' g=' num2str(request_pool_size)]);
-    % % 
-    % % naverage = 1;
-    % % naverage = 5;
-    % naverage = 20;
+    % naverage = 1;
     % % naverage = 50;
     % % naverage = 2000;
-    % % interval = floor(10/dt/max_lyapunov);
-    % interval = floor(0.01/dt/max_lyapunov);
+    % interval = floor(10/dt/max_lyapunov);
     % % interval = 20;
-    % % start_step = floor(6/dt/max_lyapunov);
-    % start_step = floor(0.02/dt/max_lyapunov);
+    % start_step = floor(6/dt/max_lyapunov);
+    % 
+
+    % % Temporal Powerspectrum
+    % [true_temporal_p, f] = pspectrum(trajectories_true(1, :), 1/(max_lyapunov*dt));
+    % [pred_temporal_p, f] = pspectrum(pred_collect(1, :), 1/(max_lyapunov*dt));
+    % figure();
+    % plot(f, log10(true_temporal_p), 'DisplayName', ['true']);
+    % hold off;
+    % hold on;
+    % plot(f, log10(pred_temporal_p), 'DisplayName', ['prediction']);
+    % hold off;
+    % title(['Temporal Powerspectrum' ' g=' num2str(request_pool_size) ' l=' num2str(locality)]); legend(); axis tight;
+    % % savefig()
+    % 
+    % %% delta(t)
+    % figure(); plot(times(1, 1:size(deltas, 2)), deltas(1, :)); 
+    % xlabel('lyapunov time'); ylabel('\Delta(t)'); title(['g=' num2str(num_workers) ', l=' num2str(locality)]);
+    % xlim([0 50]);
+
+
     % 
     % true_sum_p = zeros(4096, 1);
     % pred_sum_p = zeros(4096, 1);
@@ -1874,18 +2383,11 @@ for jobid = jobid_list
     % % title(['average over ' num2str(naverage)]);
     % % title(['Powerspectrum c_1=' num2str(c1) ', c_2=' num2str(c2)]);
     % % title(['Powerspectrum ' 'L=' num2str(L)]);
-    % % xlim([10^-2 10^1]); ylim([10^-4 10^2]);
-    % % xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
+    % xlim([10^-2 10^1]); ylim([10^-4 10^2]);
+    % xticks(logspace(-2, 1, 4)); yticks(logspace(-4, 2, 7));
     % xlabel('q'); ylabel('g_q');
     % legend();
     % grid on;
-    % 
-    % 
-    % lz_fft = fftshift(abs(fft2(pred_collect));
-    % figure(); surf(log10(lz_fft)); view(0, 90); shading interp; 
-    % xlabel('temporal frequency'); ylabel('spatial frequency');
-    % title('2Dfft');
-
     % 
     % [max_true_power, max_true_index] = max(true_sum_p);
     % max_true_freq = f(max_true_index);    
@@ -1906,16 +2408,13 @@ for jobid = jobid_list
     % clear pred_marker_array which_index_iter rho_array locality_array;
     toc
     % close all;
-    if size(request_pool_size_list, 2) > 1
+    if total > 1
         clear trajectories_true pred_collect diff 
     end
 end
 end
 end
 
-end
-end
-end
 end
 end
 end
@@ -1930,5 +2429,8 @@ close(h);
 function root = sqroot(x)
 root = x^0.5;
 end
+% rmse = mean(diff.^2, 1);
+% figure(); plot(deltas{1}(1, :));
 
+% figure(); plot(times(1, 1:size(deltas, 2)), deltas(1, :)); xlim([0 20]); xlabel('lyapunov time'); ylabel('\Delta(t)'); fontsize(16, 'points');
 

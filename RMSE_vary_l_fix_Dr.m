@@ -1,11 +1,4 @@
 
-% pred_length = 2499; num_pred = 49;
-pred_length = 2499; num_pred = 40;
-% % % pred_length = 2899; num_pred = 1; % for plot
-% pred_length = 2899; num_pred = 5;
-% pred_length = 2499; num_pred = 20;
-% pred_length = 2199; num_pred = 20;
-
 %% errors 
 % Ntotal = 1680;
 % Ntotal = 5040;
@@ -39,9 +32,8 @@ pred_length = 2499; num_pred = 40;
 % locality_list = 60:5:90; num_workers_list = [5]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 
 %% Lyapunov
-% beta = 1e-4;
-% locality_list = 0:20:200; num_workers_list = [2:8]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % locality_list = 60:70; num_workers_list = 6;  jobid_list = 1e5+[1:10]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 1000-100-1;% locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+beta = 1e-2;
+locality_list = 0:20:200; num_workers_list = [8:-1:2]; Ntotal_list = 5040 * num_workers_list; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % locality_list = 20:20:200; num_workers_list = [6]; jobid_list = 1:10; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % locality_list = 60; num_workers_list = [2:8]; jobid_list = 2; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % locality_list = 60; num_workers_list = [6]; jobid_list = 1001:1010; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
@@ -51,51 +43,8 @@ pred_length = 2499; num_pred = 40;
 % locality_list = 100; num_workers_list = [4]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 
 % beta = 1;
-beta = 1e-2;
-locality_list = 0:20:200; num_workers_list = [2:8]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:20:60; num_workers_list = [6]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:20:60; num_workers_list = [6]; jobid_list = 101; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % locality_list = 0:20:200; num_workers_list = [16:-2:4]; jobid_list = 1; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 44; Ntotal = 10080; N=1680; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:20:200; num_workers_list = [16:-2:4]; jobid_list = 1; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 44; Ntotal = 10080; N=1680; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-locality_list = 0:20:200; num_workers_list = [16:-2:4]; jobid_list = 1e3+1; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 44; Ntotal = 10080; N=1680; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:20:20; num_workers_list = [16]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 44; Ntotal = 10080; N=1680; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
-% % % chapter 3
-% train_steps = 80000;
-% % % % % locality_list = 91:100; train_steps = 8e4; num_workers_list = 6; jobid_list = 1:5; data_kind = 'KS'; reservoir_kind = 'uniform_fix'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % locality_list = 60:120; num_workers_list = 6; jobid_list = 1e5+[1:10]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = [0:340]; num_workers_list = 6; jobid_list = [1e5+1]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % locality_list = 60:97; num_workers_list = 6; jobid_list = 1e5+[1:10]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % % % locality_list = 40:60; num_workers_list = 6; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % locality_list = 60:70; num_workers_list = 6; jobid_list = 1e5+[1:40]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % locality_list = 60:5:100; num_workers_list = 6; jobid_list = 1e5+[1:10]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
-% train_steps = 40000;
-% % % % train_steps = 4e4;
-% % % % locality_list = 100:-1:60; train_steps = 40000; num_workers_list = 6; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % locality_list = [340:-1:318]; num_workers_list = 6; jobid_list = [1e5+1]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; %train_steps = 80000; %pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = [0:340]; num_workers_list = 6; jobid_list = [1e5+1]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; %train_steps = 80000; %pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
-% train_steps = 2e4+1;
-% locality_list = 100:-1:97; train_steps = 2e4+1; num_workers_list = 6; jobid_list = 1:5; data_kind = 'KS'; reservoir_kind = 'uniform_fix'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 60:2:100; train_steps = 20001; num_workers_list = 6; jobid_list = 1:5; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % locality_list = 60:80; num_workers_list = 6; jobid_list = 1e5+[1:30]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 20001; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 60:70; train_steps = 20001; num_workers_list = 6; jobid_list = 1e2+[1:15]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 60:100; train_steps = 20001; num_workers_list = 6; jobid_list = 1e2+[1:10 21:30]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 60:100; train_steps = 20001; num_workers_list = 6; jobid_list = 1e2+[1:10]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% train_steps = 1e4;
-% % locality_list = 60:90; train_steps = 10000; num_workers_list = 6; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % locality_list = 60:69; train_steps = 10000; num_workers_list = 6; jobid_list = 101:120; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:340; num_workers_list = 6; jobid_list = [1e5+1]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; %train_steps = 80000; %pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
-% train_steps = 5e3;
-% % % locality_list = 60:90; train_steps = 10000; num_workers_list = 6; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% % % locality_list = 60:69; train_steps = 10000; num_workers_list = 6; jobid_list = 101:120; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% locality_list = 0:340; num_workers_list = 6; jobid_list = [1e5+1]; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; %train_steps = 80000; %pred_length = 2000-100-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
-% chapter3
-% % locality_list = 60:20:120; num_workers_list = 4; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; pred_length = 3000-500-1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-
+% % beta = 1e-2;
+% locality_list = 0:20:200; num_workers_list = [2:8]; jobid_list = 1:3; data_kind = 'KS'; reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L = 22; Ntotal = 5040; N=840; train_steps = 80000; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 
 % num_workers_list = [6]; locality_list = 0:120; data_kind = 'KS';
 % reservoir_kind = 'uniform'; learn = 'LSM_GD_short_prediction_time'; L =
@@ -112,10 +61,10 @@ locality_list = 0:20:200; num_workers_list = [16:-2:4]; jobid_list = 1e3+1; data
 %% 
 % data_kind = 'KS_slow'; L = 44; Ntotal = 5040; N=1680; train_steps = 160000; locality_list = 20:20:280; num_workers_list = 2*[2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 %% 
-% beta = 1e-4;
+
 %% 2章 予測時間と訓練誤差
 % data_kind = 'KS'; L = 22; dt = 1/4; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:160; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1:3; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
-% data_kind = 'KS'; learn = 'LSM_common'; reservoir_kind = 'uniform'; L = 44; dt = 1/4; Ntotal = 10080; N=1680; train_steps = 80000; locality_list = 20:20:280; num_workers_list = 4:2:16; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
+% data_kind = 'KS'; L = 44; dt = 1/4; Ntotal = 10080; N=1680; train_steps = 80000; locality_list = 20:20:280; num_workers_list = 4:2:16; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow'; dt = 1/8; L = 22; Ntotal = 5040; N=840; train_steps = 160000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow_short'; dt = 1/8; L = 22; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
 % data_kind = 'KS_slow_short'; dt = 1/8; L = 22; Ntotal = 5040; N=840; train_steps = 80000; locality_list = 20:20:280; num_workers_list = [2 3 4 5 6 7 8]; jobid_list = 1; % locality_list = [20 25 30 35 40 45 50 55 60]; num_workers_list = [1 4 5 6 7 8 10]; % num_workers_list = [1 2 4 5 6 8 10 12];
@@ -158,6 +107,9 @@ locality_list = 0:20:200; num_workers_list = [16:-2:4]; jobid_list = 1e3+1; data
 % num_workers_list = [8 10 12 14 15];
 % num_workers_list = [2 3 4 5 6 7 8];
 % num_workers_list = [2 4 8 12 15];
+% pred_length = 2499; num_pred = 49;
+pred_length = 2499; num_pred = 20;
+% pred_length = 2199; num_pred = 20;
 lineWidth = 1.5;
 dt = 1/4; 
 % max_lyapunov = 0.0743;
@@ -175,14 +127,10 @@ n_data = N;
 times = repmat(0:dt*max_lyapunov:(n_steps-1)*dt*max_lyapunov, n_data, 1);
 locations = repmat((1:n_data).', 1, n_steps);
 threshold = 1.0;
-% threshold = 0.5;
 % threshold = 0.30;
 % threshold = 0.10;
-sum_E = zeros(length(jobid_list), length(locality_list));
-geo_mean = true;
 T_th_max = round(1 / dt / max_lyapunov);
 T_list = zeros(length(num_workers_list), length(locality_list));
-T_list_geo = zeros(length(num_workers_list), length(locality_list));
 RMSE_list = zeros(length(num_workers_list), length(locality_list));
 Lambda_list = zeros(length(jobid_list), length(locality_list));
 max_deltas = zeros(length(num_workers_list), length(locality_list));
@@ -192,6 +140,7 @@ pred_error_list = zeros(length(num_workers_list), length(locality_list));
 n_diverge_list = zeros(length(num_workers_list), length(locality_list));
 for h = 1:length(num_workers_list)
     num_workers = num_workers_list(h);
+    Ntotal = Ntotal_list(h);
     errors = zeros(length(locality_list), pred_length);
     train_errors = zeros(length(jobid_list), length(locality_list));
     % lambda_mean_list = zeros(1, length(jobid_list));
@@ -225,34 +174,32 @@ for h = 1:length(num_workers_list)
                     if beta == 1e-4 % beta = 1e-4;
                         filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
                     else % beta = 1e-2
-                        filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_' 'beta' num2str(beta) '_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
+                        filename = ['\\nas08c093\data\otsuki\parallelized-reservoir-computing\KSParallelReservoir\' data_kind '\' data_kind '_result_' learn '_' reservoir_kind '_reservoir_' 'beta' num2str(1e-2) '_train' num2str(train_steps) '_node' num2str(Dr) '-L' num2str(L) '-N' num2str(N) '-radius0.6-locality' num2str(locality) '-numlabs' num2str(num_workers) '-jobid' num2str(jobid) '-index_iter1.mat'];
                     end
                     load(filename, 'error', 'RMSE_mean', 'lambda_list', 'deltas','resparams', 'delta1_list');
                     
                     % lambdas = (log(deltas(:,2:end)./deltas(:,1))./(2:size(deltas,2)));
                     % Lambdas = mean(lambdas, 1);
                     % Dth_list = 0.03;
-                    % Dth_list = 0.1;
-                    Dth_list = 0.001;
+                    Dth_list = 0.1;
                     % Dth_list = 0.01:0.04:0.09;
                     % Dth_list = 0.01:0.02:0.09;
-                    Tth_list = 800;
-                    % Tth_list = 1000;
+                    % Tth_list = 800;
+                    Tth_list = 1000;
                     % Tth_list = 10:200:1010;
                     % Tth_list = 10:500:1010;
-                    % num_preds = 10;
                     % num_preds = 20;
-                    % num_preds = 40;
+                    num_preds = 40;
                     % fprintf('locality=%d\n', locality);
                     lambda_list2 = zeros(length(Dth_list), length(Tth_list));
                     for dd = 1:length(Dth_list)
                         Dth = Dth_list(dd);
                         for tt = 1:length(Tth_list)
                             Tth = Tth_list(tt);
-                            t1list = zeros(num_pred, 1);
-                            delta1_list = zeros(num_pred, 1);
+                            t1list = zeros(num_preds, 1);
+                            delta1_list = zeros(num_preds, 1);
                             % ln_mean = 0;
-                            for kk = 1:num_pred
+                            for kk = 1:num_preds
                                 over_Dth_list = find(deltas(kk,:)>Dth);
                                 if size(over_Dth_list, 2) == 0
                                     t1list(kk) = Tth;
@@ -264,13 +211,13 @@ for h = 1:length(num_workers_list)
                                 delta1_list(kk) = deltas(kk, t1list(kk));
                                 t1_sum = t1_sum + (t1list(kk)-1);
                                 log_delta_sum = log_delta_sum + log10(delta1_list(kk) / deltas(kk, 1));
-                                th = 2e-3;
-                                % th = 1e-3;
+                                % th = 2e-3;
+                                th = 1e-3;
                                 if max(deltas(kk, :)) > th
                                     n_diverge_list(h, k) = n_diverge_list(h, k) + 1;
                                 end
                             end
-                            ln_list = log(delta1_list./deltas(1:num_pred, 1));
+                            ln_list = log(delta1_list./deltas(:, 1));
                             ln_mean = mean(ln_list);
                             t_mean = mean(t1list-1);
                             lambda = ln_mean / t_mean;
@@ -294,24 +241,13 @@ for h = 1:length(num_workers_list)
                     % max_deltas(h, k) = max_deltas(h, k) + mean(mean(log10(deltas)));
             end
             % % pred_length = 2899; num_pred = 49;
-            pred_length1 = resparams.predict_length;
             % % figure();
             % % num_pred = 49;
-            pred_times_each_l = zeros(1, num_pred);
             for l = 1:num_pred % length(pred_marker_array)
-                if geo_mean
-                    error_one = log10(error(1, (l-1)*pred_length1+1:(l-1)*pred_length1+pred_length));
-                    errors(k, :) = errors(k, :) + error_one;
-                else
-                    errors(k, :) = errors(k, :) + error(1, (l-1)*pred_length+1:(l-1)*pred_length+pred_length);
-                end
-                error_pred = error(1, (l-1)*pred_length1+1:(l-1)*pred_length1+pred_length);
+                errors(k, :) = errors(k, :) + error(1, (l-1)*pred_length+1:(l-1)*pred_length+pred_length);
+                error_pred = error(1, (l-1)*pred_length+1:(l-1)*pred_length+pred_length);
                 pred_time = find(error_pred>threshold);
                 pred_time = pred_time(1);
-                pred_times_each_l(l) = pred_time;
-                % for ttt = 1:10:101
-                %     sum_E(m, k) = sum_E(m, k) + log(error_pred(ttt))/(ttt*dt);
-                % end
                 % T_list(h, k) = pred_time(1);
                 T_trials(m, l) = pred_time;
                 T_error_list2(m) = T_error_list2(m) + (pred_time-1)*dt; %%% dt kakeru???
@@ -326,13 +262,12 @@ for h = 1:length(num_workers_list)
                 end
                 pred_error_locality_list(k, m) = pred_error_locality_list(k, m) + error_pred(T_th_max);
             end
-            
             ln_error_list(m) = ln_error_list(m) / num_pred;
             T_error_list(m) = T_error_list(m) / num_pred;
             ln_error_list2(m) = ln_error_list2(m) / num_pred;
             T_error_list2(m) = T_error_list2(m) / num_pred;
             pred_error_locality_list(k, m) = pred_error_locality_list(k, m) / num_pred;
-        end 
+        end
         lambda_error_locality_list(k, :) = ln_error_list ./ T_error_list;
         lambda_error_locality_list2(k, :) = ln_error_list2 ./ T_error_list2;
         pred_error_list(h, k) = mean(pred_error_locality_list(k, :));
@@ -340,14 +275,11 @@ for h = 1:length(num_workers_list)
         max_deltas(h, k) = max_deltas(h, k) / length(jobid_list);
         switch learn
             case 'LSM_GD_short_prediction_time'
-                log_delta_mean = log_delta_sum / (num_pred*length(jobid_list));
-                t1_mean = t1_sum / (num_pred*length(jobid_list));
+                log_delta_mean = log_delta_sum / (num_preds*length(jobid_list));
+                t1_mean = t1_sum / (num_preds*length(jobid_list));
                 lambda_delta_mean_list(k) = log_delta_mean / t1_mean;
         end
         errors(k, :) = errors(k, :) / (num_pred*length(jobid_list));
-        if geo_mean
-            errors(k, :) = 10.^errors(k, :);
-        end
         % train_errors(1, k) = train_errors(1, k) / length(jobid_list);
         % figure();
         % errorbar(mean(T_trials, 2), std(T_trials, 0, 2));
@@ -356,7 +288,7 @@ for h = 1:length(num_workers_list)
         hold on;
         % plot(error);
         % plot(times(1,1:pred_length), errors(1, 1:pred_length), 'DisplayName', ['locality=' num2str(locality)]); 
-        plot(times(1,1:pred_length), errors(k, 1:pred_length), 'LineWidth', lineWidth, 'DisplayName', ['locality=' num2str(locality/N*L)]); 
+        plot(times(1,1:pred_length), errors(k, 1:pred_length), 'LineWidth', lineWidth, 'DisplayName', ['l=' num2str(locality)]); 
         % plot(times(1,:), error(1, 1:n_steps), 'DisplayName', ['train steps=' num2str(train_steps)]); 
         hold off;
         
@@ -365,8 +297,6 @@ for h = 1:length(num_workers_list)
         pred_time = median(median(T_trials));
         % pred_time = mean(mean(T_trials));
         T_list(h, k) = pred_time;
-        out_times_geo = find(errors(k, :)>threshold);
-        T_list_geo(h, k) = out_times_geo(1);
         RMSE_list(h, :) = mean(train_errors, 1).';
     end
     lambda_error_list(h, :) = mean(lambda_error_locality_list, 2).';
@@ -382,11 +312,11 @@ for h = 1:length(num_workers_list)
     % xlim([0 6]);
     switch learn
         case 'LSM_GD_short_prediction_time'
-            % figure(); 
-            % hold on; plot(locality_list/N*L, mean(Lambda_list, 1));
-            % scatter(locality_list/N*L, Lambda_list, 'black');
-            % hold off; fontsize(16, 'points'); 
-            % title(['g=' num2str(num_workers)]); xlabel('locality'); ylabel('\lambda'); grid on;
+            figure(); 
+            hold on; plot(locality_list/N*L, mean(Lambda_list, 1));
+            scatter(locality_list/N*L, Lambda_list, 'black');
+            hold off; fontsize(16, 'points'); 
+            title(['g=' num2str(num_workers)]); xlabel('locality'); ylabel('\lambda'); grid on;
 
             % figure(); errorbar(locality_list/N*L, mean(Lambda_list, 1), std(Lambda_list));
             % xlabel('locality'); ylabel('\lambda');
@@ -409,14 +339,14 @@ figure();
 for h = 1:length(num_workers_list)
     hold on;
     num_workers = num_workers_list(h);
-    plot(locality_list/n_data*L, dt*max_lyapunov*T_list(h, :), 'DisplayName', ['g=' num2str(num_workers)]);
+    plot(locality_list/n_data*L, T_list(h, :), 'DisplayName', ['g=' num2str(num_workers)]);
     hold off;
 end
 % sgtitle(['L=' num2str(L) ', Ntotal=' num2str(Ntotal)]);
 title(['g=' num2str(num_workers)]);
-xlabel('locality'); %xlabel('locality'); 
-ylabel('short-term prediction time(\Lambda_1t)'); title('');
-legend('Location', 'eastoutside'); fontsize(16, 'points'); axis tight; grid on; % xlim([60 100]/840*22); 
+xlabel('locality (space)'); %xlabel('locality'); 
+ylabel('short-term prediction time');
+legend('Location', 'eastoutside'); fontsize(16, 'points'); axis tight; grid on;
 legend off;
 
 
@@ -429,18 +359,8 @@ switch length(num_workers_list)
         % figure(); plot(locality_list/n_data*L, train_errors);
         figure(); plot(locality_list/n_data*L, mean(train_errors, 1));
         % figure(); errorbar(locality_list/n_data*L, mean(train_errors, 1), std(train_errors));
-        xlabel('locality'); ylabel('train error'); fontsize(16, 'points');
-        grid on; axis tight;
-
-        figure(); 
-        % num_workers = num_workers_list(h);
-        plot(locality_list/n_data*L, dt*max_lyapunov*T_list_geo(h, :), 'DisplayName', ['g=' num2str(num_workers)]);
-        % sgtitle(['L=' num2str(L) ', Ntotal=' num2str(Ntotal)]);
-        % title(['g=' num2str(num_workers)]);
-        xlabel('locality (space)'); %xlabel('locality'); 
-        ylabel('short-term prediction time geo');
-        legend('Location', 'eastoutside'); legend off;
-        fontsize(16, 'points'); axis tight; grid on;
+        xlabel('locality_space'); ylabel('train error'); fontsize(16, 'points');
+        grid on;
 
         figure(); plot(L/n_data*locality_list, pred_error_list);
         xlabel('locality'); ylabel('pred error'); 
@@ -469,10 +389,6 @@ switch length(num_workers_list)
         xlabel('number of reservoirs'); ylabel('locality'); title(['short-term prediction time' data_kind 'L=' num2str(L) ', fix g*Dr']);
         colorbar; view(0, 90); fontsize(16, 'points'); axis tight;
         
-        % figure(); surf(repmat(num_workers_list.', 1, length(locality_list)), L/n_data*repmat(locality_list, length(num_workers_list), 1), max_lyapunov*dt*T_list_geo, 'FaceColor', 'interp');
-        % xlabel('number of reservoirs'); ylabel('locality'); title(['short-term prediction time (geo)' data_kind 'L=' num2str(L) ', fix g*Dr']);
-        % colorbar; view(0, 90); fontsize(16, 'points'); axis tight;
-        
         figure(); surf(repmat(num_workers_list.', 1, length(locality_list)), L/n_data*repmat(locality_list, length(num_workers_list), 1), lambda_error_list, 'FaceColor', 'interp');
         xlabel('number of reservoirs'); ylabel('locality'); title(['\lambda error' data_kind 'L=' num2str(L) ', fix g*Dr']);
         colorbar; view(0, 90); fontsize(16, 'points'); axis tight;
@@ -494,7 +410,7 @@ switch length(num_workers_list)
                 xlabel('number of reservoirs'); ylabel('locality'); title(['delta ' data_kind 'L=' num2str(L) ', fix g*Dr']);
                 colorbar; view(0, 90); fontsize(16, 'points'); axis tight;
 
-                figure(); surf(repmat(num_workers_list.', 1, length(locality_list)), L/n_data*repmat(locality_list, length(num_workers_list), 1), n_diverge_list/(length(jobid_list)*num_pred),  'FaceColor', 'interp');
+                figure(); surf(repmat(num_workers_list.', 1, length(locality_list)), L/n_data*repmat(locality_list, length(num_workers_list), 1), n_diverge_list/(length(jobid_list)*num_preds),  'FaceColor', 'interp');
                 xlabel('number of reservoirs'); ylabel('locality'); title(['n_diverge ' data_kind 'L=' num2str(L) ', fix g*Dr']);
                 colorbar; view(0, 90); fontsize(16, 'points'); axis tight;
         end
